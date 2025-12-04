@@ -1,0 +1,487 @@
+[
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [
+      "ICMP Flood Attack",
+      "Fragmented ICMP Attack",
+      "Fragmented IP Attack",
+      "IPv6 Fragment Header Attack"
+    ],
+    "category": "Network Layer DoS Attack"
+  },
+  {
+    "attacks": [
+      "TCP SYN Flood Attack",
+      "TCP ACK Flood Attack",
+      "TCP RST Flood Attack",
+      "TCP FIN Flood Attack",
+      "UDP Flood Attack",
+      "DNS Reflect Attack",
+      "Memcached Amplification Attack"
+    ],
+    "category": "Transport Layer DoS Attack"
+  },
+  {
+    "attacks": [
+      "HTTP Get Flood",
+      "HTTPS Get Flood",
+      "DNS Flood Attack",
+      "SIP Invite Flooding Attack",
+      "SSDP Amplification",
+      "HTTP SlowLoris Attack"
+    ],
+    "category": "Application Layer DoS Attack"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [
+      "TCP SYN Flood Attack"
+    ],
+    "category": "DDoS Attack"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [
+      "ICMP Flood Attack",
+      "Fragmented IP Attack",
+      "IPv6 Fragment Header Attack"
+    ],
+    "category": "Network Layer DoS Attack"
+  },
+  {
+    "attacks": [
+      "TCP SYN Flood Attack",
+      "UDP Flood Attack",
+      "TCP ACK Flood Attack",
+      "TCP RST Flood Attack",
+      "TCP FIN Flood Attack",
+      "DNS Reflect Attack",
+      "Memcached Amplification Attack"
+    ],
+    "category": "Transmission Layer DoS Attack"
+  },
+  {
+    "attacks": [
+      "HTTP Get Flood",
+      "HTTPS Get Flood",
+      "DNS Flood Attack",
+      "SIP Invite Flooding Attack",
+      "SSDP Amplification",
+      "HTTP SlowLoris Attack"
+    ],
+    "category": "Application Layer DDoS Attack"
+  },
+  {
+    "attacks": [
+      "TCP SYN Flood Attack"
+    ],
+    "category": "DoS Attack"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [
+      "ICMP Flood Attack",
+      "UDP Flood Attack",
+      "TCP SYN Flood Attack",
+      "DNS Flood Attack"
+    ],
+    "category": "DDoS Attack"
+  },
+  {
+    "attacks": [
+      "Unknown"
+    ],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [
+      "ICMP Flood Attack",
+      "UDP Flood Attack",
+      "TCP SYN Flood Attack",
+      "DNS Flood Attack"
+    ],
+    "category": "DDoS Attack"
+  },
+  {
+    "attacks": [
+      "TCP SYN Flood Attack"
+    ],
+    "category": "DoS Attack"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  },
+  {
+    "attacks": [],
+    "category": "Unknown"
+  }
+]

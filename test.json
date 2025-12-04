@@ -1,0 +1,629 @@
+{ 
+  "overwrite": true, 
+  "src_testcase_name": "string", 
+  "testcase_id": 0, 
+  "testcase_info": { 
+    "app_replay_list": [ 
+      { 
+        "basic": { 
+          "client_tags": [ 
+            "string" 
+          ], 
+          "desc": "string", 
+          "disable": true, 
+          "name": "string", 
+          "server_tags": [ 
+            "string" 
+          ] 
+        }, 
+        "data_rate": { 
+          "max_rate": 0, 
+          "min_rate": 0, 
+          "type": 0, 
+          "unit": 0, 
+          "unlimited": true 
+        }, 
+        "delay_start": 0, 
+        "ipv4_configuration": { 
+          "tos": 0, 
+          "ttl": 0, 
+          "type": 0 
+        }, 
+        "load_profile": { 
+          "custom": { 
+            "phase_list": [ 
+              { 
+                "behavior": 0, 
+                "data_rate": 0, 
+                "data_unit": 0, 
+                "duration": 0, 
+                "max_sessions": 0, 
+                "session_rate": 0, 
+                "type": 0 
+              } 
+            ], 
+            "profile_id": 0, 
+            "profile_name": "string", 
+            "user_id": 0 
+          }, 
+          "default": { 
+            "ramp_down": { 
+              "behavior": 0, 
+              "duration": 0 
+            }, 
+            "ramp_up": { 
+              "behavior": 0, 
+              "duration": 0 
+            }, 
+            "steady": { 
+              "behavior": 0, 
+              "duration": 0 
+            } 
+          }, 
+          "stair": { 
+            "ramp_down": { 
+              "behavior": 0, 
+              "duration": 0 
+            }, 
+            "ramp_up": { 
+              "behavior": 0, 
+              "duration": 0 
+              "incr_interval": 0, 
+              "incr_val": 0, 
+              "max_val": 0, 
+              "min_val": 0 
+            }, 
+            "steady": { 
+              "behavior": 0, 
+              "duration": 0 
+            } 
+          } 
+        }, 
+        "replay_profile": { 
+          "profile_id": 0, 
+          "profile_name": "string" 
+        }, 
+        "src_port": { 
+          "max": 0, 
+          "min": 0, 
+          "type": 0 
+        }, 
+        "super_flow": { 
+          "load_profile_type": 0, 
+          "max_flow_rate": 0, 
+          "max_flows": 0, 
+          "max_open_flows": 0 
+        }, 
+        "tcp_configuration": { 
+          "initrwnd": 0, 
+          "mss": 0, 
+          "tcptimestamp": true, 
+          "type": 0, 
+          "windowscale": 0 
+        } 
+      } 
+    ], 
+    "app_simulator_list": [ 
+      { 
+        "app_profile": { 
+          "profile_id": 0, 
+          "profile_name": "string" 
+        }, 
+        "basic": { 
+          "client_tags": [ 
+            "string" 
+          ], 
+          "desc": "string", 
+          "disable": true, 
+          "name": "string", 
+          "server_tags": [ 
+            "string" 
+          ] 
+        }, 
+        "data_rate": { 
+          "max_rate": 0, 
+          "min_rate": 0, 
+          "type": 0, 
+          "unit": 0, 
+          "unlimited": true 
+        }, 
+        "delay_start": 0, 
+        "ipv4_configuration": { 
+          "tos": 0, 
+          "ttl": 0, 
+          "type": 0 
+        }, 
+        "load_profile": { 
+          "custom": { 
+            "phase_list": [ 
+              { 
+                "behavior": 0, 
+                "data_rate": 0, 
+                "data_unit": 0, 
+                "duration": 0, 
+                "max_sessions": 0, 
+                "session_rate": 0, 
+                "type": 0 
+              } 
+            ], 
+            "profile_id": 0, 
+            "profile_name": "string", 
+            "user_id": 0 
+          }, 
+          "default": { 
+            "ramp_down": { 
+              "behavior": 0, 
+              "duration": 0 
+            }, 
+            "ramp_up": { 
+              "behavior": 0, 
+              "duration": 0 
+            }, 
+            "steady": { 
+              "behavior": 0, 
+              "duration": 0 
+            } 
+          }, 
+          "stair": { 
+            "ramp_down": { 
+              "behavior": 0, 
+              "duration": 0 
+            }, 
+            "ramp_up": { 
+              "behavior": 0, 
+              "duration": 0, 
+              "incr_interval": 0, 
+              "incr_val": 0, 
+              "max_val": 0, 
+              "min_val": 0 
+            }, 
+            "steady": { 
+              "behavior": 0, 
+              "duration": 0 
+            } 
+          } 
+        }, 
+        "src_port": { 
+          "max": 0, 
+          "min": 0, 
+          "type": 0 
+        }, 
+        "super_flow": { 
+          "load_profile_type": 0, 
+          "max_flow_rate": 0, 
+          "max_flows": 0, 
+          "max_open_flows": 0 
+        }, 
+        "tcp_configuration": { 
+          "initrwnd": 0, 
+          "mss": 0, 
+          "tcptimestamp": true, 
+          "type": 0, 
+          "windowscale": 0 
+        } 
+      } 
+    ], 
+    "criteria_list": [ 
+      { 
+        "active": true, 
+        "description": "string", 
+        "fail_description": "string", 
+        "first_action": "string", 
+        "first_component": { 
+          "index": 0, 
+          "name": "string", 
+          "type": 0 
+        }, 
+        "first_group": "string", 
+        "name": "string", 
+        "operator": "string", 
+        "second_action": "string", 
+        "second_component": { 
+          "index": 0, 
+          "name": "string", 
+          "type": 0 
+        }, 
+        "second_group": "string", 
+        "user_defined": true, 
+        "user_defined_value": "string" 
+      } 
+    ], 
+    "ddos_attack_list": [ 
+      { 
+        "attack_profile": { 
+          "profile_id": 0, 
+          "profile_name": "string" 
+        }, 
+        "basic": { 
+          "client_tags": [ 
+            "string" 
+          ], 
+          "desc": "string", 
+          "disable": true, 
+          "name": "string", 
+          "server_tags": [ 
+            "string" 
+          ] 
+        }, 
+        "data_rate": { 
+          "max_rate": 0, 
+          "min_rate": 0, 
+          "type": 0, 
+          "unit": 0, 
+           "unlimited": true 
+        }, 
+        "delay_start": 0, 
+        "load_profile": { 
+          "custom": { 
+            "phase_list": [ 
+              { 
+                "behavior": 0, 
+                "data_rate": 0, 
+                "data_unit": 0, 
+                "duration": 0, 
+                "max_sessions": 0, 
+                "session_rate": 0, 
+                "type": 0 
+              } 
+            ], 
+            "profile_id": 0, 
+            "profile_name": "string", 
+            "user_id": 0 
+          }, 
+          "default": { 
+            "ramp_down": { 
+              "behavior": 0, 
+              "duration": 0 
+            }, 
+            "ramp_up": { 
+              "behavior": 0, 
+              "duration": 0 
+            }, 
+            "steady": { 
+              "behavior": 0, 
+              "duration": 0 
+            } 
+          }, 
+          "stair": { 
+            "ramp_down": { 
+              "behavior": 0, 
+              "duration": 0 
+            }, 
+            "ramp_up": { 
+              "behavior": 0, 
+              "duration": 0 
+              "incr_interval": 0, 
+              "incr_val": 0, 
+              "max_val": 0, 
+              "min_val": 0 
+            }, 
+            "steady": { 
+              "behavior": 0, 
+              "duration": 0 
+            } 
+          } 
+        }, 
+        "src_port": { 
+          "max": 0, 
+          "min": 0, 
+          "type": 0 
+        }, 
+        "super_flow": { 
+          "load_profile_type": 0, 
+          "max_flow_rate": 0, 
+          "max_flows": 0, 
+          "max_open_flows": 0 
+        } 
+      } 
+    ], 
+    "malware_list": [ 
+      { 
+        "attack_retries": 0, 
+        "attack_timeout_seconds": 0, 
+        "basic": { 
+          "client_tags": [ 
+            "string" 
+          ], 
+          "desc": "string", 
+          "disable": true, 
+          "name": "string", 
+          "server_tags": [ 
+            "string" 
+          ] 
+        }, 
+        "delay_start_seconds": 0, 
+        "evasion_profile": { 
+          "profile_id": 0, 
+          "profile_name": "string" 
+        }, 
+        "iteration_delay_seconds": 0, 
+        "iterations": 0, 
+        "max_attacks_per_second": 0, 
+        "max_concurrent_attacks": 0, 
+        "random_seed": 0, 
+        "strike_profile": { 
+          "profile_id": 0, 
+          "profile_name": "string" 
+        } 
+      } 
+    ], 
+    "ping_setting": [ 
+      { 
+        "ping_seting": { 
+          "basic": { 
+            "client_tags": [ 
+              "string" 
+            ], 
+            "desc": "string", 
+            "disable": true, 
+            "name": "string", 
+            "server_tags": [ 
+              "string" 
+            ] 
+          }, 
+          "gateway_add": "string", 
+          "num_of_ping": 0, 
+          "time_interval": 0 
+        } 
+      } 
+    ], 
+    "security_list": [ 
+      { 
+        "attack_retries": 0, 
+        "attack_timeout_seconds": 0, 
+        "basic": { 
+          "client_tags": [ 
+            "string" 
+          ], 
+          "desc": "string", 
+          "disable": true, 
+          "name": "string", 
+          "server_tags": [ 
+            "string" 
+          ] 
+        }, 
+        "concurrent_strikes": 0, 
+        "delay_start_seconds": 0, 
+        "evasion_profile": { 
+          "profile_id": 0, 
+          "profile_name": "string" 
+        }, 
+        "iteration_delay_seconds": 0, 
+        "iterations": 0, 
+        "max_attacks_per_second": 0, 
+        "max_packets_per_second": 0, 
+        "random_seed": 0, 
+        "strike_profile": { 
+          "profile_id": 0, 
+          "profile_name": "string" 
+        } 
+      } 
+    ], 
+    "session_sender_list": [ 
+      { 
+        "basic": { 
+          "client_tags": [ 
+            "string" 
+          ], 
+          "desc": "string", 
+          "disable": true, 
+          "name": "string", 
+          "server_tags": [ 
+            "string" 
+          ] 
+        }, 
+        "data_rate": { 
+          "max_rate": 0, 
+          "min_rate": 0, 
+          "type": 0, 
+          "unit": 0, 
+          "unlimited": true 
+        }, 
+        "delay_start": 0, 
+        "dst_port": { 
+          "max": 0, 
+          "min": 0, 
+          "type": 0 
+        }, 
+        "ipv4_configuration": { 
+          "tos": 0, 
+          "ttl": 0, 
+          "type": 0 
+        }, 
+        "load_profile": { 
+          "custom": { 
+            "phase_list": [ 
+              { 
+                "behavior": 0, 
+                "data_rate": 0, 
+                "data_unit": 0, 
+                "duration": 0, 
+                "max_sessions": 0, 
+                "session_rate": 0, 
+                "type": 0 
+              } 
+            ], 
+            "profile_id": 0, 
+            "profile_name": "string", 
+            "user_id": 0 
+          }, 
+          "default": { 
+            "ramp_down": { 
+              "behavior": 0, 
+              "duration": 0 
+            }, 
+            "ramp_up": { 
+              "behavior": 0, 
+              "duration": 0 
+            }, 
+            "steady": { 
+              "behavior": 0, 
+              "duration": 0 
+            } 
+          }, 
+          "stair": { 
+            "ramp_down": { 
+              "behavior": 0, 
+              "duration": 0 
+            }, 
+            "ramp_up": { 
+              "behavior": 0, 
+              "duration": 0 
+              "incr_interval": 0, 
+              "incr_val": 0, 
+              "max_val": 0, 
+              "min_val": 0 
+            }, 
+            "steady": { 
+              "behavior": 0, 
+              "duration": 0 
+            } 
+          } 
+        }, 
+        "payload": { 
+          "http_request_type": 0, 
+          "packets_per_session": 0, 
+          "transport": 0, 
+          "type": 0 
+        }, 
+        "payload_size": { 
+          "max": 0, 
+          "min": 0, 
+          "type": 0 
+        }, 
+        "src_port": { 
+          "max": 0, 
+          "min": 0, 
+          "type": 0 
+        }, 
+        "super_flow": { 
+          "load_profile_type": 0, 
+          "max_flow_rate": 0, 
+          "max_flows": 0, 
+          "max_open_flows": 0 
+        }, 
+        "tcp_configuration": { 
+          "initrwnd": 0, 
+          "mss": 0, 
+          "tcptimestamp": true, 
+          "type": 0, 
+          "windowscale": 0 
+        } 
+      } 
+    ], 
+    "shared_settings": { 
+      "network_id": 0, 
+      "network_name": "string", 
+      "sample_interval": 0, 
+      "testcase_desc": "string", 
+      "testcase_name": "string" 
+    }, 
+    "xapp_simulator_list": [ 
+      { 
+        "basic": { 
+          "client_tags": [ 
+            "string" 
+          ], 
+          "desc": "string", 
+          "disable": true, 
+          "name": "string", 
+          "server_tags": [ 
+            "string" 
+          ] 
+        }, 
+        "data_rate": { 
+          "max_rate": 0, 
+          "min_rate": 0, 
+          "type": 0, 
+          "unit": 0, 
+          "unlimited": true 
+        }, 
+        "delay_start": 0, 
+        "host_list": [ 
+          { 
+            "name": "string", 
+            "role": "string", 
+            "tag": "string" 
+          } 
+        ], 
+        "ipv4_configuration": { 
+          "tos": 0, 
+          "ttl": 0, 
+          "type": 0 
+        }, 
+        "load_profile": { 
+          "custom": { 
+            "phase_list": [ 
+              { 
+                "behavior": 0, 
+                "data_rate": 0, 
+                "data_unit": 0, 
+                "duration": 0, 
+                "max_sessions": 0, 
+                "session_rate": 0, 
+                "type": 0 
+              } 
+            ], 
+            "profile_id": 0, 
+            "profile_name": "string", 
+            "user_id": 0 
+          }, 
+          "default": { 
+            "ramp_down": { 
+              "behavior": 0, 
+              "duration": 0 
+            }, 
+            "ramp_up": { 
+              "behavior": 0, 
+              "duration": 0 
+            }, 
+            "steady": { 
+              "behavior": 0, 
+              "duration": 0 
+            } 
+          }, 
+          "stair": { 
+            "ramp_down": { 
+              "behavior": 0, 
+              "duration": 0 
+            }, 
+            "ramp_up": { 
+              "behavior": 0, 
+              "duration": 0 
+              "incr_interval": 0, 
+              "incr_val": 0, 
+              "max_val": 0, 
+              "min_val": 0 
+            "steady": { 
+              "behavior": 0, 
+              "duration": 0 
+            } 
+          } 
+        }, 
+        "src_port": { 
+          "max": 0, 
+          "min": 0, 
+          "type": 0 
+        }, 
+        "super_flow": { 
+          "load_profile_type": 0, 
+          "max_flow_rate": 0, 
+          "max_flows": 0, 
+          "max_open_flows": 0 
+        }, 
+        "tcp_configuration": { 
+          "initrwnd": 0, 
+          "mss": 0, 
+          "tcptimestamp": true, 
+          "type": 0, 
+          "windowscale": 0 
+        }, 
+        "xapp_profile": { 
+          "profile_id": 0, 
+          "profile_name": "string" 
+        } 
+      } 
+    ] 
+  } 
+  "testcase_name": "string" 
+} 
