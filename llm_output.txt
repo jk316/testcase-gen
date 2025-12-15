@@ -1,0 +1,109 @@
+[
+  {
+    "step": "1",
+    "description": "用户登录接口",
+    "guidance": "测试用户登录功能，验证用户能否成功登录。",  经验池预留，保留api，说明调用的api。TODO，删除没用到的output
+    "input": [
+      {
+        "name": "timestamp",
+        "type": "int",
+        "description": "Unix时间戳，有效期10分钟"
+      },
+      {
+        "name": "body",
+        "type": "alps.UserLoginRequest",
+        "description": "登录请求体"
+      }
+    ],
+    "output": []
+  },
+  {
+    "step": "1.1",
+    "description": "构造一个有效的用户登录请求体，包括用户名、观察者模式、密码或签名。",
+    "guidance": "构造一个有效的用户登录请求体，包括用户名、观察者模式、密码或签名。",
+    "input": [
+      {
+        "name": "name",
+        "type": "string",
+        "description": "用户名，长度1-32，字符集为_, 0-9, a-z, A-Z"
+      },
+      {
+        "name": "observer",
+        "type": "string",
+        "description": "默认为空，1表示强制登录，2表示观察者模式登录"
+      },
+      {
+        "name": "password",
+        "type": "string",
+        "description": "登录密码；选择signature和password之一。为了账户安全，建议使用签名登录"
+      },
+      {
+        "name": "signature",
+        "type": "string",
+        "description": "登录签名；规则：SHA-1加密的(name+timestamp(int)+SHA-1加密的密码)"
+      }
+    ],
+    "output": []
+  },
+  {
+    "step": "1.2",
+    "description": "用户登录响应",
+    "guidance": "验证用户登录后的响应，检查响应码、消息和登录结果。",
+    "input": [],
+    "output": [
+      {
+        "name": "code",
+        "type": "integer",
+        "description": "响应码，0表示成功，非零表示错误"
+      },
+      {
+        "name": "message",
+        "type": "string",
+        "description": "响应消息，描述响应码"
+      },
+      {
+        "name": "result",
+        "type": "alps.UserLoginResult",
+        "description": "登录结果"
+      }
+    ]
+  },
+  {
+    "step": "1.2.1",
+    "description": "用户登录结果",
+    "guidance": "验证登录结果中的各个字段，确保其符合预期。",
+    "input": [],
+    "output": [
+      {
+        "name": "is_admin",
+        "type": "boolean",
+        "description": "是否是管理员"
+      },
+      {
+        "name": "is_observer",
+        "type": "boolean",
+        "description": "是否是观察者"
+      },
+      {
+        "name": "session_id",
+        "type": "string",
+        "description": "分配的会话ID"
+      },
+      {
+        "name": "timestamp_delta",
+        "type": "integer",
+        "description": "时间戳差值秒（服务器时间 - 本地时间）"
+      },
+      {
+        "name": "timestamp_error",
+        "type": "boolean",
+        "description": "时间戳是否有误，如果为true则必须更新本地/机箱系统时间"
+      },
+      {
+        "name": "user_id",
+        "type": "integer",
+        "description": "用户ID"
+      }
+    ]
+  }
+]

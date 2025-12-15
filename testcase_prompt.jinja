@@ -1,0 +1,78 @@
+你是一个测试用例生成器。现在我会给你一份 jsonl 数据，每一行都表示一个 API 或其子结构。注意以下规则：
+
+【输入数据结构说明】
+jsonl 的每行结构如下（示例）：
+{
+    "step": "1.2.1",
+    "title": "TestcaseInfo",
+    "summary": "...",
+    "parameters": [...],
+    "responses": {...}
+}
+
+其中：
+- step 使用层级表示父子关系，例如：
+  - “1” 是根节点
+  - “1.2” 是 “1” 的子节点
+  - “1.2.1” 是 “1.2” 的子节点
+  - 以此类推
+
+【核心规则】
+1. 层级结构：  
+   - 一个 step A 是另一个 step B 的子节点，如果 B 的前缀等于 A，并且 B 的层级深度更多。  
+     例如 1.2 是 1 的子节点；1.2.1 是 1.2 的子节点。
+
+2. 输入输出推断规则：
+   - 如果某个 step 的内容（parameters 或 responses）表示请求输入：
+        title 或 summary 中包含 Request，或者 parameters 存在具体字段（而 responses 为空），则判定为“输入相关结构”。
+        它的所有子项（子 step）都属于 inputs 参数。
+   - 如果某个 step 的内容表示 Response：
+        responses 字段不为空 或 title/summary 中出现 Response，则判定为“输出相关结构”。
+        它的所有子项（子 step）都属于 outputs 参数。
+
+3. 参数抽取方式：
+   - 若某行带有 parameters，则从其中提取每个 parameter 的：
+        - name
+        - type（如未提供类型，可自动推断为 str 或 unknown）
+        - description 可以根据 summary 或字段名自动生成一句简要解释
+   - 若某行带有 responses，且 responses.schema.properties 中有字段，也按上述方式提取 name / type / description。
+
+4. 输出测试用例格式：
+生成如下结构的 JSON（示例）：
+
+{
+  "step": <数字或字符串>,
+  "description": "<该 step 的 summary 或根据 title 自动生成自然语言描述>",
+  "guidance": "<根据该 API 的语义生成对测试执行的自然语言指导>",
+  "input": [
+    {
+      "name": "<字段名>",
+      "type": "<字段类型>",
+      "description": "<字段含义>"
+    }
+  ],
+  "output": [
+    {
+      "name": "<字段名>",
+      "type": "<字段类型>",
+      "description": "<字段含义>"
+    }
+  ]
+}
+
+注意：
+- input/output 块只有对应参数才会生成；没有则为空数组。
+- description 与 guidance 必须结合 summary、title、API 路径信息自动生成简洁清晰的自然语言描述。
+
+【任务】
+我会在下面贴出全部 jsonl，请根据上述规则：
+
+- 自动构建层级结构
+- 自动分析哪些 step 属于输入，哪些 step 属于输出
+- 抽取 name/type/description
+- 生成和示例一致格式的测试用例 JSON（可能包含多个 step）
+- step 使用 jsonl 中的 step 原值
+
+【现在开始分析以下 jsonl：】
+
+{{ jsonl_data }}

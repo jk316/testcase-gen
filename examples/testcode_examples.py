@@ -7,8 +7,9 @@ import hashlib
 from datetime import datetime
 from typing import Optional, Dict, Any
 from models.ddos_attack_config import DataRate, BasicData, AttackProfileBrief, FlowItem, ProfileDetail, SuperFlow, LoadProfile, DefaultProfile, Behav, SrcPort, AttackModule, SharedSettings, TestcaseInfo, Testcase
-
+from exceptions import AttackNotFoundError
 import requests
+import logging
 
 
 # ----------------- 通用工具函数 ----------------- #
@@ -360,14 +361,23 @@ class AlpsClient:
             add_session_id=True,
             json_body=payload
         )
-    
-    
-    def set_basic_data(self) -> BasicData:
+
+    def get_ddos_attack_profile_list(self) -> Dict[str, Any]:
+        """
+        GET  /v1/cl/ddos/attack/profile/list
+        """
+        return self._request(
+            method="GET",
+            path="/v1/cl/ddos/attack/profile/list",
+            add_session_id=True,
+        )
+
+    def set_basic_data(self, attack_name: str) -> BasicData:
         """
         set basic_data for attack
         """
         attack_basic_data = BasicData(
-        name="UDP Flood Attack", #TODO 搜索得到
+        name = attack_name, #TODO 搜索得到
         desc="",
         client_tags=["client6"], #TODO 搜索得到
         server_tags=["server6"], #TODO 搜索得到
@@ -388,27 +398,27 @@ class AlpsClient:
         )
         return attack_data_rate
 
-    def set_attack_profile_brief(self) -> AttackProfileBrief:
+    def set_attack_profile_brief(self, profile_id: int, profile_name: str) -> AttackProfileBrief:
         """
         set attack_profile_brief for attack
         """
         attack_profile_brief = AttackProfileBrief(
-            profile_id=220, #TODO 搜索得到
-            profile_name="UDP Flood Attack", #TODO 搜索得到
+            profile_id=profile_id,
+            profile_name=profile_name,
             user_id=1
         )
         return attack_profile_brief
 
-    def set_flow_item(self) -> FlowItem:
-        """
-        set flow_item for attack
-        """
-        attack_flow_item = FlowItem(
-            flow_id=1, #TODO 搜索得到
-            user_id=1, 
-            flow_name="UDP Flood Attack"  #TODO 搜索得到
-        )
-        return attack_flow_item
+    # def set_flow_item(self) -> FlowItem:
+    #     """
+    #     set flow_item for attack
+    #     """
+    #     attack_flow_item = FlowItem(
+    #         flow_id=1, #TODO 搜索得到
+    #         user_id=1, 
+    #         flow_name="UDP Flood Attack"  #TODO 搜索得到
+    #     )
+    #     return attack_flow_item
 
     
     def set_profile_detail(self) -> ProfileDetail:
@@ -460,11 +470,11 @@ class AlpsClient:
             polling_mode = 0
         )
     
-    def set_attack_module(self) -> AttackModule:
-        basic_data = self.set_basic_data()
+    def set_attack_module(self, profile_id: int, profile_name: str) -> AttackModule:
+        basic_data = self.set_basic_data(profile_name)
         data_rate = self.set_data_rate()
         src_port = self.set_src_port()
-        attack_profile = self.set_attack_profile_brief()
+        attack_profile = self.set_attack_profile_brief(profile_id, profile_name)
         super_flow = self.set_super_flow()
         load_profile = self.set_load_profile()
         
@@ -490,16 +500,29 @@ class AlpsClient:
         shared_settings.sample_interval = 1
         return shared_settings
 
-    def set_testcase_info(self, testcase_id: int, testcase_name: str) -> TestcaseInfo:
+    def set_testcase_info(self, testcase_id: int, testcase_name: str, profile_id: int, profile_name: str) -> TestcaseInfo:
         testcase_info = TestcaseInfo()
         testcase_info.testcase_id = testcase_id
-        attack_module = self.set_attack_module()
+        attack_module = self.set_attack_module(profile_id, profile_name)
         shared_settings = self.set_shared_settings(testcase_name)
         testcase_info.ddos_attack_list = [attack_module]
         testcase_info.shared_settings = shared_settings
         testcase_info.component_tags = ["client6","server6"]
         return testcase_info
 
+def find_attack_profile_id(attack_profile_list, attack_name):
+    attack_name_lower = attack_name.lower()
+    for profile in attack_profile_list:
+        profile_name = profile.get("profile_name")
+        if not profile_name:
+            continue
+        
+        if attack_name_lower in profile_name.lower(): 
+            profile_id = profile.get("profile_id")
+            return profile_id, profile_name
+    # 如果遍历完没有 return
+    logging.error(f"未找到攻击 '{attack_name}' 的 profile_id")
+    raise AttackNotFoundError("attack not found")
 
 def extract_matched_ports(data: Dict[str, Any]) -> list[Dict[str, Any]]:
     """筛选出 is_reserved=True 且 test_running=False 的端口"""
@@ -535,13 +558,20 @@ if __name__ == "__main__":
         # matched_port_ids = extract_matched_ports(port_list_data)testcase/component/create
         # print("matched_port_ids:", matched_port_ids)
 
-        testcase_name = f"TestCase_by_agent_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-        testcase_data = client.create_testcase(testcase_name=testcase_name, overwrite=True)
-        print("testcase_data:", testcase_data)
-        testcase_id = testcase_data.get("result", {}).get("testcase_id")
-        testcase_info = client.set_testcase_info(testcase_id, testcase_name)
-        testcase_save_result = client.save_testcase(testcase_id, testcase_info)
-        print("testcase_save_result:", testcase_save_result)
+        # attack_profile_list_data = client.get_ddos_attack_profile_list()
+        # attack_profile_list = attack_profile_list_data.get("result", {})
+        # print("attack_profile_list: ", attack_profile_list)
+        # attack_name = "UDP Flood Attack"
+        # profile_id, profile_name  = find_attack_profile_id(attack_profile_list, attack_name)
+
+
+        # testcase_name = f"TestCase_by_agent_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        # testcase_data = client.create_testcase(testcase_name=testcase_name, overwrite=True)
+        # print("testcase_data:", testcase_data)
+        # testcase_id = testcase_data.get("result", {}).get("testcase_id")
+        # testcase_info = client.set_testcase_info(testcase_id, testcase_name, profile_id, profile_name)
+        # testcase_save_result = client.save_testcase(testcase_id, testcase_info)
+        # print("testcase_save_result:", testcase_save_result)
 
 
         # network_list = client.get_network_list()
@@ -559,8 +589,8 @@ if __name__ == "__main__":
         # ddos_attack_list = client.get_ddos_attack_list()  # 获取攻击类型
         # print("ddos_attack_list: ", ddos_attack_list)
 
-        # component_list = client.get_component_list()
-        # print("component_list: ", component_list)
+        component_list = client.get_component_list()
+        print("component_list: ", component_list)
 
         # param_list = client.fetch_testcase_param(10850)
         # print("param_list: ", param_list)
