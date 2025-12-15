@@ -1,0 +1,241 @@
+[
+  {
+    "step": "1.2.1",
+    "description": "User login result information, including whether the user is an admin or observer, session ID, and timestamp details.",
+    "guidance": "This step should be used to verify the response of a user login operation, ensuring that all expected fields are present and correctly formatted.",
+    "input": [],
+    "output": [
+      {
+        "name": "is_admin",
+        "type": "boolean",
+        "description": "Indicates if the user has admin privileges."
+      },
+      {
+        "name": "is_observer",
+        "type": "boolean",
+        "description": "Indicates if the user is an observer."
+      },
+      {
+        "name": "session_id",
+        "type": "string",
+        "description": "The session ID allocated after successful login."
+      },
+      {
+        "name": "timestamp_delta",
+        "type": "integer",
+        "description": "The difference in seconds between the server and local datetime."
+      },
+      {
+        "name": "timestamp_error",
+        "type": "boolean",
+        "description": "Indicates if there is a timestamp error, requiring the local system datetime to be updated."
+      },
+      {
+        "name": "user_id",
+        "type": "integer",
+        "description": "The unique identifier for the logged-in user."
+      }
+    ]
+  }
+]
+[
+  {
+    "step": "1.1",
+    "description": "User login request with fields for name, observer, password, and signature.",
+    "guidance": "To test this API, provide a valid user name, choose an observer mode if needed, and either a password or a signature for authentication.",
+    "input": [
+      {
+        "name": "name",
+        "type": "string",
+        "description": "name of the user; length: 1-32; charset: _, 0-9, a-z, A-Z"
+      },
+      {
+        "name": "observer",
+        "type": "string",
+        "description": "the default is empty, 1 is forced login, 2 is observer mode login"
+      },
+      {
+        "name": "password",
+        "type": "string",
+        "description": "login password; choose one of signature and password. for the security of your account, it is recommended to log in with signature."
+      },
+      {
+        "name": "signature",
+        "type": "string",
+        "description": "login signature; rules:SHA-1 encryption of:name+timestamp(int)+SHA-1 encrypted password"
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "1.2",
+    "description": "User login response, including code, message, and result.",
+    "guidance": "Verify that the user login response contains a valid response code, an appropriate message, and the expected login result.",
+    "input": [],
+    "output": [
+      {
+        "name": "code",
+        "type": "integer",
+        "description": "response code, zero for success, non-zero for errors"
+      },
+      {
+        "name": "message",
+        "type": "string",
+        "description": "response message, description for the response code"
+      },
+      {
+        "name": "result",
+        "type": "unknown",
+        "description": "login result"
+      }
+    ]
+  }
+]
+[
+  {
+    "step": "1",
+    "description": "user login",
+    "guidance": "This API is used for user login. Ensure the provided timestamp and body are correctly formatted.",
+    "input": [
+      {
+        "name": "timestamp",
+        "type": "string",
+        "description": "unix timestamp, expired in 10 minutes, type is int"
+      },
+      {
+        "name": "body",
+        "type": "alps.UserLoginRequest",
+        "description": "Required body for user login request"
+      }
+    ],
+    "output": [
+      {
+        "name": "200",
+        "type": "alps.UserLoginResponse",
+        "description": "OK response containing user login information"
+      }
+    ]
+  }
+]
+[
+  {
+    "step": "2.2.1.2.1.1.2.1",
+    "description": "定义了一个字段，包含客户端类别、显示名称、字段类型等信息。",
+    "guidance": "请根据提供的参数创建一个字段实例，并确保所有必填项都已正确填充。",
+    "input": [
+      {
+        "name": "client_category",
+        "type": "string",
+        "description": "客户端类别"
+      },
+      {
+        "name": "display",
+        "type": "string",
+        "description": "显示名称"
+      },
+      {
+        "name": "field_type",
+        "type": "string",
+        "description": "字段类型"
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "description": "字段名"
+      },
+      {
+        "name": "server_category",
+        "type": "string",
+        "description": "服务器类别"
+      },
+      {
+        "name": "unit",
+        "type": "string",
+        "description": "值单位"
+      },
+      {
+        "name": "value",
+        "type": "number",
+        "description": "值（数字）"
+      },
+      {
+        "name": "value_string",
+        "type": "string",
+        "description": "值（字符串）"
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "2.2.1.1.5.1.1",
+    "description": "LoadPhaseCustom definition for load phase behavior and parameters.",
+    "guidance": "Test the LoadPhaseCustom API by providing valid input parameters such as behavior, data_rate, data_unit, duration, enable_max_sessions, max_sessions, session_rate, and type.",
+    "input": [
+      {
+        "name": "behavior",
+        "type": "integer",
+        "description": "load phase behavior"
+      },
+      {
+        "name": "data_rate",
+        "type": "number",
+        "description": "data rate; default: 1000; range: 1-119047619"
+      },
+      {
+        "name": "data_unit",
+        "type": "integer",
+        "description": "the unit of data rate"
+      },
+      {
+        "name": "duration",
+        "type": "integer",
+        "description": "load phase duration; default: 1; range: 1-1080000"
+      },
+      {
+        "name": "enable_max_sessions",
+        "type": "boolean",
+        "description": "enable maximum sessions; default: true"
+      },
+      {
+        "name": "max_sessions",
+        "type": "integer",
+        "description": "maximum sessions; range: 1-4294967295"
+      },
+      {
+        "name": "session_rate",
+        "type": "integer",
+        "description": "session rate; range: 1-4294967295"
+      },
+      {
+        "name": "type",
+        "type": "integer",
+        "description": "load phase type"
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "2.2.1.1.5.2.1",
+    "description": "LoadPhaseRampDown definition for ramp down behavior and duration.",
+    "guidance": "Test the LoadPhaseRampDown with different values of behavior and duration to ensure it behaves as expected.",
+    "input": [
+      {
+        "name": "behavior",
+        "type": "integer",
+        "description": "ramp down behavior; default: 1; range: CloseFIN=0, CloseRST=1, FullCloseFIN=2"
+      },
+      {
+        "name": "duration",
+        "type": "integer",
+        "description": "ramp down duration; default: 2; range: 1-1080000"
+      }
+    ],
+    "output": []
+  }
+]

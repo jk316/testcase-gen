@@ -1,0 +1,1236 @@
+[
+  {
+    "step": "1.2.1",
+    "description": "User login result definition, including whether the user is an admin or observer, session ID, timestamp delta, and user ID.",
+    "guidance": "Test the response structure of the user login API to ensure it includes all necessary fields such as is_admin, is_observer, session_id, timestamp_delta, timestamp_error, and user_id.",
+    "input": [
+      {
+        "name": "is_admin",
+        "type": "boolean",
+        "description": "Indicates if the user is an admin or not"
+      },
+      {
+        "name": "is_observer",
+        "type": "boolean",
+        "description": "Indicates if the user is an observer or not"
+      },
+      {
+        "name": "session_id",
+        "type": "string",
+        "description": "The allocated session ID for the user"
+      },
+      {
+        "name": "timestamp_delta",
+        "type": "integer",
+        "description": "The difference in seconds between the server datetime and local datetime"
+      },
+      {
+        "name": "timestamp_error",
+        "type": "boolean",
+        "description": "Indicates if there is a timestamp error, requiring the local/chassis system datetime to be updated"
+      },
+      {
+        "name": "user_id",
+        "type": "integer",
+        "description": "The unique identifier for the user"
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "1.1",
+    "description": "User login request with parameters for name, observer, password, and signature.",
+    "guidance": "To test this API, provide valid values for the user's name, observer mode, password, or signature. Ensure that the name meets the character set requirements and the password is securely provided or use a signature for enhanced security.",
+    "input": [
+      {
+        "name": "name",
+        "type": "string",
+        "description": "name of the user; length: 1-32; charset: _, 0-9, a-z, A-Z"
+      },
+      {
+        "name": "observer",
+        "type": "string",
+        "description": "the default is empty, 1 is forced login, 2 is observer mode login"
+      },
+      {
+        "name": "password",
+        "type": "string",
+        "description": "login password; choose one of signature and password. for the security of your account, it is recommended to log in with signature."
+      },
+      {
+        "name": "signature",
+        "type": "string",
+        "description": "login signature; rules:SHA-1 encryption of:name+timestamp(int)+SHA-1 encrypted password"
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "1.2",
+    "description": "User login response, including code, message, and result.",
+    "guidance": "Verify the response from a user login attempt, ensuring the response code indicates success or failure, the message provides context, and the result contains expected information.",
+    "input": [],
+    "output": [
+      {
+        "name": "code",
+        "type": "integer",
+        "description": "response code, zero for success, non-zero for errors"
+      },
+      {
+        "name": "message",
+        "type": "string",
+        "description": "response message, description for the response code"
+      },
+      {
+        "name": "result",
+        "type": "unknown",
+        "description": "login result"
+      }
+    ]
+  }
+]
+[
+  {
+    "step": "1",
+    "description": "user login",
+    "guidance": "测试用户登录功能，需要提供时间戳和请求体。",
+    "input": [
+      {
+        "name": "timestamp",
+        "type": "int",
+        "description": "unix timestamp, expired in 10 minutes"
+      },
+      {
+        "name": "body",
+        "type": "alps.UserLoginRequest",
+        "description": "请求体，包含用户登录所需信息"
+      }
+    ],
+    "output": [
+      {
+        "name": "200",
+        "type": "alps.UserLoginResponse",
+        "description": "OK 响应，返回用户登录后的信息"
+      }
+    ]
+  }
+]
+[
+  {
+    "step": "2.2.1.2.1.1.2.1",
+    "description": "定义了一个字段结构，包含客户端类别、显示名称、字段类型等信息。",
+    "guidance": "请确保输入的字段信息准确无误，包括客户端类别、显示名称、字段类型等。",
+    "input": [
+      {
+        "name": "client_category",
+        "type": "string",
+        "description": "客户端类别"
+      },
+      {
+        "name": "display",
+        "type": "string",
+        "description": "显示名称"
+      },
+      {
+        "name": "field_type",
+        "type": "string",
+        "description": "字段类型"
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "description": "字段名称"
+      },
+      {
+        "name": "server_category",
+        "type": "string",
+        "description": "服务器类别"
+      },
+      {
+        "name": "unit",
+        "type": "string",
+        "description": "值单位"
+      },
+      {
+        "name": "value",
+        "type": "number",
+        "description": "值"
+      },
+      {
+        "name": "value_string",
+        "type": "string",
+        "description": "值字符串"
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "2.2.1.1.5.1.1",
+    "description": "Load phase custom definition with specific parameters for behavior, data rate, data unit, duration, enabling maximum sessions, maximum sessions, session rate, and type.",
+    "guidance": "Test the load phase by setting various parameters such as behavior, data rate, data unit, duration, maximum sessions, and session rate to ensure the system can handle different load scenarios.",
+    "input": [
+      {
+        "name": "behavior",
+        "type": "integer",
+        "description": "load phase behavior"
+      },
+      {
+        "name": "data_rate",
+        "type": "number",
+        "description": "data rate; default: 1000; range: 1-119047619"
+      },
+      {
+        "name": "data_unit",
+        "type": "integer",
+        "description": "the unit of data rate"
+      },
+      {
+        "name": "duration",
+        "type": "integer",
+        "description": "load phase duration; default: 1; range: 1-1080000"
+      },
+      {
+        "name": "enable_max_sessions",
+        "type": "boolean",
+        "description": "enable maximum sessions; default: true"
+      },
+      {
+        "name": "max_sessions",
+        "type": "integer",
+        "description": "maximum sessions; range: 1-4294967295"
+      },
+      {
+        "name": "session_rate",
+        "type": "integer",
+        "description": "session rate; range: 1-4294967295"
+      },
+      {
+        "name": "type",
+        "type": "integer",
+        "description": "load phase type"
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "2.2.1.1.5.2.1",
+    "description": "LoadPhaseRampDown definition for load testing, including ramp down behavior and duration.",
+    "guidance": "This step defines the parameters for the LoadPhaseRampDown, which is used to specify how the load should be decreased during a test. Ensure that the provided values for behavior and duration are within the expected ranges.",
+    "input": [
+      {
+        "name": "behavior",
+        "type": "integer",
+        "description": "ramp down behavior; default: 1; range: CloseFIN=0, CloseRST=1, FullCloseFIN=2"
+      },
+      {
+        "name": "duration",
+        "type": "integer",
+        "description": "ramp down duration; default: 2; range: 1-1080000"
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "2.2.1.1.5.2.2",
+    "description": "LoadPhaseRampUp",
+    "guidance": "测试 LoadPhaseRampUp 的行为和持续时间参数。",
+    "input": [
+      {
+        "name": "behavior",
+        "type": "integer",
+        "description": "ramp up behavior; default: 2; range: OpenData=0, OpenDataCloseFIN=1, OpenDataCloseRST=2, OpenDataFullCloseFIN=3"
+      },
+      {
+        "name": "duration",
+        "type": "integer",
+        "description": "ramp up duration; default: 2; range: 1-1080000"
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "2.2.1.1.5.2.3",
+    "description": "Definitions for load phase steady behavior and duration.",
+    "guidance": "Test the load phase with different steady behaviors and durations to ensure the system can handle various load conditions.",
+    "input": [
+      {
+        "name": "behavior",
+        "type": "integer",
+        "description": "steady behavior; default: 2; range: OpenCloseFIN=0, HoldSessionOpen=1, OpenCloseRST=2, OpenFullCloseFIN=3"
+      },
+      {
+        "name": "duration",
+        "type": "integer",
+        "description": "steady duration; default: 30; range: 1-1080000"
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "2.2.1.1.5.3.1",
+    "description": "LoadPhaseRampDown definition",
+    "guidance": "Test the LoadPhaseRampDown parameters to ensure they are correctly set and meet the specified requirements.",
+    "input": [
+      {
+        "name": "behavior",
+        "type": "integer",
+        "description": "ramp down behavior; default: 1; range: CloseFIN=0, CloseRST=1, FullCloseFIN=2"
+      },
+      {
+        "name": "duration",
+        "type": "integer",
+        "description": "ramp down duration; default: 2; range: 1-1080000"
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "2.2.1.1.5.3.2",
+    "description": "LoadPhaseRampUpStair definition for configuring ramp up behavior in a load test.",
+    "guidance": "Configure the ramp up phase of a load test by specifying parameters such as behavior, duration, increment interval, and values.",
+    "input": [
+      {
+        "name": "behavior",
+        "type": "integer",
+        "description": "ramp up behavior; default: 2; range: OpenData=0, OpenDataCloseFIN=1, OpenDataCloseRST=2, OpenDataFullCloseFIN=3"
+      },
+      {
+        "name": "duration",
+        "type": "integer",
+        "description": "ramp up duration; default: 2; range: 1-1080000"
+      },
+      {
+        "name": "incr_interval",
+        "type": "integer",
+        "description": "the interval for increment flows; default: 1; range: 1-3600"
+      },
+      {
+        "name": "incr_val",
+        "type": "integer",
+        "description": "increment n flow rate or concurrent flows per interval; default: 1; range: 1-4294967295"
+      },
+      {
+        "name": "max_val",
+        "type": "integer",
+        "description": "maximum flow rate or concurrent flows; default: 2; range: 1-4294967295"
+      },
+      {
+        "name": "min_val",
+        "type": "integer",
+        "description": "minimum flow rate or concurrent flows; default: 1; range: 1-4294967295"
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "2.2.1.1.5.3.3",
+    "description": "Definitions for load phase steady behavior and duration.",
+    "guidance": "Test the load phase steady behavior and duration by providing valid integer values within the specified ranges.",
+    "input": [
+      {
+        "name": "behavior",
+        "type": "integer",
+        "description": "steady behavior; default: 2; range: OpenCloseFIN=0, HoldSessionOpen=1, OpenCloseRST=2, OpenFullCloseFIN=3"
+      },
+      {
+        "name": "duration",
+        "type": "integer",
+        "description": "steady duration; default: 30; range: 1-1080000"
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "2.2.1.2.1.1.1",
+    "description": "定义了一个字段，包括客户端类别、显示名称、字段类型等信息。",
+    "guidance": "请根据提供的参数构建请求，并检查返回结果是否符合预期。",
+    "input": [
+      {
+        "name": "client_category",
+        "type": "string",
+        "description": "客户端类别"
+      },
+      {
+        "name": "display",
+        "type": "string",
+        "description": "显示名称"
+      },
+      {
+        "name": "field_type",
+        "type": "string",
+        "description": "字段类型"
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "description": "字段名称"
+      },
+      {
+        "name": "server_category",
+        "type": "string",
+        "description": "服务器类别"
+      },
+      {
+        "name": "unit",
+        "type": "string",
+        "description": "值单位"
+      },
+      {
+        "name": "value",
+        "type": "number",
+        "description": "值"
+      },
+      {
+        "name": "value_string",
+        "type": "string",
+        "description": "值字符串"
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "2.2.1.2.1.1.2",
+    "description": "CustomStatsPropField definition for testcase",
+    "guidance": "Test the CustomStatsPropField by providing valid and invalid values for each parameter.",
+    "input": [
+      {
+        "name": "action",
+        "type": "unknown",
+        "description": "component Prop"
+      },
+      {
+        "name": "component",
+        "type": "unknown",
+        "description": "component info"
+      },
+      {
+        "name": "group",
+        "type": "string",
+        "description": "component group"
+      },
+      {
+        "name": "merge_port",
+        "type": "boolean",
+        "description": "merge multi port stats;default:false"
+      },
+      {
+        "name": "operator",
+        "type": "string",
+        "description": "operator;default:*"
+      },
+      {
+        "name": "port_list",
+        "type": "array",
+        "description": "for the internal logic of the code, the user can ignore "
+      },
+      {
+        "name": "port_value",
+        "type": "number",
+        "description": "for the internal logic of the code, the user can ignore "
+      },
+      {
+        "name": "type",
+        "type": "string",
+        "description": "custom stats type"
+      },
+      {
+        "name": "user_defined",
+        "type": "boolean",
+        "description": "user defined;default:false"
+      },
+      {
+        "name": "user_defined_value",
+        "type": "string",
+        "description": "user defined value"
+      },
+      {
+        "name": "value",
+        "type": "number",
+        "description": "value;default:1"
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "2.2.1.1.5.1",
+    "description": "LoadProfileCustom definition, including phase list, profile id, profile name, and user id.",
+    "guidance": "Provide a valid load profile with the required parameters to test the creation or modification of a load profile.",
+    "input": [
+      {
+        "name": "phase_list",
+        "type": "array",
+        "description": "load phase list"
+      },
+      {
+        "name": "profile_id",
+        "type": "integer",
+        "description": "load profile id"
+      },
+      {
+        "name": "profile_name",
+        "type": "string",
+        "description": "load profile name"
+      },
+      {
+        "name": "user_id",
+        "type": "integer",
+        "description": "user id"
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "2.2.1.1.5.2",
+    "description": "LoadProfileDefault API for defining load profiles with ramp down, ramp up, and steady phases.",
+    "guidance": "Test the LoadProfileDefault API by providing parameters for the ramp down, ramp up, and steady phases to ensure they are correctly defined and processed.",
+    "input": [
+      {
+        "name": "ramp_down",
+        "type": "unknown",
+        "description": "ramp down phase"
+      },
+      {
+        "name": "ramp_up",
+        "type": "unknown",
+        "description": "ramp up phase"
+      },
+      {
+        "name": "steady",
+        "type": "unknown",
+        "description": "steady phase"
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "2.2.1.1.5.3",
+    "description": "LoadProfileStair definition with ramp down, ramp up, and steady phases.",
+    "guidance": "Test the LoadProfileStair by providing valid parameters for ramp down, ramp up, and steady phases.",
+    "input": [
+      {
+        "name": "ramp_down",
+        "type": "unknown",
+        "description": "ramp down phase"
+      },
+      {
+        "name": "ramp_up",
+        "type": "unknown",
+        "description": "ramp up phase"
+      },
+      {
+        "name": "steady",
+        "type": "unknown",
+        "description": "steady phase"
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "2.2.1.2.1.1",
+    "description": "Custom stats prop definition with various properties for configuration and calculation.",
+    "guidance": "Test the configuration of custom statistics properties by providing different values to the parameters. Ensure that all provided inputs are correctly processed and that calculated props are returned as expected.",
+    "input": [
+      {
+        "name": "action",
+        "type": "unknown",
+        "description": "Component property, refer to Field definition."
+      },
+      {
+        "name": "all_prop_assign_count",
+        "type": "integer",
+        "description": "For the internal logic of the code, the user can ignore this integer value."
+      },
+      {
+        "name": "calculated_props",
+        "type": "array",
+        "description": "List of calculated properties, each item refers to CustomStatsPropField definition."
+      },
+      {
+        "name": "component",
+        "type": "unknown",
+        "description": "Component information, refer to CriteriaComponent definition."
+      },
+      {
+        "name": "group",
+        "type": "string",
+        "description": "Component group identifier."
+      },
+      {
+        "name": "merge_port",
+        "type": "boolean",
+        "description": "Merge multiple port statistics; default is false."
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "description": "Custom statistics property name."
+      },
+      {
+        "name": "operator",
+        "type": "string",
+        "description": "Operator used in calculations; default is * (multiplication)."
+      },
+      {
+        "name": "operator_list",
+        "type": "array",
+        "description": "List of operators, each a string value."
+      },
+      {
+        "name": "port_list",
+        "type": "array",
+        "description": "For the internal logic of the code, the user can ignore this list of strings."
+      },
+      {
+        "name": "port_value",
+        "type": "number",
+        "description": "For the internal logic of the code, the user can ignore this double value."
+      },
+      {
+        "name": "type",
+        "type": "string",
+        "description": "Custom statistics type, range includes port, protocol, component; default is component."
+      },
+      {
+        "name": "user_defined",
+        "type": "boolean",
+        "description": "Indicates if the property is user-defined; default is false."
+      },
+      {
+        "name": "user_defined_value",
+        "type": "string",
+        "description": "User-defined value for the property."
+      },
+      {
+        "name": "value",
+        "type": "number",
+        "description": "Value for the property; default is 1."
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "2.2.1.1.1",
+    "description": "Attack Profile Configuration",
+    "guidance": "Test the configuration of an attack profile by providing its ID and name.",
+    "input": [
+      {
+        "name": "profile_id",
+        "type": "integer",
+        "description": "attack profile id"
+      },
+      {
+        "name": "profile_name",
+        "type": "string",
+        "description": "attack profile name"
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "2.2.1.1.2",
+    "description": "This is a basic configuration for a testcase, including client tags, component description, disable status, component name, and server tags.",
+    "guidance": "Please provide the necessary information to configure the testcase, such as client and server tags, a description, the name of the component, and whether the testcase should be disabled.",
+    "input": [
+      {
+        "name": "client_tags",
+        "type": "array",
+        "description": "client tags"
+      },
+      {
+        "name": "desc",
+        "type": "string",
+        "description": "component description; length: 0-65535"
+      },
+      {
+        "name": "disable",
+        "type": "boolean",
+        "description": "testcase disable;default: 0"
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "description": "component name; length: 1-128"
+      },
+      {
+        "name": "server_tags",
+        "type": "array",
+        "description": "server tags"
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "2.2.1.1.3",
+    "description": "This step defines the DataPath for a testcase, including client and server tags data paths and an enable flag.",
+    "guidance": "Provide the necessary data paths and enable flag to configure the DataPath for the test case.",
+    "input": [
+      {
+        "name": "client_tags_data_path",
+        "type": "array",
+        "description": "client tags data path"
+      },
+      {
+        "name": "enable_data_path",
+        "type": "boolean",
+        "description": "enable data path; default: false"
+      },
+      {
+        "name": "server_tags_data_path",
+        "type": "array",
+        "description": "server tags data path"
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "2.2.1.1.4",
+    "description": "Configuration for data rate settings including maximum and minimum rates, type, unit, and whether the rate is unlimited.",
+    "guidance": "This API allows you to configure the data rate with specific parameters such as max_rate, min_rate, type, unit, and unlimited. Ensure that the values provided are within the specified ranges and follow the given format.",
+    "input": [
+      {
+        "name": "max_rate",
+        "type": "integer",
+        "description": "Maximum data rate; default: 10000; range: 1-119047619"
+      },
+      {
+        "name": "min_rate",
+        "type": "integer",
+        "description": "Minimum data rate; default: 1000; range: 1-119047619"
+      },
+      {
+        "name": "type",
+        "type": "integer",
+        "description": "Data rate type; default: 0; range: Const=0"
+      },
+      {
+        "name": "unit",
+        "type": "integer",
+        "description": "Data rate unit; default: 0; range: Fps=0, Mbs=1"
+      },
+      {
+        "name": "unlimited",
+        "type": "boolean",
+        "description": "Unlimited data rate; default: true"
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "2.2.1.1.5",
+    "description": "Load Profile Definitions",
+    "guidance": "Test the load profile definitions to ensure they meet the expected structure and data types.",
+    "input": [
+      {
+        "name": "custom",
+        "type": "unknown",
+        "description": "custom load profile"
+      },
+      {
+        "name": "default",
+        "type": "unknown",
+        "description": "default load profile"
+      },
+      {
+        "name": "stair",
+        "type": "unknown",
+        "description": "stair load profile"
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "2.2.1.1.6",
+    "description": "SrcPortConfig for defining source port configuration",
+    "guidance": "Test the configuration of source ports by setting the maximum and minimum port numbers, polling mode, port step, and distribution type.",
+    "input": [
+      {
+        "name": "max",
+        "type": "integer",
+        "description": "maximum port number; default: 65535; range: 0-65535"
+      },
+      {
+        "name": "min",
+        "type": "integer",
+        "description": "minimum port number; default: 10001; range: 0-65535"
+      },
+      {
+        "name": "polling_mode",
+        "type": "integer",
+        "description": "port polling mode when the type is 2(Range); default: 0; range: Global=0, StandalonePerIP=1"
+      },
+      {
+        "name": "port_step",
+        "type": "integer",
+        "description": "port step number; default: 1; range: 1-1024"
+      },
+      {
+        "name": "type",
+        "type": "integer",
+        "description": "port distribution type; default: 2; range: Const=0, Random=1, Range=2"
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "2.2.1.1.7",
+    "description": "定义了 SuperFlowConfig 的配置参数。",
+    "guidance": "测试时，请确保正确设置带宽控制、连接控制以及最大并发流等参数。",
+    "input": [
+      {
+        "name": "enable_bandwidth_ctrl",
+        "type": "boolean",
+        "description": "启用带宽控制，默认值为 false。"
+      },
+      {
+        "name": "enable_conn_ctrl",
+        "type": "boolean",
+        "description": "启用连接控制，默认值为 false。"
+      },
+      {
+        "name": "enable_max_flows",
+        "type": "boolean",
+        "description": "启用最大同时流，默认值为 true。"
+      },
+      {
+        "name": "flow_timeout",
+        "type": "integer",
+        "description": "流超时时间（毫秒），0 表示永不超时，默认值为 0。"
+      },
+      {
+        "name": "load_profile_type",
+        "type": "integer",
+        "description": "负载配置类型，默认值为 0，范围：CPS=0, CC=1, CL=2。"
+      },
+      {
+        "name": "max_flow_attempts",
+        "type": "integer",
+        "description": "最大流尝试次数，0 表示无限制，默认值为 0。"
+      },
+      {
+        "name": "max_flow_rate",
+        "type": "integer",
+        "description": "每秒最大流数，默认值为 100，范围：1-4294967295。"
+      },
+      {
+        "name": "max_flows",
+        "type": "integer",
+        "description": "最大同时流数，默认值为 10000，范围：1-4294967295。"
+      },
+      {
+        "name": "max_outstanding_conns",
+        "type": "integer",
+        "description": "最大未完成连接数，0 表示无限制，默认值为 0。"
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "2.2.1.2.1",
+    "description": "Custom statistics for a testcase, including fields and name.",
+    "guidance": "Ensure that the custom statistics are correctly set up with the specified fields and name.",
+    "input": [
+      {
+        "name": "fields",
+        "type": "array",
+        "description": "custom stats fields"
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "description": "custom stats name"
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "2.2.1.1",
+    "description": "Testcase for DdosAttack configuration.",
+    "guidance": "Configure the DdosAttack with appropriate parameters as specified in the input fields.",
+    "input": [
+      {
+        "name": "attack_profile",
+        "type": "unknown",
+        "description": "attack profile configuration"
+      },
+      {
+        "name": "basic",
+        "type": "unknown",
+        "description": "basic configuration"
+      },
+      {
+        "name": "clean_duration",
+        "type": "integer",
+        "description": "clean duration configuration; default: 0"
+      },
+      {
+        "name": "data_path_configuration",
+        "type": "unknown",
+        "description": "data path configuration"
+      },
+      {
+        "name": "data_rate",
+        "type": "unknown",
+        "description": "data rate configuration"
+      },
+      {
+        "name": "delay_start",
+        "type": "integer",
+        "description": "delay start configuration; default: 0"
+      },
+      {
+        "name": "load_profile",
+        "type": "unknown",
+        "description": "load profile configuration"
+      },
+      {
+        "name": "src_port",
+        "type": "unknown",
+        "description": "source port configuration"
+      },
+      {
+        "name": "super_flow",
+        "type": "unknown",
+        "description": "super flow configuration"
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "2.2.1.2",
+    "description": "Testcase settings configuration including various options for enabling specific features and setting up basic test parameters.",
+    "guidance": "Configure the testcase with appropriate settings such as enabling CPU usage, custom stats, port packet capture, and more. Ensure that the network ID and name are correctly set along with the sample interval and other required fields.",
+    "input": [
+      {
+        "name": "custom_stats",
+        "type": "array",
+        "description": "Custom stats information; default: []"
+      },
+      {
+        "name": "enable_cpu_usage",
+        "type": "boolean",
+        "description": "Enable CPU usage; default: false"
+      },
+      {
+        "name": "enable_custom_stats",
+        "type": "boolean",
+        "description": "Enable custom stats; default: false"
+      },
+      {
+        "name": "enable_port_packet_capture",
+        "type": "boolean",
+        "description": "Enable port packet capture; default: false"
+      },
+      {
+        "name": "enable_testcase_sharing",
+        "type": "boolean",
+        "description": "Enable testcase sharing; default: false"
+      },
+      {
+        "name": "network_id",
+        "type": "integer",
+        "description": "Network ID; format: int64"
+      },
+      {
+        "name": "network_name",
+        "type": "string",
+        "description": "Network name"
+      },
+      {
+        "name": "port_reset",
+        "type": "boolean",
+        "description": "Reset port data; default: false"
+      },
+      {
+        "name": "sample_interval",
+        "type": "integer",
+        "description": "The period between data samples; default: 1; range: 1-3600; format: int64"
+      },
+      {
+        "name": "testcase_desc",
+        "type": "string",
+        "description": "Testcase description; length: 0-65535"
+      },
+      {
+        "name": "testcase_name",
+        "type": "string",
+        "description": "Testcase name; length: 1-128"
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "2.2.1",
+    "description": "TestcaseCreateResult for creating a new test case with various parameters.",
+    "guidance": "Provide the necessary input parameters to create a new test case, including lists of application replays, simulators, criteria, DDoS attacks, and more.",
+    "input": [
+      {
+        "name": "app_replay_list",
+        "type": "array",
+        "description": "List of application replays."
+      },
+      {
+        "name": "app_simulator_list",
+        "type": "array",
+        "description": "List of application simulators."
+      },
+      {
+        "name": "criteria_list",
+        "type": "array",
+        "description": "List of criteria."
+      },
+      {
+        "name": "ddos_attack_list",
+        "type": "array",
+        "description": "List of DDoS attacks."
+      },
+      {
+        "name": "ipsec_simulator_list",
+        "type": "array",
+        "description": "List of IPSEC simulators."
+      },
+      {
+        "name": "layer2_replay_list",
+        "type": "array",
+        "description": "List of layer 2 replays."
+      },
+      {
+        "name": "malware_list",
+        "type": "array",
+        "description": "List of malware."
+      },
+      {
+        "name": "ping_setting",
+        "type": "array",
+        "description": "Ping information."
+      },
+      {
+        "name": "security_list",
+        "type": "array",
+        "description": "List of security items."
+      },
+      {
+        "name": "session_sender_list",
+        "type": "array",
+        "description": "List of session senders."
+      },
+      {
+        "name": "shared_settings",
+        "type": "object",
+        "description": "Shared component settings."
+      },
+      {
+        "name": "testcase_id",
+        "type": "integer",
+        "description": "ID of the test case."
+      },
+      {
+        "name": "xapp_simulator_list",
+        "type": "array",
+        "description": "List of extended application simulators."
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "2.1",
+    "description": "Create a new testcase with the option to overwrite an existing one.",
+    "guidance": "Provide the name of the testcase and specify whether to overwrite if it already exists.",
+    "input": [
+      {
+        "name": "overwrite",
+        "type": "boolean",
+        "description": "Indicates if the existing testcase should be overwritten."
+      },
+      {
+        "name": "testcase_name",
+        "type": "string",
+        "description": "The name of the testcase to create or overwrite."
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "2.2",
+    "description": "TestcaseCreateResponse, 包含响应码、消息和测试用例信息。",
+    "guidance": "请验证响应是否包含预期的响应码、消息以及测试用例信息。",
+    "input": [],
+    "output": [
+      {
+        "name": "code",
+        "type": "integer",
+        "description": "响应码，零表示成功，非零表示错误"
+      },
+      {
+        "name": "message",
+        "type": "string",
+        "description": "响应消息，描述响应码"
+      },
+      {
+        "name": "result",
+        "type": "unknown",
+        "description": "测试用例信息"
+      }
+    ]
+  }
+]
+[
+  {
+    "step": "2",
+    "description": "create testcase",
+    "guidance": "This API is used to create a new testcase. You need to provide necessary parameters such as timestamp and session_id, along with the request body.",
+    "input": [
+      {
+        "name": "timestamp",
+        "type": "string",
+        "description": "unix timestamp, expired in 10 minutes, type is int"
+      },
+      {
+        "name": "session_id",
+        "type": "string",
+        "description": "allocated session id"
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "3.1.1",
+    "description": "定义了网络模型的参数。",
+    "guidance": "测试时，请确保提供正确的网络模型参数，包括创建时间、网络ID等。",
+    "input": [
+      {
+        "name": "create_time",
+        "type": "string",
+        "description": "创建时间"
+      },
+      {
+        "name": "network_id",
+        "type": "integer",
+        "description": "网络ID"
+      },
+      {
+        "name": "network_name",
+        "type": "string",
+        "description": "网络名称"
+      },
+      {
+        "name": "update_time",
+        "type": "string",
+        "description": "更新时间"
+      },
+      {
+        "name": "user_id",
+        "type": "integer",
+        "description": "用户ID"
+      },
+      {
+        "name": "user_name",
+        "type": "string",
+        "description": "用户名"
+      }
+    ],
+    "output": []
+  }
+]
+[
+  {
+    "step": "3.1",
+    "description": "Definitions for Network List Response",
+    "guidance": "Test the response structure of a network list request, ensuring it includes a response code, message, and the result containing a list of all available networks.",
+    "input": [],
+    "output": [
+      {
+        "name": "code",
+        "type": "integer",
+        "description": "response code, zero for success, non-zero for errors"
+      },
+      {
+        "name": "message",
+        "type": "string",
+        "description": "response message, description for the response code"
+      },
+      {
+        "name": "result",
+        "type": "array",
+        "description": "list result: a list of all available network"
+      }
+    ]
+  }
+]
+[
+  {
+    "step": "3",
+    "description": "list all network settings",
+    "guidance": "Test the API to list all network settings by providing a valid timestamp and session_id.",
+    "input": [
+      {
+        "name": "timestamp",
+        "type": "string",
+        "description": "unix timestamp, expired in 10 minutes, type is int"
+      },
+      {
+        "name": "session_id",
+        "type": "string",
+        "description": "allocated session id"
+      }
+    ],
+    "output": []
+  }
+]
