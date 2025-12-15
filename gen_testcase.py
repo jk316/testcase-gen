@@ -85,7 +85,7 @@ def postorder_sort(rows):
 
 
 def main():
-    jsonl_path = "merged3.jsonl"
+    jsonl_path = "inputs/merged3.jsonl"
     template_path = "testcase_prompt.jinja"
     root_steps = ["1","2","3"]  # 需要包含的根步骤前缀列表
 
