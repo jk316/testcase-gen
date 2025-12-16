@@ -15,7 +15,10 @@ class ApiIntentIndex:
         llm: ChatTongyi,
         embedding: DashScopeEmbeddings,
         prompt_template: str,
-        logger=None
+        logger=None,
+        recall_size: int = 50, # recall的数量
+        rerank_size: int = 10, # rerank的数量
+        top_k: int = 3       # 最终返回的数量
     ):
         self.llm = llm
         self.embedding = embedding
@@ -26,7 +29,9 @@ class ApiIntentIndex:
             template=prompt_template,
             template_format="jinja2" 
         )
-
+        self.recall_size = recall_size
+        self.rerank_size = rerank_size
+        self.top_k = top_k
         self.chain = self.prompt | self.llm
         self.vector_store: FAISS | None = None
 
@@ -155,17 +160,28 @@ class ApiIntentIndex:
 
     # ----------- 查询阶段 -----------
 
-    def search(self, intent: str, k: int = 3):
+    def search(self, intent: str, recall_size: int):
         """
         根据测试意图检索相关 API
         """
         if self.vector_store is None:
             raise RuntimeError("Vector store not initialized. Call build_from_apis() first.")
 
-        return self.vector_store.similarity_search(
+        candidates = self.vector_store.similarity_search(
             query=intent,
-            k=k
+            k=self.recall_size
         )
+        best_api = self.rerank_with_llm(intent, candidates)
+        return best_api
+
+    def rerank_with_llm(self, query: str, candidates: List):
+        """
+        使用 LLM 对候选结果进行重排序
+        """
+        # 这里可以实现更复杂的重排序逻辑
+        return candidates  # 暂时返回原始顺序
+    
+
 
     def save(self, path: str):
         self.logger.info(f"Saving FAISS index to {path}")

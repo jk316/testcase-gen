@@ -42,11 +42,11 @@ def main():
         index.build_from_apis(apis)
         index.save(INDEX_DIR)
 
-    query = "测试登录功能"
+    query = "登录"
     logger.info("Index ready, start intent search")
     results = index.search(
         intent=query,
-        k=3
+        k=50
     )
 
     for res in results:
@@ -54,7 +54,6 @@ def main():
         print("ID", res.metadata["id"])
         print("匹配描述: ", res.page_content)
         print("-----")
-
 
 if __name__ == "__main__":
     main()
