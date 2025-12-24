@@ -9,6 +9,7 @@ from typing import List, Dict, Optional, Tuple
 from pathlib import Path
 from utils.logger import get_logger
 from utils.file_process import load_jinja_template
+from schemas.dto import *
 import os
 
 
@@ -22,7 +23,7 @@ class ApiIntentIndex:
         recall_size: int = 50, # recall的数量
         rerank_size: int = 10, # rerank的数量
         top_k: int = 3,       # 最终返回的数量
-        cross_encoder_model: str = "models/ms-marco-MiniLM-L-6-v2"  # cross-encoder模型
+        cross_encoder_model: str = "cross-encoder/ms-marco-MiniLM-L6-v2"  # cross-encoder模型
     ):
         self.llm = llm
         self.embedding = embedding
@@ -108,15 +109,15 @@ class ApiIntentIndex:
         self.logger.info("All API descriptions generated")
         return results
 
-    def build_index_from_descriptions(self, items: List[Dict]):
+    def build_index_from_descriptions(self, items: List[DescriptionItem]):
         """
         从 description 构建向量索引
         """
         self.logger.info("Building FAISS index from descriptions")
 
-        texts = [item["description"] for item in items]
+        texts = [item.description for item in items]
         metadatas = [
-            {"id": item["id"], "title": item["title"]}
+            {"id": item.id, "title": item.title}
             for item in items
         ]
 
@@ -129,7 +130,7 @@ class ApiIntentIndex:
         self.logger.info("FAISS index built successfully")
 
     def build_from_apis(self, 
-                        apis: List[Dict],
+                        apis: List[ApiItem],
                         description_path: str = "outputs/api_descriptions.jsonl"
         ):
         """
@@ -143,7 +144,7 @@ class ApiIntentIndex:
             self.logger.info("Existing descriptions found, skipping generation.")
         self.build_index_from_descriptions(descriptions)
     
-    def _load_descriptions_if_exists(self, path: str) -> Optional[List[Dict]]:
+    def _load_descriptions_if_exists(self, path: str) -> Optional[List[DescriptionItem]]:
         if not os.path.exists(path):
             return None
 
@@ -152,7 +153,8 @@ class ApiIntentIndex:
         items = []
         with open(path, "r", encoding="utf-8") as f:
             for line in f:
-                items.append(json.loads(line))
+                item_dict = json.loads(line)
+                items.append(DescriptionItem(id=item_dict["id"], title=item_dict["title"], description=item_dict["description"]))
 
         self.logger.info(f"Loaded {len(items)} API descriptions")
         return items
@@ -200,6 +202,7 @@ class ApiIntentIndex:
             query=intent,
             k=recall_k
         )
+        candidates = [Candidate(id=candidate.metadata["id"], content=candidate.page_content, metadata=candidate.metadata) for candidate in candidates]
         
         self.logger.info(f"Recalled {len(candidates)} candidates")
         
@@ -212,7 +215,7 @@ class ApiIntentIndex:
         
         return reranked_results
 
-    def rerank_with_cross_encoder(self, query: str, candidates: List) -> List[Tuple[Dict, float]]:
+    def rerank_with_cross_encoder(self, query: str, candidates: List) -> List[RerankResult]:
         """
         使用 Cross-Encoder 对候选结果进行重排序
         
@@ -320,7 +323,7 @@ class ApiIntentIndex:
                 return candidates
             
             # 确保所有候选结果都被包含（处理 LLM 可能遗漏的情况）
-            included_indices = set(reranked_indices)
+            included_indices = set[int](reranked_indices)
             for idx, candidate in enumerate(candidates):
                 if idx not in included_indices:
                     reranked_candidates.append(candidate)

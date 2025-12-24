@@ -7,6 +7,7 @@ import json
 from utils.logger import get_logger
 import os
 from dotenv import load_dotenv
+from schemas.dto import ApiItem
 from utils.file_process import load_api_jsonl, load_jinja_template
 
 load_dotenv()
@@ -14,7 +15,8 @@ load_dotenv()
 def main():
     logger = get_logger("Main")
     logger.info("Loading API jsonl...")
-    apis = load_api_jsonl("inputs/xrt_openapi.jsonl")
+    api_jsonl = load_api_jsonl("inputs/xrt_openapi.jsonl")
+    apis = [ApiItem(id=api_dict["id"], title=api_dict["title"], content=api_dict["content"]) for api_dict in api_jsonl]
     logger.info(f"Loaded {len(apis)} APIs")
 
     INDEX_DIR = "indexes/api_intent_faiss"
