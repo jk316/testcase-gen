@@ -42,11 +42,11 @@ def main():
         index.build_from_apis(apis)
         index.save(INDEX_DIR)
 
-    query = "登录"
+    query = "创建udp flood攻击测试用例"
     logger.info("Index ready, start intent search")
     results = index.search(
         intent=query,
-        k=50
+        recall_size=50
     )
 
     for res in results:
