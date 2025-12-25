@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from typing import Dict, Any
+from typing import Dict, Any, NamedTuple
+
 
 @dataclass(frozen=True)
 class ApiItem:
@@ -21,14 +22,11 @@ class IndexDocument:
     metadata: Dict[str, Any] | None = None
 
 @dataclass(frozen=True) #只读属性
-class RerankResult:
-    candidate: Dict[str, Any]
-    score: float
-
-@dataclass(frozen=True) #只读属性
 class Candidate:
-    id: str
     content: str
     metadata: Dict[str, Any]
 
 
+class RerankResult(NamedTuple):
+    candidate: Candidate
+    score: float

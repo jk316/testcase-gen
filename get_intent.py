@@ -44,18 +44,21 @@ def main():
         index.build_from_apis(apis)
         index.save(INDEX_DIR)
 
-    query = "创建udp flood攻击测试用例"
+    query = "使用测试用户登录ALPS客户端"
     logger.info("Index ready, start intent search")
     results = index.search(
         intent=query,
         recall_size=50
     )
 
-    for res in results:
-        print("API Path:",res.metadata["title"])
-        print("ID", res.metadata["id"])
-        print("匹配描述: ", res.page_content)
-        print("-----")
+    # logger.info(f"Search results: {results}")
+
+    # for res in results:
+    #     print("API Path:",res.candidate.metadata["title"])
+    #     print("ID", res.candidate.metadata["id"])
+    #     print("匹配描述: ", res.candidate.content)
+    #     print("Score: ", res.score)
+    #     print("-----")
 
 if __name__ == "__main__":
     main()

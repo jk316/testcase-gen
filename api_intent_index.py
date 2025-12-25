@@ -4,6 +4,7 @@ from langchain_core.prompts import PromptTemplate
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import DashScopeEmbeddings
 from langchain_community.chat_models import ChatTongyi
+from langchain_core.documents import Document
 from sentence_transformers import CrossEncoder
 from typing import List, Dict, Optional, Tuple
 from pathlib import Path
@@ -23,7 +24,7 @@ class ApiIntentIndex:
         recall_size: int = 50, # recall的数量
         rerank_size: int = 10, # rerank的数量
         top_k: int = 3,       # 最终返回的数量
-        cross_encoder_model: str = "cross-encoder/ms-marco-MiniLM-L6-v2"  # cross-encoder模型
+        cross_encoder_model: str = r"C:\Users\fanzx\Documents\code\ms-marco-MiniLM-L6-v2"  # cross-encoder模型
     ):
         self.llm = llm
         self.embedding = embedding
@@ -48,10 +49,18 @@ class ApiIntentIndex:
             template=rerank_template_str,
             template_format="jinja2"
         )
+
+        if not os.path.isdir(cross_encoder_model):
+            self.logger.error(
+                f"CrossEncoder model path not found: {cross_encoder_model}"
+            )
+            raise ValueError(
+                f"CrossEncoder model path not found: {cross_encoder_model}"
+            )
         
         # 初始化 cross-encoder 模型
         self.logger.info(f"Loading cross-encoder model: {cross_encoder_model}")
-        self.cross_encoder = CrossEncoder(cross_encoder_model)
+        self.cross_encoder = CrossEncoder(cross_encoder_model, local_files_only=True)
         self.logger.info("Cross-encoder model loaded successfully")
 
     # ----------- 构建阶段 -----------
@@ -120,7 +129,7 @@ class ApiIntentIndex:
             {"id": item.id, "title": item.title}
             for item in items
         ]
-
+        # 向量数据库中的内容是description，metadata是id和title
         self.vector_store = FAISS.from_texts(
             texts=texts,
             embedding=self.embedding,
@@ -180,7 +189,7 @@ class ApiIntentIndex:
 
     # ----------- 查询阶段 -----------
 
-    def search(self, intent: str, recall_size: int = None):
+    def search(self, intent: str, recall_size: int = None) -> List[Candidate]:
         """
         根据测试意图检索相关 API
         
@@ -198,24 +207,27 @@ class ApiIntentIndex:
         recall_k = recall_size if recall_size is not None else self.recall_size
         self.logger.info(f"Recalling top {recall_k} candidates from vector store")
         
-        candidates = self.vector_store.similarity_search(
+        #
+        docs: List[Document] = self.vector_store.similarity_search(
             query=intent,
             k=recall_k
         )
-        candidates = [Candidate(id=candidate.metadata["id"], content=candidate.page_content, metadata=candidate.metadata) for candidate in candidates]
+        candidates = [Candidate(content=doc.page_content, metadata=doc.metadata) for doc in docs]
         
         self.logger.info(f"Recalled {len(candidates)} candidates")
         
         # 使用cross-encoder重排序
-        reranked_results = self.rerank_with_cross_encoder(intent, candidates)
+        ce_reranked_results = self.rerank_with_cross_encoder(intent, candidates)
         
         # 使用LLM进一步重排序（作为cross-encoder的下一步）
-        if reranked_results:
-            reranked_results = self.rerank_with_llm(intent, reranked_results)
+        if ce_reranked_results:
+            llm_reranked_results = self.rerank_with_llm(intent, ce_reranked_results)
+        else:
+            llm_reranked_results = []
         
-        return reranked_results
+        return llm_reranked_results
 
-    def rerank_with_cross_encoder(self, query: str, candidates: List) -> List[RerankResult]:
+    def rerank_with_cross_encoder(self, query: str, candidates: List[Candidate]) -> List[RerankResult]:
         """
         使用 Cross-Encoder 对候选结果进行重排序
         
@@ -236,7 +248,7 @@ class ApiIntentIndex:
         pairs = []
         for candidate in candidates:
             # 从候选结果中提取文本内容
-            doc_text = candidate.page_content
+            doc_text = candidate.content
             pairs.append([query, doc_text])
         
         # 使用cross-encoder计算相关性分数
@@ -246,7 +258,7 @@ class ApiIntentIndex:
         scored_candidates = []
         for i, candidate in enumerate(candidates):
             score = float(scores[i])
-            scored_candidates.append((candidate, score))
+            scored_candidates.append(RerankResult(candidate, score))
             self.logger.debug(
                 f"API: {candidate.metadata.get('title', 'N/A')} | "
                 f"Score: {score:.4f}"
@@ -256,16 +268,18 @@ class ApiIntentIndex:
         scored_candidates.sort(key=lambda x: x[1], reverse=True)
         
         # 返回top_k个结果
-        top_results = scored_candidates[:self.top_k]
+        top_results = scored_candidates[:self.rerank_size] # 重排序后的数量
         
         self.logger.info(
             f"Reranking complete. Top {len(top_results)} results selected. "
             f"Score range: [{top_results[-1][1]:.4f}, {top_results[0][1]:.4f}]"
+            f"reranked_results: {top_results}"
         )
         
+
         return top_results
     
-    def rerank_with_llm(self, query: str, candidates: List[Tuple]) -> List[Tuple]:
+    def rerank_with_llm(self, query: str, candidates: List[RerankResult]) -> List[RerankResult]:
         """
         使用 LLM 对候选结果进行重排序（作为 cross-encoder 的下一步）
         
@@ -285,11 +299,12 @@ class ApiIntentIndex:
         
         # 准备候选结果的格式化信息
         candidate_info = []
-        for idx, (candidate, score) in enumerate(candidates):
+        for idx, result in enumerate(candidates):
+            candidate = result.candidate
             api_title = candidate.metadata.get('title', 'N/A')
             api_id = candidate.metadata.get('id', 'N/A')
-            description = candidate.page_content[:500]  # 限制长度避免 prompt 过长
-            
+            description = candidate.content[:500]  # 限制长度避免 prompt 过长
+            score = result.score
             candidate_info.append({
                 'index': idx,
                 'id': api_id,
