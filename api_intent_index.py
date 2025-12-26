@@ -212,6 +212,9 @@ class ApiIntentIndex:
             query=intent,
             k=recall_k
         )
+
+        self.logger.info(f"Recalled docs: {docs}")
+
         candidates = [Candidate(content=doc.page_content, metadata=doc.metadata) for doc in docs]
         
         self.logger.info(f"Recalled {len(candidates)} candidates")
