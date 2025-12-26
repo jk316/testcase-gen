@@ -13,8 +13,6 @@ import logging
 
 load_dotenv()
 
-
-
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
@@ -56,21 +54,41 @@ def main():
         index.build_from_apis(apis, force_rebuild=FORCE_REBUILD)
         index.save(INDEX_DIR)
 
-    query = "创建测试用例"
+    # 从 steps.txt 读取查询列表
+    steps_file = "steps.txt"
+    logger.info(f"Reading queries from {steps_file}")
+    
+    queries = []
+    if os.path.exists(steps_file):
+        with open(steps_file, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line:  # 跳过空行
+                    queries.append(line)
+        logger.info(f"Loaded {len(queries)} queries from {steps_file}")
+
+    
+    # 遍历每一行查询
     logger.info("Index ready, start intent search")
-    results = index.search(
-        intent=query,
-        recall_size=50
-    )
+    for idx, query in enumerate(queries, start=1):
+        logger.info(f"\n{'='*60}")
+        logger.info(f"Query {idx}/{len(queries)}: {query}")
+        logger.info(f"{'='*60}")
+        
+        results = index.search(
+            intent=query,
+            recall_size=50
+        )
 
-    logger.info(f"Search results: {results}")
+        logger.info(f"Found {len(results)} results for query: {query}")
 
-    for res in results:
-        print("API Path:",res.candidate.metadata["title"])
-        print("ID", res.candidate.metadata["id"])
-        print("匹配描述: ", res.candidate.content)
-        print("Score: ", res.score)
-        print("-----")
+        for res_idx, res in enumerate(results, start=1):
+            print(f"\n[Query {idx}] Result {res_idx}:")
+            print("API Path:", res.candidate.metadata["title"])
+            print("ID:", res.candidate.metadata["id"])
+            print("匹配描述:", res.candidate.content)
+            print("Score:", res.score)
+            print("-" * 60)
 
 if __name__ == "__main__":
     main()
