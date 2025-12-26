@@ -9,8 +9,20 @@ import os
 from dotenv import load_dotenv
 from schemas.dto import ApiItem
 from utils.file_process import load_api_jsonl, load_jinja_template
+import logging
 
 load_dotenv()
+
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
+    handlers=[
+        logging.StreamHandler(),                    # 控制台
+        logging.FileHandler("logs/app.log",  mode="a", encoding="utf-8"),  # 文件
+    ],
+)
 
 def main():
     logger = get_logger("Main")
@@ -44,7 +56,7 @@ def main():
         index.build_from_apis(apis, force_rebuild=FORCE_REBUILD)
         index.save(INDEX_DIR)
 
-    query = "使用测试用户登录ALPS客户端"
+    query = "创建测试用例"
     logger.info("Index ready, start intent search")
     results = index.search(
         intent=query,
