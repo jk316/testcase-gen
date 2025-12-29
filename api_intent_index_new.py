@@ -53,6 +53,14 @@ class ApiIntentIndexNew:
             template=rerank_template_str,
             template_format="jinja2"
         )
+        
+        # 初始化简化的 rerank prompt 模板（用于直接对 Candidate 列表排序）
+        rerank_simple_template_str = load_jinja_template("prompts/rerank_simple.jinja")
+        self.rerank_simple_prompt = PromptTemplate(
+            input_variables=["query", "candidate_info"],
+            template=rerank_simple_template_str,
+            template_format="jinja2"
+        )
 
         if not os.path.isdir(cross_encoder_model):
             self.logger.error(
@@ -118,12 +126,12 @@ class ApiIntentIndexNew:
                     f"[LLM] {i}/{total} {api.title}"
                 )
 
-                desc = self._generate_description(api)
+                semantic_description = self._generate_description(api)
 
                 item = DescriptionItem(
                     id=api.id,
                     title=api.title,
-                    description=desc
+                    description=semantic_description.high_level_description
                 )
 
                 fw.write(json.dumps(asdict(item), ensure_ascii=False) + "\n")
@@ -193,7 +201,7 @@ class ApiIntentIndexNew:
         self.logger.info(f"Loaded {len(items)} API descriptions")
         return items
     
-    def _generate_description(self, api: Dict) -> str:
+    def _generate_description(self, api: ApiItem) -> ApiSemanticDescription:
         """
         调用 LLM 为单个 API 生成语义描述
         """
@@ -210,17 +218,20 @@ class ApiIntentIndexNew:
             "title": api.title,
             "content": api.content
         })
-        return result.content.strip()
+        return ApiSemanticDescription.model_validate_json(result.content.strip(), strict=True)
 
     # ----------- 查询阶段 -----------
 
-    def search(self, intent: str, recall_size: int = None) -> List[Candidate]:
+    def search(self, intent: str, with_cross_encoder: bool = True) -> List[Candidate]:
         """
         根据测试意图检索相关 API
         
         Args:
             intent: 测试意图查询文本
             recall_size: 召回数量，如果为None则使用初始化时的recall_size
+            with_cross_encoder: 是否使用 cross-encoder 进行重排序
+                - True: 向量数据库 recall → cross-encoder 排序 → LLM 排序
+                - False: 向量数据库 recall → 直接 LLM 排序
             
         Returns:
             重排序后的top_k个API结果
@@ -229,13 +240,11 @@ class ApiIntentIndexNew:
             raise RuntimeError("Vector store not initialized. Call build_from_apis() first.")
 
         # 使用向量检索召回候选集
-        recall_k = recall_size if recall_size is not None else self.recall_size
-        self.logger.info(f"Recalling top {recall_k} candidates from vector store")
+        self.logger.info(f"Recalling top {self.recall_size} candidates from vector store")
         
-        #
         docs: List[Document] = self.vector_store.similarity_search(
             query=intent,
-            k=recall_k
+            k=self.recall_size
         )
 
         self.logger.info(f"Recalled docs: {docs}")
@@ -244,16 +253,24 @@ class ApiIntentIndexNew:
         
         self.logger.info(f"Recalled {len(candidates)} candidates")
         
-        # 使用cross-encoder重排序
-        ce_reranked_results = self.rerank_with_cross_encoder(intent, candidates)
-        
-        # 使用LLM进一步重排序（作为cross-encoder的下一步）
-        if ce_reranked_results:
-            llm_reranked_results = self.rerank_with_llm(intent, ce_reranked_results)
+        if with_cross_encoder:
+            # 使用cross-encoder重排序
+            ce_reranked_results = self.rerank_with_cross_encoder(intent, candidates)
+            
+            # 使用LLM进一步重排序（作为cross-encoder的下一步）
+            if ce_reranked_results:
+                llm_reranked_results = self.rerank_with_llm(intent, ce_reranked_results)
+                # 将 RerankResult 转换为 Candidate
+                final_results = [result.candidate for result in llm_reranked_results]
+            else:
+                final_results = []
         else:
-            llm_reranked_results = []
+            # 直接使用LLM排序
+            final_results = self.rerank(intent, candidates[:self.rerank_size])
+            # 按 top_k 截取最终结果
+            final_results = final_results[:self.top_k]
         
-        return llm_reranked_results
+        return final_results
 
     def rerank_with_cross_encoder(self, query: str, candidates: List[Candidate]) -> List[RerankResult]:
         """
@@ -455,6 +472,82 @@ class ApiIntentIndexNew:
             f"Failed to parse LLM result. Expected comma-separated indices, got: {result_text[:200]}"
         )
         return []
+    
+    def rerank(self, query: str, candidates: List[Candidate]) -> List[Candidate]:
+        """
+        使用 LLM 对候选结果进行相关性排序
+        
+        Args:
+            query: 查询文本（测试意图）
+            candidates: 候选 API 列表（从向量数据库 recall 出来的结果）
+            
+        Returns:
+            按相关性排序后的候选 API 列表
+        """
+        if not candidates:
+            self.logger.warning("No candidates to rerank")
+            return []
+        
+        self.logger.info(f"Reranking {len(candidates)} candidates with LLM")
+        
+        # 准备候选结果的格式化信息
+        candidate_info = []
+        for idx, candidate in enumerate(candidates):
+            api_title = candidate.metadata.get('title', 'N/A')
+            api_id = candidate.metadata.get('id', 'N/A')
+            description = candidate.content[:500]  # 限制长度避免 prompt 过长
+            candidate_info.append({
+                'index': idx,
+                'id': api_id,
+                'title': api_title,
+                'description': description
+            })
+        
+        # 构建 LLM reranking prompt
+        rerank_prompt = self.rerank_simple_prompt.format(
+            query=query,
+            candidate_info=candidate_info
+        )
+        
+        try:
+            # 调用 LLM 进行重排序
+            response = self.llm.invoke(rerank_prompt)
+            result_text = response.content.strip()
+            
+            # 解析 LLM 返回的排序结果
+            reranked_indices = self._parse_llm_rerank_result(result_text, len(candidates))
+            
+            # 根据 LLM 的排序重新组织候选结果
+            reranked_candidates = []
+            for idx in reranked_indices:
+                if 0 <= idx < len(candidates):
+                    reranked_candidates.append(candidates[idx])
+                else:
+                    self.logger.warning(f"Invalid index {idx} from LLM, skipping")
+            
+            # 如果解析失败，返回原始顺序
+            if not reranked_candidates:
+                self.logger.warning("Failed to parse LLM rerank result, returning original order")
+                return candidates
+            
+            # 确保所有候选结果都被包含（处理 LLM 可能遗漏的情况）
+            included_indices = set(reranked_indices)
+            for idx, candidate in enumerate(candidates):
+                if idx not in included_indices:
+                    reranked_candidates.append(candidate)
+            
+            self.logger.info(
+                f"LLM reranking complete. Reordered {len(reranked_candidates)} candidates. "
+                f"Reranked results: {[c.metadata.get('title', 'N/A') for c in reranked_candidates]}"
+            )
+            
+            return reranked_candidates
+            
+        except Exception as e:
+            self.logger.error(f"Error during LLM reranking: {e}", exc_info=True)
+            self.logger.warning("Falling back to original order")
+            # 异常情况下返回原始顺序
+            return candidates
     
     def clean(self, faiss_index_path: str = None):
         """

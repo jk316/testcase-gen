@@ -75,19 +75,21 @@ def main():
         logger.info(f"Query {idx}/{len(queries)}: {query}")
         logger.info(f"{'='*60}")
         
+        with_cross_encoder = False  # 可以根据需要修改这个值
         results = index.search(
             intent=query,
-            recall_size=50
+            with_cross_encoder=with_cross_encoder
         )
 
         logger.info(f"Found {len(results)} results for query: {query}")
 
         for res_idx, res in enumerate(results, start=1):
             print(f"\n[Query {idx}] Result {res_idx}:")
-            print("API Path:", res.candidate.metadata["title"])
-            print("ID:", res.candidate.metadata["id"])
-            print("匹配描述:", res.candidate.content)
-            print("Score:", res.score)
+            print("API Path:", res.metadata["title"])
+            print("ID:", res.metadata["id"])
+            print("匹配描述:", res.content)
+            # 注意：search 方法现在统一返回 Candidate，不包含 score
+            # 如果需要显示 score，需要单独调用 cross-encoder 方法
             print("-" * 60)
 
 if __name__ == "__main__":

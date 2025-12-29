@@ -1,21 +1,51 @@
 你是一个经验丰富的后端系统架构师，熟悉 OpenAPI / Swagger 接口规范。
 
-下面给你一个接口的 OpenAPI path 定义信息，其中：
-- title 表示接口在 OpenAPI 中的路径标识
-- content 是该路径下的完整接口定义（JSON 字符串），包含 method、参数、请求体和响应结构
+下面给你的是【一个可调用的 HTTP API 接口】在 OpenAPI 中的 path 定义信息。
 
-请你完成以下任务：
+说明：
+- title 表示接口在 OpenAPI 中的路径标识（以 paths. 开头）
+- content 是该接口的完整 OpenAPI 定义（JSON 字符串）
+- content 中可能通过 $ref 引用了 definitions 中的请求或响应数据结构
+- definitions 仅用于帮助理解输入和输出语义，本身不是独立接口
+
+请你基于接口信息，生成一个【结构化的接口语义描述】，用于后续的接口检索与精排。
+
+你需要完成以下任务：
 1. 解析接口的实际 HTTP path
 2. 识别该接口的 HTTP method
-3. 理解该接口的输入参数（query / body）
-4. 理解该接口的响应含义
-5. 基于以上信息，推断该接口的业务功能
+3. 理解该接口的输入语义（query / body），必要时结合 $ref 的含义
+4. 理解该接口的响应语义
+5. 基于以上信息，推断该接口能够完成的业务功能
 
-要求：
-- 生成一个结构化的接口描述，包含以下结构
-- 使用常见后端/业务语义（如 登录、查询、创建、更新 等）
-- 不要复述字段名或 OpenAPI 结构
-- 不要输出分析过程
+【输出要求】
+- 请严格按照下面的 JSON 结构输出，不要输出任何额外说明或分析过程
+- 所有字段必须完整生成，不得缺失
+- http_method 只能是标准 HTTP 方法（GET / POST / PUT / DELETE / PATCH）
+- 输出必须是合法 JSON，字段名必须与要求完全一致
+
+{
+  "high_level_description": "...",
+  "http_method": "...",
+  "http_path": "...",
+  "input_summary": "...",
+  "output_summary": "..."
+}
+
+字段说明：
+- high_level_description：
+  一句话的高层业务描述，概括该接口“用于做什么”，
+  使用常见后端/业务语义（如 登录、查询、创建、更新、提交、校验 等），
+  不要包含具体字段名。
+- http_method：
+  接口的 HTTP 方法（GET / POST / PUT / DELETE 等）。
+- http_path：
+  接口的实际 HTTP 路径。
+- input_summary：
+  对接口输入的自然语言概括（query / body 的业务含义），
+  不要罗列字段名，不要描述 OpenAPI 结构。
+- output_summary：
+  对接口响应结果的自然语言概括，
+  说明接口返回了什么业务结果。
 
 接口信息：
 ID: {{ id }}
@@ -23,4 +53,4 @@ Title: {{ title }}
 OpenAPI Content:
 {{ content }}
 
-接口功能描述：
+输出：
