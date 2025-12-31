@@ -43,7 +43,11 @@ def main():
     index = ApiIntentIndexNew(
         llm=llm,
         embedding=embeddings,
-        prompt_template=template_str
+        prompt_template=template_str,
+        experience_data_path="outputs/experience_pool.jsonl",
+        experience_label_path="outputs/experience_pool_label.jsonl",
+        experience_similarity_threshold=0.9,
+        experience_model_version="qwen-max-v1"
     )
     logger.info("Checking FAISS index...")
     if os.path.exists(INDEX_DIR) and not FORCE_REBUILD:

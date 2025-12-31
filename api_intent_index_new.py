@@ -13,6 +13,7 @@ from pathlib import Path
 from utils.logger import get_logger
 from utils.file_process import load_jinja_template
 from schemas.dto import *
+from schemas.experience_pool import ExperiencePool
 import os
 
 
@@ -27,7 +28,11 @@ class ApiIntentIndexNew:
         rerank_size: int = 10, # rerank的数量
         top_k: int = 3,       # 最终返回的数量
         cross_encoder_model: str = r"C:\Users\fanzx\Documents\code\ms-marco-MiniLM-L6-v2",  # cross-encoder模型
-        description_path: str = "outputs/api_descriptions.jsonl"  # description 文件路径
+        description_path: str = "outputs/api_descriptions.jsonl",  # description 文件路径
+        experience_data_path: Optional[str] = None,
+        experience_label_path: Optional[str] = None,
+        experience_similarity_threshold: float = 0.9,
+        experience_model_version: str = "unknown",
     ):
         self.llm = llm
         self.embedding = embedding
@@ -43,8 +48,17 @@ class ApiIntentIndexNew:
         self.rerank_size = rerank_size
         self.top_k = top_k
         self.description_path = description_path
+        self.model_version = experience_model_version
         self.chain = self.prompt | self.llm
         self.vector_store: FAISS | None = None
+        # 人类经验池（可选）
+        self.experience_pool: Optional[ExperiencePool] = None
+        if experience_data_path:
+            self.experience_pool = ExperiencePool(
+                data_path=experience_data_path,
+                label_path=experience_label_path,
+                similarity_threshold=experience_similarity_threshold,
+            )
         
         # 初始化 rerank prompt 模板
         rerank_template_str = load_jinja_template("prompts/rerank.jinja")
@@ -269,7 +283,10 @@ class ApiIntentIndexNew:
             final_results = self.rerank(intent, candidates[:self.rerank_size])
             # 按 top_k 截取最终结果
             final_results = final_results[:self.top_k]
-        
+
+        # 将当前 intent 与 LLM 排序结果写入 ExperiencePool
+        self._log_experience(intent, final_results)
+
         return final_results
 
     def rerank_with_cross_encoder(self, query: str, candidates: List[Candidate]) -> List[RerankResult]:
@@ -472,6 +489,49 @@ class ApiIntentIndexNew:
             f"Failed to parse LLM result. Expected comma-separated indices, got: {result_text[:200]}"
         )
         return []
+    
+    def _log_experience(self, intent: str, ranked_candidates: List[Candidate]) -> None:
+        """
+        将当前 intent 与 LLM 排序后的结果写入 ExperiencePool 对应的 jsonl 文件。
+        仅在初始化时配置了 experience_data_path 时生效。
+        """
+        if not self.experience_pool:
+            return
+
+        if not ranked_candidates:
+            return
+
+        try:
+            # 计算 intent 的 embedding，作为经验向量
+            intent_embedding = self.embedding.embed_query(intent)
+        except Exception as e:
+            self.logger.error(f"Failed to compute intent embedding for experience pool: {e}", exc_info=True)
+            return
+
+        # 将 LLM 排序后的候选结果转换为可序列化的结构
+        retrieved_apis: List[Dict] = []
+        for idx, cand in enumerate(ranked_candidates):
+            api_id = cand.metadata.get("id")
+            api_title = cand.metadata.get("title")
+            retrieved_apis.append(
+                {
+                    "rank": idx,
+                    "id": api_id,
+                    "title": api_title
+                }
+            )
+
+        try:
+            record_id = self.experience_pool.append(
+                intent_text=intent,
+                intent_embedding=intent_embedding,
+                retrieved_apis=retrieved_apis,
+                model_version=self.model_version,
+            )
+            self.logger.info(f"Appended experience record to pool, id={record_id}")
+        except Exception as e:
+            # 写入失败不应影响主流程
+            self.logger.error(f"Failed to append experience to pool: {e}", exc_info=True)
     
     def rerank(self, query: str, candidates: List[Candidate]) -> List[Candidate]:
         """
