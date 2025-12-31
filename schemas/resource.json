@@ -1,0 +1,66 @@
+{
+    "type": "object",
+    "required": [
+      "api_path",
+      "resource",
+      "capability",
+      "stage",
+      "affects_workflow",
+      "confidence"
+    ],
+    "properties": {
+      "api_path": {
+        "type": "string"
+      },
+      "resource": {
+        "type": "string",
+        "description": "Logical resource name, e.g. user, port, testcase, network, load_profile"
+      },
+      "capability": {
+        "type": "string",
+        "enum": [
+          "login",
+          "logout",
+          "list",
+          "search",
+          "fetch",
+          "create",
+          "update",
+          "update_param",
+          "save",
+          "save_as",
+          "reserve",
+          "release",
+          "run",
+          "stop",
+          "stats_query",
+          "other"
+        ]
+      },
+      "stage": {
+        "type": "string",
+        "enum": [
+          "authentication",
+          "port_prepare",
+          "port_reserve",
+          "testcase_prepare",
+          "network_config",
+          "load_profile_config",
+          "component_config",
+          "testcase_finalize",
+          "testcase_execute",
+          "stats_collect",
+          "resource_cleanup",
+          "logout"
+        ]
+      },
+      "affects_workflow": {
+        "type": "boolean"
+      },
+      "confidence": {
+        "type": "string",
+        "enum": ["high", "medium", "low"]
+      }
+    }
+  }
+  

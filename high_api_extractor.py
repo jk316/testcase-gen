@@ -194,6 +194,7 @@ class HierarchicalAPIExtractor:
 
 
 if __name__ == "__main__":
+    from extract_top_results import get_title_list
     
     ignore_titles = {
         "definitions.testcase.AppReplay",
@@ -210,21 +211,20 @@ if __name__ == "__main__":
 
     extractor = HierarchicalAPIExtractor("inputs/xrt_openapi.jsonl", ignore_titles=ignore_titles)
 
-    apis = [
-        "/v1/cl/user/login",
-        "/v1/cl/testcase/create",
-        "/v1/cl/network/list",
-        "/v1/cl/testcase/save",
-        "/v1/cl/testcase/run"
-    ]
+    # 从 extract_top_results.py 获取 title 列表
+    apis = get_title_list("outputs/intent_search_results.jsonl")
+    
+    print(f"从 intent_search_results.jsonl 提取了 {len(apis)} 个 API:")
+    for api in apis:
+        print(f"  - {api}")
 
     result = extractor.extract_multiple(apis)
-    extractor.save_jsonl(result, "merged3.jsonl")
+    extractor.save_jsonl(result, "outputs/merged4.jsonl")
 
-    # New: extract input & output lists
-    inputs, outputs = extractor.extract_io_params(result)
+    # # New: extract input & output lists
+    # inputs, outputs = extractor.extract_io_params(result)
 
-    extractor.save_list(inputs, "inputs.txt")
-    extractor.save_list(outputs, "outputs.txt")
+    # extractor.save_list(inputs, "inputs.txt")
+    # extractor.save_list(outputs, "outputs.txt")
 
     print("Done. Saved hierarchical JSONL, inputs.txt, outputs.txt.")

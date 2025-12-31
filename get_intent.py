@@ -74,27 +74,47 @@ def main():
     
     # 遍历每一行查询
     logger.info("Index ready, start intent search")
-    for idx, query in enumerate(queries, start=1):
-        logger.info(f"\n{'='*60}")
-        logger.info(f"Query {idx}/{len(queries)}: {query}")
-        logger.info(f"{'='*60}")
-        
-        with_cross_encoder = False  # 可以根据需要修改这个值
-        results = index.search(
-            intent=query,
-            with_cross_encoder=with_cross_encoder
-        )
+    
+    # 打开输出文件
+    output_file = "outputs/intent_search_results.jsonl"
+    os.makedirs(os.path.dirname(output_file), exist_ok=True)
+    
+    with open(output_file, "w", encoding="utf-8") as f:
+        for idx, query in enumerate(queries, start=1):
+            logger.info(f"\n{'='*60}")
+            logger.info(f"Query {idx}/{len(queries)}: {query}")
+            logger.info(f"{'='*60}")
+            
+            with_cross_encoder = False  # 可以根据需要修改这个值
+            results = index.search(
+                intent=query,
+                with_cross_encoder=with_cross_encoder
+            )
 
-        logger.info(f"Found {len(results)} results for query: {query}")
+            logger.info(f"Found {len(results)} results for query: {query}")
 
-        for res_idx, res in enumerate(results, start=1):
-            print(f"\n[Query {idx}] Result {res_idx}:")
-            print("API Path:", res.metadata["title"])
-            print("ID:", res.metadata["id"])
-            print("匹配描述:", res.content)
-            # 注意：search 方法现在统一返回 Candidate，不包含 score
-            # 如果需要显示 score，需要单独调用 cross-encoder 方法
-            print("-" * 60)
+            for res_idx, res in enumerate(results, start=1):
+                print(f"\n[Query {idx}] Result {res_idx}:")
+                print("API Path:", res.metadata["title"])
+                print("ID:", res.metadata["id"])
+                print("匹配描述:", res.content)
+                # 注意：search 方法现在统一返回 Candidate，不包含 score
+                # 如果需要显示 score，需要单独调用 cross-encoder 方法
+                print("-" * 60)
+                
+                # 将 title 和 id 写入文件
+                result_data = {
+                    "query_index": idx,
+                    "query": query,
+                    "result_index": res_idx,
+                    "title": res.metadata["title"],
+                    "id": res.metadata["id"],
+                    "description": res.content
+                }
+                f.write(json.dumps(result_data, ensure_ascii=False) + "\n")
+                f.flush()  # 立即刷新到文件
+    
+    logger.info(f"结果已保存到: {output_file}")
 
 if __name__ == "__main__":
     main()
