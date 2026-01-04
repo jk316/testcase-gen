@@ -1,0 +1,58 @@
+{
+    "step": "2.2.1.1",
+    "title": "definitions.testcase.DdosAttack",
+    "content": {
+        "summary": null,
+        "parameters": [
+            {
+                "name": "attack_profile",
+                "description": "attack profile configuration",
+                "$ref": "#/definitions/testcase.AttackProfileConfig"
+            },
+            {
+                "name": "basic",
+                "description": "basic configuration",
+                "$ref": "#/definitions/testcase.BasicConfig"
+            },
+            {
+                "name": "clean_duration",
+                "description": "clean duration configuration; default: 0",
+                "type": "integer",
+                "format": "integer"
+            },
+            {
+                "name": "data_path_configuration",
+                "description": "data path configuration",
+                "$ref": "#/definitions/testcase.DataPath"
+            },
+            {
+                "name": "data_rate",
+                "description": "data rate configuration",
+                "$ref": "#/definitions/testcase.DataRateConfig"
+            },
+            {
+                "name": "delay_start",
+                "description": "delay start configuration; default: 0",
+                "type": "integer",
+                "format": "integer"
+            },
+            {
+                "name": "load_profile",
+                "description": "load profile configuration",
+                "$ref": "#/definitions/load.LoadProfile"
+            },
+            {
+                "name": "src_port",
+                "description": "source port configuration",
+                "$ref": "#/definitions/testcase.SrcPortConfig"
+            },
+            {
+                "name": "super_flow",
+                "description": "super flow configuration",
+                "$ref": "#/definitions/testcase.SuperFlowConfig"
+            }
+        ],
+        "responses": {}
+    },
+    "ref_from": "#/definitions/testcase.DdosAttack"
+}
