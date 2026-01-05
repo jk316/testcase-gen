@@ -1,8 +1,9 @@
 """
-从 merged4.jsonl 中提取每个 API 的参数，整理成指定格式
+从 intent_search_results.jsonl 读取 result_index=1 的 title，
+然后在 xrt_openapi.jsonl 中查找并解析对应 API 的所有参数
 """
 import json
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Set
 
 
 def load_jsonl(path: str) -> List[Dict[str, Any]]:
@@ -17,100 +18,155 @@ def load_jsonl(path: str) -> List[Dict[str, Any]]:
     return rows
 
 
-def build_step_map(rows: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
-    """构建 step 到 row 的映射"""
-    return {row["step"]: row for row in rows}
+def load_api_data(path: str = "inputs/xrt_openapi.jsonl") -> Dict[str, Dict[str, Any]]:
+    """
+    加载原始 API 数据
+    返回 title 到完整 item 的映射（包括 id, title, content）
+    """
+    api_data = {}
+    with open(path, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            item = json.loads(line)
+            title = item.get("title", "")
+            content_str = item.get("content", "{}")
+            try:
+                content = json.loads(content_str)
+                api_data[title] = {
+                    "id": item.get("id"),
+                    "title": title,
+                    "content": content
+                }
+            except json.JSONDecodeError:
+                continue
+    return api_data
 
 
+def parse_ref(ref: str) -> str:
+    """
+    解析 $ref，转换为 title 格式
+    例如: "#/definitions/alps.UserLoginRequest" -> "definitions.alps.UserLoginRequest"
+    """
+    if ref.startswith("#/"):
+        return ref[2:].replace("/", ".")
+    return ref
 
 
-def normalize_api_path(title: str) -> str:
-    """规范化 API 路径"""
-    if title.startswith("paths."):
-        return title.replace("paths.", "")
-    return title
-
-
-def extract_parameters_recursive(
-    step: str,
-    step_map: Dict[str, Dict[str, Any]],
-    visited: set,
+def extract_parameters_from_definition(
+    definition_title: str,
+    api_data: Dict[str, Dict[str, Any]],
+    visited: Set[str],
     parent_path: str = "",
     direction: str = "input"
 ) -> List[Dict[str, Any]]:
     """
-    递归提取参数
+    从对象定义中递归提取参数，完全展开所有 $ref 引用
     
     Args:
-        step: 当前步骤
-        step_map: step 到 row 的映射
-        visited: 已访问的 step 集合（避免循环引用）
-        parent_path: 父路径（如 "body", "result"）
+        definition_title: 对象定义的 title（如 "definitions.alps.UserLoginRequest"）
+        api_data: API 数据映射
+        visited: 已访问的定义集合（避免循环引用）
+        parent_path: 父路径
         direction: "input" 或 "output"
     """
-    if step in visited:
+    if definition_title in visited:
         return []
     
-    if step not in step_map:
+    if definition_title not in api_data:
         return []
     
-    visited.add(step)
-    row = step_map[step]
-    content = row.get("content", {})
-    parameters = content.get("parameters", [])
+    visited.add(definition_title)
+    definition_item = api_data[definition_title]
+    content = definition_item.get("content", {})
+    
+    # 获取 required 数组
+    required_fields = set(content.get("required", []))
+    
+    # 获取 properties
+    properties = content.get("properties", {})
     
     results = []
     
-    for param in parameters:
-        param_name = param.get("name", "")
-        if not param_name:
+    for prop_name, prop_value in properties.items():
+        if not prop_name:
             continue
         
         # 构建 full_path
         if parent_path:
-            full_path = f"{parent_path}.{param_name}"
+            full_path = f"{parent_path}.{prop_name}"
         else:
-            full_path = param_name
+            full_path = prop_name
         
-        # 确定 location
-        location = param.get("in", "body")
-        if direction == "output":
-            location = "body"  # 输出参数通常在 body 中
-        
-        # 确定 type
-        param_type = param.get("type", "string")
-        if "$ref" in param:
-            param_type = "object"  # 引用类型视为 object
+        # 确定 location（对象定义中的字段通常在 body 中）
+        location = "body"
         
         # 确定 required
-        required = param.get("required", False)
+        required = prop_name in required_fields
         
         # 获取描述
-        desc = param.get("description", "")
+        desc = prop_value.get("description", "")
         
-        # 如果是引用类型，需要递归处理
-        if "$ref" in param:
-            ref = param["$ref"]
-            # 查找对应的 step（通过 ref_from 字段）
-            ref_step = None
-            for s, r in step_map.items():
-                if r.get("ref_from") == ref:
-                    ref_step = s
-                    break
-            
-            if ref_step:
-                # 递归提取嵌套参数
-                nested_params = extract_parameters_recursive(
-                    ref_step, step_map, visited.copy(), full_path, direction
+        # 获取类型
+        prop_type = prop_value.get("type", "string")
+        
+        # 处理数组类型
+        if prop_type == "array":
+            items = prop_value.get("items", {})
+            if "$ref" in items:
+                # 先添加数组元素类型本身的记录
+                results.append({
+                    "name": prop_name,
+                    "full_path": full_path,
+                    "location": location,
+                    "type": "array[object]",  # 数组元素是对象类型
+                    "required": required,  # 数组本身的 required
+                    "desc": desc
+                })
+                # 然后展开数组元素类型的字段
+                ref = items["$ref"]
+                ref_title = parse_ref(ref)
+                nested_params = extract_parameters_from_definition(
+                    ref_title, api_data, visited.copy(), full_path, direction
                 )
                 results.extend(nested_params)
-        else:
-            # 普通参数
+            else:
+                # 数组元素是基本类型
+                items_type = items.get("type", "object")
+                results.append({
+                    "name": prop_name,
+                    "full_path": full_path,
+                    "location": location,
+                    "type": f"array[{items_type}]",
+                    "required": required,
+                    "desc": desc
+                })
+        # 处理 $ref 引用
+        elif "$ref" in prop_value:
+            # 先添加中间对象本身的记录
             results.append({
-                "name": param_name,
+                "name": prop_name,
                 "full_path": full_path,
                 "location": location,
-                "type": param_type,
+                "type": "object",
+                "required": required,  # 中间对象本身的 required
+                "desc": desc
+            })
+            # 然后递归展开该对象的字段
+            ref = prop_value["$ref"]
+            ref_title = parse_ref(ref)
+            nested_params = extract_parameters_from_definition(
+                ref_title, api_data, visited.copy(), full_path, direction
+            )
+            results.extend(nested_params)
+        else:
+            # 基本类型
+            results.append({
+                "name": prop_name,
+                "full_path": full_path,
+                "location": location,
+                "type": prop_type,
                 "required": required,
                 "desc": desc
             })
@@ -118,158 +174,158 @@ def extract_parameters_recursive(
     return results
 
 
-def extract_api_params(rows: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+def extract_api_params_from_title(
+    api_title: str,
+    api_data: Dict[str, Dict[str, Any]]
+) -> List[Dict[str, Any]]:
     """
-    提取所有 API 的参数
+    从 API title 提取所有参数
+    
+    Args:
+        api_title: API 的 title（如 "paths./v1/cl/user/login"）
+        api_data: API 数据映射
     """
-    step_map = build_step_map(rows)
+    if api_title not in api_data:
+        return []
+    
+    api_item = api_data[api_title]
+    content = api_item.get("content", {})
+    
+    # 规范化 API 路径
+    api_path = api_title.replace("paths.", "")
+    
+    # 提取 HTTP 方法
+    http_method = "POST"  # 默认
+    operation = None
+    for method in ["get", "post", "put", "delete", "patch"]:
+        if method in content:
+            http_method = method.upper()
+            operation = content[method]
+            break
+    
+    if not operation:
+        return []
+    
+    api_id = f"{http_method} {api_path}"
     results = []
     
-    # 找到所有 API 路径（step 为单个数字，title 以 paths. 开头）
-    api_rows = []
-    for row in rows:
-        step = row.get("step", "")
-        title = row.get("title", "")
+    # 提取输入参数
+    parameters = operation.get("parameters", [])
+    for param in parameters:
+        param_name = param.get("name", "")
+        param_in = param.get("in", "query")
         
-        # 判断是否为 API 路径行（step 是单个数字，title 以 paths. 开头）
-        if step.isdigit() and title.startswith("paths."):
-            api_rows.append(row)
-    
-    print(f"找到 {len(api_rows)} 个 API")
-    
-    for api_row in api_rows:
-        step = api_row["step"]
-        title = api_row["title"]
-        content = api_row.get("content", {})
-        
-        # 规范化 API 路径
-        api_path = normalize_api_path(title)
-        
-        # 提取 HTTP 方法（简化处理，实际应该从 content 中获取）
-        http_method = "POST"  # 默认
-        if "get" in content:
-            http_method = "GET"
-        elif "post" in content:
-            http_method = "POST"
-        elif "put" in content:
-            http_method = "PUT"
-        elif "delete" in content:
-            http_method = "DELETE"
-        
-        api_id = f"{http_method} {api_path}"
-        
-        # 提取输入参数
-        input_params = []
-        parameters = content.get("parameters", [])
-        
-        for param in parameters:
-            param_name = param.get("name", "")
-            param_in = param.get("in", "query")
-            
-            if param_in == "body":
-                # body 参数，需要递归提取
-                schema = param.get("schema", {})
-                if "$ref" in schema:
-                    ref = schema["$ref"]
-                    # 查找对应的 step
-                    ref_step = None
-                    for s, r in step_map.items():
-                        if r.get("ref_from") == ref:
-                            ref_step = s
-                            break
-                    
-                    if ref_step:
-                        nested = extract_parameters_recursive(
-                            ref_step, step_map, set(), "request.body", "input"
-                        )
-                        input_params.extend(nested)
-                else:
-                    # 直接 body 参数
-                    input_params.append({
-                        "name": param_name,
-                        "full_path": f"request.body.{param_name}",
-                        "location": "body",
-                        "type": param.get("type", "object"),
-                        "required": param.get("required", False),
-                        "desc": param.get("description", "")
+        if param_in == "body":
+            # body 参数，需要展开 schema
+            schema = param.get("schema", {})
+            if "$ref" in schema:
+                ref = schema["$ref"]
+                ref_title = parse_ref(ref)
+                nested_params = extract_parameters_from_definition(
+                    ref_title, api_data, set(), "request.body", "input"
+                )
+                for p in nested_params:
+                    results.append({
+                        "api_id": api_id,
+                        "direction": "input",
+                        **p
                     })
             else:
-                # query, path, header 参数
-                input_params.append({
+                # 直接 body 参数
+                results.append({
+                    "api_id": api_id,
+                    "direction": "input",
                     "name": param_name,
-                    "full_path": f"request.{param_in}.{param_name}",
-                    "location": param_in,
-                    "type": param.get("type", "string"),
+                    "full_path": f"request.body.{param_name}",
+                    "location": "body",
+                    "type": schema.get("type", "object"),
                     "required": param.get("required", False),
                     "desc": param.get("description", "")
                 })
-        
-        # 提取输出参数
-        output_params = []
-        responses = content.get("responses", {})
-        
-        if "200" in responses:
-            response_200 = responses["200"]
-            schema = response_200.get("schema", {})
-            
-            if "$ref" in schema:
-                ref = schema["$ref"]
-                # 查找对应的 step
-                ref_step = None
-                for s, r in step_map.items():
-                    if r.get("ref_from") == ref:
-                        ref_step = s
-                        break
-                
-                if ref_step:
-                    nested = extract_parameters_recursive(
-                        ref_step, step_map, set(), "response.body", "output"
-                    )
-                    output_params.extend(nested)
-            else:
-                # 直接响应
-                output_params.append({
-                    "name": "body",
-                    "full_path": "response.body",
-                    "location": "body",
-                    "type": schema.get("type", "object"),
-                    "required": True,
-                    "desc": response_200.get("description", "")
-                })
-        
-        # 生成结果
-        for param in input_params:
+        else:
+            # query, path, header 参数
             results.append({
                 "api_id": api_id,
                 "direction": "input",
-                **param
+                "name": param_name,
+                "full_path": f"request.{param_in}.{param_name}",
+                "location": param_in,
+                "type": param.get("type", "string"),
+                "required": param.get("required", False),
+                "desc": param.get("description", "")
             })
+    
+    # 提取输出参数
+    responses = operation.get("responses", {})
+    if "200" in responses:
+        response_200 = responses["200"]
+        schema = response_200.get("schema", {})
         
-        for param in output_params:
+        if "$ref" in schema:
+            ref = schema["$ref"]
+            ref_title = parse_ref(ref)
+            nested_params = extract_parameters_from_definition(
+                ref_title, api_data, set(), "response", "output"
+            )
+            for p in nested_params:
+                results.append({
+                    "api_id": api_id,
+                    "direction": "output",
+                    **p
+                })
+        else:
+            # 直接响应
             results.append({
                 "api_id": api_id,
                 "direction": "output",
-                **param
+                "name": "body",
+                "full_path": "response.body",
+                "location": "body",
+                "type": schema.get("type", "object"),
+                "required": True,
+                "desc": response_200.get("description", "")
             })
     
     return results
 
 
 def main():
-    input_file = "outputs/merged4.jsonl"
+    intent_results_file = "outputs/intent_search_results.jsonl"
+    api_data_file = "inputs/xrt_openapi.jsonl"
     output_file = "outputs/api_params.jsonl"
     
-    print(f"正在读取 {input_file}...")
-    rows = load_jsonl(input_file)
-    print(f"已加载 {len(rows)} 行数据")
+    # 1. 从 intent_search_results.jsonl 读取 result_index=1 的 title
+    print(f"正在读取 {intent_results_file}...")
+    intent_results = load_jsonl(intent_results_file)
+    top_titles = []
+    for item in intent_results:
+        if item.get("result_index") == 1:
+            title = item.get("title", "")
+            if title:
+                top_titles.append(title)
     
-    print("正在提取 API 参数...")
-    params = extract_api_params(rows)
-    print(f"提取了 {len(params)} 个参数")
+    print(f"找到 {len(top_titles)} 个 API title (result_index=1)")
+    for title in top_titles:
+        print(f"  - {title}")
     
-    # 保存结果
+    # 2. 加载原始 API 数据
+    print(f"\n正在加载原始 API 数据 {api_data_file}...")
+    api_data = load_api_data(api_data_file)
+    print(f"已加载 {len(api_data)} 个 API 定义")
+    
+    # 3. 解析每个 API 的参数
+    print("\n正在提取 API 参数...")
+    all_params = []
+    for title in top_titles:
+        params = extract_api_params_from_title(title, api_data)
+        all_params.extend(params)
+        print(f"  {title}: 提取了 {len(params)} 个参数")
+    
+    print(f"\n总共提取了 {len(all_params)} 个参数")
+    
+    # 4. 保存结果
     with open(output_file, "w", encoding="utf-8") as f:
-        for param in params:
+        for param in all_params:
             f.write(json.dumps(param, ensure_ascii=False) + "\n")
     
     print(f"结果已保存到 {output_file}")
@@ -277,4 +333,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

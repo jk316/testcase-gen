@@ -220,11 +220,3 @@ if __name__ == "__main__":
 
     result = extractor.extract_multiple(apis)
     extractor.save_jsonl(result, "outputs/merged4.jsonl")
-
-    # # New: extract input & output lists
-    # inputs, outputs = extractor.extract_io_params(result)
-
-    # extractor.save_list(inputs, "inputs.txt")
-    # extractor.save_list(outputs, "outputs.txt")
-
-    print("Done. Saved hierarchical JSONL, inputs.txt, outputs.txt.")
