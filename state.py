@@ -10,7 +10,7 @@ from langchain_community.embeddings import DashScopeEmbeddings
 from langchain_core.prompts import PromptTemplate
 from api_intent_index_new import ApiIntentIndexNew
 from schemas.dto import ApiItem
-from utils.file_process import load_api_jsonl, load_jinja_template
+from utils.file_process import load_api_jsonl, load_jinja_template, write_testcase_jsonl
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -325,6 +325,38 @@ def generate_testcase_node(state: AgentState) -> dict:
         }
 
 
+def write_testcase_node(state: AgentState) -> dict:
+    """
+    LangGraph Node: 将生成的 testcase 写入到文件
+    
+    Args:
+        state: AgentState 对象，必须包含 generated_testcase 字段
+        
+    Returns:
+        空的 delta（不更新状态）
+    """
+    logger.info("[write_testcase_node] Starting execution")
+    generated_testcase = state.get("generated_testcase")
+    
+    if generated_testcase is None:
+        logger.warning("[write_testcase_node] No testcase to write, skipping")
+        return {}
+    
+    # 默认输出路径
+    output_path = "outputs/generated_testcases.jsonl"
+    
+    try:
+        # 写入 testcase 到文件（追加模式）
+        write_testcase_jsonl(generated_testcase, output_path, append=True)
+        logger.info(f"[write_testcase_node] Successfully wrote testcase to {output_path}")
+        logger.info(f"[write_testcase_node] Testcase: {json.dumps(generated_testcase, ensure_ascii=False)[:200]}...")
+    except Exception as e:
+        logger.error(f"[write_testcase_node] Error writing testcase: {e}", exc_info=True)
+    
+    # 返回空字典，不更新状态
+    return {}
+
+
 def process_intent_node(state: AgentState) -> dict:
     """
     处理当前 intent：从 intent_list 中取出当前索引的 intent
@@ -342,9 +374,11 @@ def process_intent_node(state: AgentState) -> dict:
             "current_intent_index": current_index + 1
         }
     else:
-        logger.warning("No more intents to process")
+        logger.warning(f"No more intents to process (current_index={current_index}, total={len(intent_list)})")
+        # 即使没有更多 intent，也要更新索引，确保 should_continue 能正确判断
         return {
-            "intent": ""
+            "intent": "",
+            "current_intent_index": current_index  # 保持当前索引，确保 >= len(intent_list)
         }
 
 
@@ -359,11 +393,14 @@ def should_continue(state: AgentState) -> str:
     intent_list = state.get("intent_list", [])
     current_index = state.get("current_intent_index", 0)
     
+    logger.info(f"[should_continue] Checking: current_index={current_index}, intent_list_length={len(intent_list)}")
+    
+    # 如果 current_index >= len(intent_list)，说明所有 intent 都已处理完
     if current_index < len(intent_list):
-        logger.info(f"Continuing: {current_index}/{len(intent_list)} intents processed")
+        logger.info(f"[should_continue] Continuing: {current_index}/{len(intent_list)} intents processed")
         return "continue"
     else:
-        logger.info("All intents processed, ending")
+        logger.info(f"[should_continue] All intents processed ({current_index}/{len(intent_list)}), ending")
         return "end"
 
 
@@ -430,6 +467,7 @@ builder.add_node("get_steps", get_steps_node)
 builder.add_node("process_intent", process_intent_node)
 builder.add_node("search_apis", search_apis_node)
 builder.add_node("generate_testcase", generate_testcase_node)
+builder.add_node("write_testcase", write_testcase_node)
 
 builder.set_entry_point("get_steps")
 
@@ -442,18 +480,21 @@ builder.add_edge("process_intent", "search_apis")
 # 从 search_apis 到 generate_testcase 的边
 builder.add_edge("search_apis", "generate_testcase")
 
-## Test用
-builder.add_edge("generate_testcase", END)
+# 从 generate_testcase 到 write_testcase 的边
+builder.add_edge("generate_testcase", "write_testcase")
 
-# # 从 generate_testcase 使用条件边：根据是否还有更多步骤决定继续循环或结束
-# builder.add_conditional_edges(
-#     "generate_testcase",
-#     should_continue,
-#     {
-#         "continue": "process_intent",  # 还有更多步骤，继续处理下一个 intent
-#         "end": END  # 所有步骤处理完毕，结束
-#     }
-# )
+# ## Test用
+# builder.add_edge("write_testcase", END)
+
+# 从 generate_testcase 使用条件边：根据是否还有更多步骤决定继续循环或结束
+builder.add_conditional_edges(
+    "write_testcase",
+    should_continue,
+    {
+        "continue": "process_intent",  # 还有更多步骤，继续处理下一个 intent
+        "end": END  # 所有步骤处理完毕，结束
+    }
+)
 
 graph = builder.compile()
 
@@ -501,16 +542,23 @@ if __name__ == "__main__":
     
     try:
         logger.info("Starting graph execution")
-        # 使用 stream 模式来追踪执行过程
-        for event in graph.stream(initial_state):
-            logger.info("Graph event: %s", event)
+        # 使用 stream 模式来追踪执行过程并获取最终状态
+        # 增加递归限制配置
+        config = {"recursion_limit": 100}  # 增加递归限制到100
+        final_state = None
+        iteration_count = 0
+        for event in graph.stream(initial_state, config=config):
+            iteration_count += 1
+            logger.info(f"Graph event (iteration {iteration_count}): %s", event)
             for node_name, node_output in event.items():
                 logger.info("  Node '%s' output keys: %s", node_name, list(node_output.keys()) if isinstance(node_output, dict) else type(node_output))
+                # 保存最后一个状态作为最终状态
+                if node_output is not None:
+                    final_state = node_output
         
-        # 获取最终状态
-        result = graph.invoke(initial_state)
-        logger.info("Graph execution completed successfully")
-        logger.info("Final generated_testcase: %s", "Present" if result.get("generated_testcase") else "None")
-        logger.debug("Final state: %s", result)
+        logger.info(f"Graph execution completed successfully after {iteration_count} iterations")
+        if final_state:
+            logger.info("Final generated_testcase: %s", "Present" if final_state.get("generated_testcase") else "None")
+        logger.debug("Final state: %s", final_state)
     except Exception as e:
         logger.error("Graph execution failed: %s", e, exc_info=True)
