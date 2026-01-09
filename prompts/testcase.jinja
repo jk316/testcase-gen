@@ -1,0 +1,96 @@
+你是一个测试用例（testcase）生成 Agent。
+
+你的任务是：  
+**基于检索得到的 API 定义，并参考给定的 testcase 示例，生成 1 个结构化的 testcase JSON 对象。**
+
+########################
+### 参考示例（必须遵循） ###
+########################
+
+下面是一个 testcase 示例。  
+你必须严格遵循它的结构、字段名称以及表述风格：
+
+<TESTCASE_EXAMPLE>
+{
+  "step": 1,
+  "description": "Login WITH signature",
+  "guidance": "Call /v1/cl/user/login with signature, which should be calculated with password and something else",
+  "input": [
+    {
+      "name": "BASE_URL",
+      "type": "str",
+      "description": "API base without trailing slash"
+    },
+    {
+      "name": "USERNAME",
+      "type": "str",
+      "description": "username for login"
+    },
+    {
+      "name": "PASSWORD",
+      "type": "str",
+      "description": "password for login"
+    }
+  ],
+  "output": [
+    {
+      "name": "session_id",
+      "type": "str",
+      "description": "session_id from response"
+    }
+  ]
+}
+</TESTCASE_EXAMPLE>
+
+####################
+### API 元数据 ###
+####################
+
+下面是检索到的 API 规范信息。  
+这是**唯一可信来源**，用于确定参数、调用方式以及返回结果。
+
+<API_SPEC>
+{{ API_JSON_HERE }}
+</API_SPEC>
+
+########################
+### 生成规则（非常重要） ###
+########################
+
+1. **只输出一个 JSON 对象**，不要输出 Markdown、注释或任何额外说明文字。
+2. 输出的 JSON 必须包含以下顶层字段：
+   - step
+   - description
+   - guidance
+   - input
+   - output
+3. `step` 必须是整数。
+4. `description`：
+   - 用简洁自然语言描述该 API 的核心功能。
+5. `guidance`：
+   - 描述如何调用该 API
+   - 必须包含：
+     - HTTP 方法
+     - 接口路径
+     - 关键使用约束（如时间戳有效期、鉴权依赖、前置条件等）
+6. `input`：
+   - 来源于 API 的参数（query / path / body）
+   - 每一项必须包含：
+     - name
+     - type
+     - description
+   - 使用**逻辑清晰、便于测试的变量名**（如 SESSION_ID、TIMESTAMP）
+7. `output`：
+   - 来源于 API 的响应
+   - 重点选择**可能被后续测试步骤复用的关键字段**
+8. 必须遵循参考示例的：
+   - 表达风格
+   - 抽象层级
+   - 命名习惯
+9. 不要虚构 API 规范中不存在的参数或返回字段。
+
+####################
+### 最终输出 ###
+####################
+
+现在生成 testcase JSON

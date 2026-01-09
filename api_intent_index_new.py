@@ -261,7 +261,7 @@ class ApiIntentIndexNew:
             k=self.recall_size
         )
 
-        self.logger.info(f"Recalled docs: {docs}")
+        self.logger.debug(f"Recalled docs: {docs}")
         
         candidates = [Candidate(content=doc.page_content, metadata=doc.metadata) for doc in docs]
         
@@ -285,7 +285,7 @@ class ApiIntentIndexNew:
             final_results = final_results[:self.top_k]
 
         # 将当前 intent 与 LLM 排序结果写入 ExperiencePool
-        self._log_experience(intent, final_results)
+        # self._log_experience(intent, final_results)
 
         return final_results
 
@@ -332,7 +332,7 @@ class ApiIntentIndexNew:
         # 返回top_k个结果
         top_results = scored_candidates[:self.rerank_size] # 重排序后的数量
         
-        self.logger.info(
+        self.logger.debug(
             f"Cross-encoder reranking complete. Top {len(top_results)} results selected. "
             f"Score range: [{top_results[-1][1]:.4f}, {top_results[0][1]:.4f}]"
             f"Cross-encoder reranked_results: {top_results}"

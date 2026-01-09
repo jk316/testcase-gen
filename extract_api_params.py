@@ -3,7 +3,7 @@
 然后在 xrt_openapi.jsonl 中查找并解析对应 API 的所有参数
 """
 import json
-from typing import Dict, List, Any, Set
+from typing import Dict, List, Any, Set, Optional
 
 
 def load_jsonl(path: str) -> List[Dict[str, Any]]:
@@ -54,12 +54,38 @@ def parse_ref(ref: str) -> str:
     return ref
 
 
+# 需要忽略的 title 列表（参考 high_api_extractor.py）
+IGNORE_TITLES = {
+    "definitions.testcase.AppReplay",
+    "definitions.api.AppReplay",
+    "definitions.testcase.AppSimulator",    
+    "definitions.api.AppSimulator",
+    "definitions.testcase.Criteria",
+    "definitions.api.Criteria",
+    "definitions.testcase.IPSecSimulator",
+    "definitions.api.IPSecSimulator",
+    "definitions.testcase.Layer2Replay",
+    "definitions.api.Layer2Replay",
+    "definitions.testcase.Malware",
+    "definitions.api.Malware",
+    "definitions.testcase.ItfPing",
+    "definitions.api.ItfPing",
+    "definitions.testcase.Security",
+    "definitions.api.Security",
+    "definitions.testcase.SessionSender",
+    "definitions.api.SessionSender",
+    "definitions.testcase.XAppSimulator",
+    "definitions.api.XAppSimulator"
+}
+
+
 def extract_parameters_from_definition(
     definition_title: str,
     api_data: Dict[str, Dict[str, Any]],
     visited: Set[str],
     parent_path: str = "",
-    direction: str = "input"
+    direction: str = "input",
+    ignore_titles: Optional[Set[str]] = None
 ) -> List[Dict[str, Any]]:
     """
     从对象定义中递归提取参数，完全展开所有 $ref 引用
@@ -70,11 +96,17 @@ def extract_parameters_from_definition(
         visited: 已访问的定义集合（避免循环引用）
         parent_path: 父路径
         direction: "input" 或 "output"
+        ignore_titles: 需要忽略的 title 集合，如果 title 在其中则直接跳过
     """
     if definition_title in visited:
         return []
     
     if definition_title not in api_data:
+        return []
+    
+    # 检查是否在 ignore_titles 中
+    ignore_set = ignore_titles if ignore_titles is not None else IGNORE_TITLES
+    if definition_title in ignore_set:
         return []
     
     visited.add(definition_title)
@@ -127,10 +159,13 @@ def extract_parameters_from_definition(
                 # 然后展开数组元素类型的字段
                 ref = items["$ref"]
                 ref_title = parse_ref(ref)
-                nested_params = extract_parameters_from_definition(
-                    ref_title, api_data, visited.copy(), full_path, direction
-                )
-                results.extend(nested_params)
+                # 检查 ref_title 是否在 ignore_titles 中
+                ignore_set = ignore_titles if ignore_titles is not None else IGNORE_TITLES
+                if ref_title not in ignore_set:
+                    nested_params = extract_parameters_from_definition(
+                        ref_title, api_data, visited.copy(), full_path, direction, ignore_titles
+                    )
+                    results.extend(nested_params)
             else:
                 # 数组元素是基本类型
                 items_type = items.get("type", "object")
@@ -156,10 +191,13 @@ def extract_parameters_from_definition(
             # 然后递归展开该对象的字段
             ref = prop_value["$ref"]
             ref_title = parse_ref(ref)
-            nested_params = extract_parameters_from_definition(
-                ref_title, api_data, visited.copy(), full_path, direction
-            )
-            results.extend(nested_params)
+            # 检查 ref_title 是否在 ignore_titles 中
+            ignore_set = ignore_titles if ignore_titles is not None else IGNORE_TITLES
+            if ref_title not in ignore_set:
+                nested_params = extract_parameters_from_definition(
+                    ref_title, api_data, visited.copy(), full_path, direction, ignore_titles
+                )
+                results.extend(nested_params)
         else:
             # 基本类型
             results.append({
@@ -176,7 +214,8 @@ def extract_parameters_from_definition(
 
 def extract_api_params_from_title(
     api_title: str,
-    api_data: Dict[str, Dict[str, Any]]
+    api_data: Dict[str, Dict[str, Any]],
+    ignore_titles: Optional[Set[str]] = None
 ) -> List[Dict[str, Any]]:
     """
     从 API title 提取所有参数
@@ -221,15 +260,17 @@ def extract_api_params_from_title(
             if "$ref" in schema:
                 ref = schema["$ref"]
                 ref_title = parse_ref(ref)
-                nested_params = extract_parameters_from_definition(
-                    ref_title, api_data, set(), "request.body", "input"
-                )
-                for p in nested_params:
-                    results.append({
-                        "api_id": api_id,
-                        "direction": "input",
-                        **p
-                    })
+                ignore_set = ignore_titles if ignore_titles is not None else IGNORE_TITLES
+                if ref_title not in ignore_set:
+                    nested_params = extract_parameters_from_definition(
+                        ref_title, api_data, set(), "request.body", "input", ignore_titles
+                    )
+                    for p in nested_params:
+                        results.append({
+                            "api_id": api_id,
+                            "direction": "input",
+                            **p
+                        })
             else:
                 # 直接 body 参数
                 results.append({
@@ -251,7 +292,7 @@ def extract_api_params_from_title(
                 "full_path": f"request.{param_in}.{param_name}",
                 "location": param_in,
                 "type": param.get("type", "string"),
-                "required": param.get("required", False),
+                "required": param.get("required", True),
                 "desc": param.get("description", "")
             })
     
@@ -264,15 +305,17 @@ def extract_api_params_from_title(
         if "$ref" in schema:
             ref = schema["$ref"]
             ref_title = parse_ref(ref)
-            nested_params = extract_parameters_from_definition(
-                ref_title, api_data, set(), "response", "output"
-            )
-            for p in nested_params:
-                results.append({
-                    "api_id": api_id,
-                    "direction": "output",
-                    **p
-                })
+            ignore_set = ignore_titles if ignore_titles is not None else IGNORE_TITLES
+            if ref_title not in ignore_set:
+                nested_params = extract_parameters_from_definition(
+                    ref_title, api_data, set(), "response", "output", ignore_titles
+                )
+                for p in nested_params:
+                    results.append({
+                        "api_id": api_id,
+                        "direction": "output",
+                        **p
+                    })
         else:
             # 直接响应
             results.append({

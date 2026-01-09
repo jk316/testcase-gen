@@ -2,7 +2,9 @@ import json
 import os
 from typing import Dict, Any, List, Set
 
-
+"""
+废弃，不需要此文件了，直接使用 extract_api_params.py 提取参数
+"""
 class HierarchicalAPIExtractor:
     def __init__(self, api_file: str, ignore_titles=None):
         self.api_file = api_file
