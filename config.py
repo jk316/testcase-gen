@@ -11,7 +11,7 @@ from typing import Optional
 class FilePaths:
     """文件路径配置"""
     # 输入文件
-    intent_file: str = "intent.txt"
+    intent_list_file: str = "intent.txt"
     steps_file: str = "steps.txt"
     api_openapi_file: str = "inputs/xrt_openapi.jsonl"
     

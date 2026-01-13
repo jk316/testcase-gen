@@ -4,6 +4,7 @@ from langgraph.graph import StateGraph, END
 from dotenv import load_dotenv
 from config import get_config
 from nodes import (
+    load_intent_list_node,
     generate_intent_node,
     update_index_node,
     generate_testcase_node,
@@ -17,8 +18,7 @@ logger = get_logger("AgentState")
 config = get_config()
 
 class AgentState(TypedDict):
-    intent: str
-
+   
     # 循环控制
     intent_list: List[str]
     current_intent_index: int
@@ -44,13 +44,17 @@ class AgentState(TypedDict):
 
 builder = StateGraph(AgentState)
 
+builder.add_node("load_intent_list", load_intent_list_node)
 builder.add_node("generate_intent", generate_intent_node)
 # builder.add_node("get_steps", get_steps_node)
 builder.add_node("generate_testcase", generate_testcase_node)
 builder.add_node("write_testcase", write_testcase_node)
 builder.add_node("loop_control", update_index_node)
 builder.add_node("should_continue", should_continue)
-builder.set_entry_point("generate_intent")
+builder.set_entry_point("load_intent_list")
+
+# 从 load_intent_list 到 generate_intent 的边
+builder.add_edge("load_intent_list", "generate_intent")
 
 # 从 generate_intent 到 generate_testcase 的边
 builder.add_edge("generate_intent", "generate_testcase")
@@ -97,17 +101,9 @@ if __name__ == "__main__":
     
     # 创建初始状态
     initial_state = {
-        "intent": "",
-        "intent_list": [],
+        "intent_list": None,
         "current_intent_index": 0,
         "candidate_api_ids": [],
-        "required_input_fields": set(),
-        "available_output_fields": set(),
-        "api_input_fields": {},
-        "api_output_fields": {},
-        "missing_fields": set(),
-        "step_count": 0,
-        "max_steps": config.graph.max_steps,
         "generated_testcase": None
     }
     

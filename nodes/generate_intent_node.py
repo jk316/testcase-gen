@@ -4,7 +4,7 @@
 """
 from typing import TYPE_CHECKING, List, Dict, Any, Tuple, Optional
 from utils.logger import get_logger
-from utils.file_process import load_api_jsonl, load_text_file, save_json_file
+from utils.file_process import load_api_jsonl, save_json_file
 from config import get_config
 from nodes.shared import (
     create_api_title_to_id_mapping,
@@ -17,22 +17,6 @@ if TYPE_CHECKING:
 
 logger = get_logger("GenerateIntentNode")
 config = get_config()
-
-
-def _load_test_intent() -> Optional[str]:
-    """
-    读取 intent.txt 文件
-    
-    Returns:
-        测试意图字符串，如果文件不存在则返回 None
-    """
-    intent_file = config.files.intent_file
-    test_intent = load_text_file(intent_file)
-    if test_intent is not None:
-        logger.info(f"[_load_test_intent] Loaded test intent from {intent_file}: {test_intent}")
-    else:
-        logger.warning(f"[_load_test_intent] Intent file {intent_file} not found")
-    return test_intent
 
 
 def _load_api_capabilities() -> List[Dict[str, Any]]:
@@ -106,19 +90,22 @@ def _extract_intent_data_from_steps(
 
 def generate_intent_node(state: "AgentState") -> dict:
     """
-    根据 intent.txt 中的内容，参考 gen_intent.jinja 的需求，生成测试意图
+    根据 state 中的 intent，参考 gen_intent.jinja 的需求，生成测试意图
     传递给 get_steps Node，并保存在 intent.json 中
     """
     logger.info("[generate_intent_node] Starting execution")
     
-    # 1. 读取测试意图
-    test_intent = _load_test_intent()
-    if test_intent is None:
+    # 1. 从 state 中读取测试意图
+    intent_list = state.get("intent_list")
+    current_intent_index = state.get("current_intent_index")
+    if not intent_list or current_intent_index is None or current_intent_index >= len(intent_list):
+        logger.warning("[generate_intent_node] intent_list is None or empty in state or current_intent_index is out of range")
         return {
             "intent_list": [],
-            "current_intent_index": 0,
+            "current_intent_index": current_intent_index,
             "candidate_api_ids": []
         }
+    current_intent = intent_list[current_intent_index]
     
     # 2. 加载 API 能力描述
     api_capabilities = _load_api_capabilities()
@@ -141,16 +128,14 @@ def generate_intent_node(state: "AgentState") -> dict:
         
         # 调用 chain
         steps_json = chain.invoke({
-            "test_intent": test_intent,
+            "test_intent": current_intent,
             "api_capabilities": api_capabilities_str
         })
         
         if steps_json is None:
             logger.warning("[generate_intent_node] Failed to parse LLM response as JSON")
             return {
-                "intent_list": [],
-                "current_intent_index": 0,
-                "candidate_api_ids": []
+
             }
         
         logger.info(f"[generate_intent_node] Successfully parsed {len(steps_json)} test steps")
@@ -175,7 +160,7 @@ def generate_intent_node(state: "AgentState") -> dict:
         # 10. 返回 delta，更新 intent_list 和 candidate_api_ids
         return {
             "intent_list": intent_lines,
-            "current_intent_index": 0,
+            "current_intent_index": current_intent_index + 1,
             "candidate_api_ids": candidate_api_ids_list
         }
         

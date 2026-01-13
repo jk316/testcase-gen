@@ -39,7 +39,7 @@ def write_testcase_jsonl(testcase: Optional[Dict[str, Any]], output_path: str, a
         f.write("\n")
 
 
-def load_text_file(file_path: str, strip: bool = True) -> Optional[str]:
+def load_text_file(file_path: str, strip: bool = True) -> Optional[List[str]]:
     """
     读取文本文件内容
     
@@ -52,10 +52,11 @@ def load_text_file(file_path: str, strip: bool = True) -> Optional[str]:
     """
     if os.path.exists(file_path):
         with open(file_path, "r", encoding="utf-8") as f:
-            content = f.read()
-            return content.strip() if strip else content
+            lines = f.readlines()
+            content = [line.strip() if strip else line for line in lines]
+            return content
     else:
-        return None
+        return []
 
 
 def save_json_file(data: Any, file_path: str, indent: int = 2, ensure_ascii: bool = False) -> None:
