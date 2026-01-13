@@ -1,0 +1,66 @@
+[
+  {
+    "step_id": 1,
+    "name": "登录客户端",
+    "description": "使用测试用户登录系统以获取后续操作权限",
+    "related_capability": "paths./v1/cl/user/login",
+    "based_on_template_step": 1,
+    "skip_reason": null
+  },
+  {
+    "step_id": 2,
+    "name": "查找已存在的DDoS攻击流量模板",
+    "description": "检查是否存在可以用于UDP flood攻击的DDoS攻击流量模板",
+    "related_capability": "paths./v1/cl/ddos/attack/flow/list",
+    "based_on_template_step": 2,
+    "skip_reason": null
+  },
+  {
+    "step_id": 3,
+    "name": "创建或更新DDoS攻击流量模板",
+    "description": "如果不存在合适的DDoS攻击流量模板，则创建一个新的；如果存在，则根据需求更新参数",
+    "related_capability": "paths./v1/cl/ddos/attack/flow/create, paths./v1/cl/ddos/attack/flow/param/update",
+    "based_on_template_step": 7,
+    "skip_reason": null
+  },
+  {
+    "step_id": 4,
+    "name": "保存DDoS攻击流量模板",
+    "description": "将配置好的DDoS攻击流量模板保存下来",
+    "related_capability": "paths./v1/cl/ddos/attack/flow/save",
+    "based_on_template_step": 8,
+    "skip_reason": null
+  },
+  {
+    "step_id": 5,
+    "name": "运行DDoS攻击测试用例",
+    "description": "执行之前配置并保存的UDP flood攻击测试用例",
+    "related_capability": "paths./v1/cl/testcase/run",
+    "based_on_template_step": 9,
+    "skip_reason": null
+  },
+  {
+    "step_id": 6,
+    "name": "获取统计类别",
+    "description": "获取可用于分析本次UDP flood攻击测试结果的统计类别",
+    "related_capability": "paths./v1/cl/stats/category/search",
+    "based_on_template_step": 10,
+    "skip_reason": null
+  },
+  {
+    "step_id": 7,
+    "name": "获取指定统计类别的详细统计值",
+    "description": "根据所选统计类别，获取具体的统计数值来评估测试效果",
+    "related_capability": "paths./v1/cl/stats/search",
+    "based_on_template_step": 11,
+    "skip_reason": null
+  },
+  {
+    "step_id": 8,
+    "name": "退出客户端登录",
+    "description": "完成所有操作后安全地注销当前会话",
+    "related_capability": "paths./v1/cl/user/logout",
+    "based_on_template_step": 12,
+    "skip_reason": null
+  }
+]

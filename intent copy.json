@@ -1,0 +1,106 @@
+[
+  {
+    "step_id": 1,
+    "name": "登录客户端",
+    "description": "使用测试用户登录系统以获取后续操作权限",
+    "related_capability": "paths./v1/cl/user/login",
+    "based_on_template_step": 1,
+    "skip_reason": null
+  },
+  {
+    "step_id": 2,
+    "name": "创建DDoS攻击流量模板",
+    "description": "根据测试需求，创建一个UDP flood类型的DDoS攻击流量模板",
+    "related_capability": "paths./v1/cl/ddos/attack/flow/create",
+    "based_on_template_step": null,
+    "skip_reason": null
+  },
+  {
+    "step_id": 3,
+    "name": "配置DDoS攻击流量参数",
+    "description": "设置DDoS攻击流量的峰值为500Mbps，持续时间为60秒，目标IP为11.0.0.1/24",
+    "related_capability": "paths./v1/cl/ddos/attack/flow/param/update",
+    "based_on_template_step": null,
+    "skip_reason": null
+  },
+  {
+    "step_id": 4,
+    "name": "保存DDoS攻击流量模板",
+    "description": "将配置好的DDoS攻击流量模板保存下来",
+    "related_capability": "paths./v1/cl/ddos/attack/flow/save",
+    "based_on_template_step": null,
+    "skip_reason": null
+  },
+  {
+    "step_id": 5,
+    "name": "查找已存在的网络邻居",
+    "description": "检查是否有现成的网络邻居可用于此次测试",
+    "related_capability": "paths./v1/cl/network/search",
+    "based_on_template_step": 3,
+    "skip_reason": null
+  },
+  {
+    "step_id": 6,
+    "name": "查看指定网络邻居的详细参数信息",
+    "description": "获取找到的网络邻居的具体参数信息，以便确认是否符合测试需求",
+    "related_capability": "paths./v1/cl/network/fetch",
+    "based_on_template_step": 4,
+    "skip_reason": null
+  },
+  {
+    "step_id": 7,
+    "name": "修改网络邻居参数信息",
+    "description": "如果需要，调整网络邻居的参数设置以匹配本次测试的要求（例如，确保包含目标IP）",
+    "related_capability": "paths./v1/cl/network/param/update",
+    "based_on_template_step": 5,
+    "skip_reason": null
+  },
+  {
+    "step_id": 8,
+    "name": "创建测试用例",
+    "description": "基于前面准备的DDoS攻击流量和网络邻居信息，创建一个新的测试用例",
+    "related_capability": "paths./v1/cl/testcase/create",
+    "based_on_template_step": 7,
+    "skip_reason": null
+  },
+  {
+    "step_id": 9,
+    "name": "更新测试用例配置参数",
+    "description": "对新建的测试用例进行必要的参数调整，确保其能够正确执行预期的DDoS攻击模拟",
+    "related_capability": "paths./v1/cl/testcase/param/update",
+    "based_on_template_step": 8,
+    "skip_reason": null
+  },
+  {
+    "step_id": 10,
+    "name": "运行测试用例",
+    "description": "启动测试用例，开始模拟UDP flood攻击",
+    "related_capability": "paths./v1/cl/testcase/run",
+    "based_on_template_step": 9,
+    "skip_reason": null
+  },
+  {
+    "step_id": 11,
+    "name": "获取统计类别",
+    "description": "确定可用于评估攻击效果的数据统计类别",
+    "related_capability": "paths./v1/cl/stats/category/search",
+    "based_on_template_step": 10,
+    "skip_reason": null
+  },
+  {
+    "step_id": 12,
+    "name": "获取详细的统计值",
+    "description": "从选定的统计类别中提取具体的数值，用于分析攻击的影响程度",
+    "related_capability": "paths./v1/cl/stats/search",
+    "based_on_template_step": 11,
+    "skip_reason": null
+  },
+  {
+    "step_id": 13,
+    "name": "退出客户端登录",
+    "description": "完成所有测试后，安全地登出当前会话",
+    "related_capability": "paths./v1/cl/user/logout",
+    "based_on_template_step": 12,
+    "skip_reason": null
+  }
+]
