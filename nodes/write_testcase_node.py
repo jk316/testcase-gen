@@ -9,9 +9,9 @@ from utils.file_process import write_testcase_jsonl
 from config import get_config
 
 if TYPE_CHECKING:
-    from state import AgentState
+    from schemas.state import AgentState
 
-logger = get_logger("WriteTestcaseNode")
+logger = get_logger(__name__)
 config = get_config()
 
 
@@ -25,11 +25,11 @@ def write_testcase_node(state: "AgentState") -> dict:
     Returns:
         空的 delta（不更新状态）
     """
-    logger.info("[write_testcase_node] Starting execution")
+    logger.info("Starting testcase write")
     generated_testcase = state.get("generated_testcase")
     
     if generated_testcase is None:
-        logger.warning("[write_testcase_node] No testcase to write, skipping")
+        logger.warning("No testcase to write, skipping")
         return {}
     
     # 默认输出路径
@@ -38,10 +38,10 @@ def write_testcase_node(state: "AgentState") -> dict:
     try:
         # 写入 testcase 到文件（追加模式）
         write_testcase_jsonl(generated_testcase, output_path, append=True)
-        logger.info(f"[write_testcase_node] Successfully wrote testcase to {output_path}")
-        logger.info(f"[write_testcase_node] Testcase: {json.dumps(generated_testcase, ensure_ascii=False)[:200]}...")
+        logger.info(f"Successfully wrote testcase to {output_path}")
+        logger.debug(f"Testcase content: {json.dumps(generated_testcase, ensure_ascii=False)[:200]}...")
     except Exception as e:
-        logger.error(f"[write_testcase_node] Error writing testcase: {e}", exc_info=True)
+        logger.error(f"Error writing testcase: {e}", exc_info=True)
     
     # 返回空字典，不更新状态
     return {}

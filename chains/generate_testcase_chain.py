@@ -10,11 +10,11 @@ from utils.file_process import load_jinja_template
 from utils.logger import get_logger
 from config import get_config
 
-logger = get_logger("GenerateIntentChain")
+logger = get_logger("GenerateTestcaseChain")
 config = get_config()
 
 # 模块级别的 chain 缓存（单例模式）
-_generate_intent_chain: Optional[Any] = None
+_generate_testcase_chain: Optional[Any] = None
 
 
 def _parse_json_output(response: Any) -> Optional[List[Dict[str, Any]]]:
@@ -32,9 +32,9 @@ def _parse_json_output(response: Any) -> Optional[List[Dict[str, Any]]]:
     return parse_json_from_llm_response(resp_text)
 
 
-def create_generate_intent_chain():
+def create_generate_testcase_chain():
     """
-    创建生成测试意图的 LangChain chain
+    创建生成测试用例的 LangChain chain
     
     Chain 流程：
     1. 加载 Jinja2 模板并创建 PromptTemplate
@@ -43,22 +43,22 @@ def create_generate_intent_chain():
     
     Returns:
         配置好的 LangChain chain
-        - 输入：{"test_intent": str, "api_capabilities": str}
+        - 输入：{"api_json_here": str}
         - 输出：List[Dict[str, Any]] 或 None
     """
-    global _generate_intent_chain
+    global _generate_testcase_chain
     
-    if _generate_intent_chain is not None:
-        return _generate_intent_chain
+    if _generate_testcase_chain is not None:
+        return _generate_testcase_chain
     
-    logger.info("[create_generate_intent_chain] Creating generate intent chain")
+    logger.info("[create_generate_testcase_chain] Creating generate testcase chain")
     
     # 1. 加载模板
-    template_str = load_jinja_template(config.files.gen_intent_template)
+    template_str = load_jinja_template(config.files.testcase_template)
     
     # 2. 创建 PromptTemplate
     prompt_template = PromptTemplate(
-        input_variables=["TEST_INTENT", "API_CAPABILITIES"],
+        input_variables=["API_JSON_HERE"],
         template=template_str,
         template_format="jinja2"
     )
@@ -67,19 +67,16 @@ def create_generate_intent_chain():
     llm = get_llm()
     
     # 4. 创建 JSON 解析器
-    json_parser = RunnableLambda(_parse_json_output)
+    json_parser = RunnableLambda[Any, List[Dict[str, Any]] | None](_parse_json_output)
     
     # 5. 组合 chain: prompt | llm | json_parser
     # 注意：需要将输入格式转换为 PromptTemplate 期望的格式
-    def format_input(input_dict: Dict[str, str]) -> Dict[str, str]:
+    def format_input(api_json_here: str) -> Dict[str, str]:
         """将输入格式转换为 PromptTemplate 期望的格式"""
         return {
-            "TEST_INTENT": input_dict["test_intent"],
-            "API_CAPABILITIES": input_dict["api_capabilities"]
+            "API_JSON_HERE": api_json_here
         }
-    
     input_formatter = RunnableLambda(format_input)
-    _generate_intent_chain = input_formatter | prompt_template | llm | json_parser
-    
-    logger.info("[create_generate_intent_chain] Chain created successfully")
-    return _generate_intent_chain
+    _generate_testcase_chain = input_formatter | prompt_template | llm | json_parser
+    logger.info("[create_generate_testcase_chain] Chain created successfully")
+    return _generate_testcase_chain

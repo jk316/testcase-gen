@@ -9,11 +9,11 @@ from langchain_community.embeddings import DashScopeEmbeddings
 from langchain_core.prompts import PromptTemplate
 from api_intent_index_new import ApiIntentIndexNew
 from schemas.dto import ApiItem
-from utils.file_process import load_api_jsonl, load_jinja_template
+from utils.file_process import load_jsonl, load_jinja_template
 from utils.logger import get_logger
 from config import get_config
 
-logger = get_logger("NodesShared")
+logger = get_logger(__name__)
 config = get_config()
 
 # 模块级别的单例实例（延迟初始化）
@@ -21,6 +21,7 @@ _api_index: Optional[ApiIntentIndexNew] = None
 _api_data_cache: Optional[Dict[str, Dict[str, Any]]] = None
 _llm: Optional[ChatTongyi] = None
 _testcase_template: Optional[PromptTemplate] = None
+_api_index_dict: Optional[Dict[str, Dict[str, Any]]] = None
 
 
 def get_api_index() -> ApiIntentIndexNew:
@@ -77,6 +78,43 @@ def get_api_index() -> ApiIntentIndexNew:
     
     return _api_index
 
+
+def load_api_jsonl_index() -> Dict[str, Dict[str, Any]]:
+    """
+    加载 API jsonl 文件，并创建 API id 到 API 数据的映射
+    """
+    try:
+        api_jsonl_file = config.files.api_openapi_file
+        api_jsonl = load_jsonl(api_jsonl_file)
+        _api_index_dict = {}
+        for api_dict in api_jsonl:
+            api_id = api_dict.get("id")
+            if api_id:
+                _api_index_dict[api_id] = api_dict
+        logger.info(f"[load_api_jsonl_index] Created {len(_api_index_dict)} API index")
+        return _api_index_dict
+    except FileNotFoundError:
+        logger.warning(f"[load_api_jsonl] API jsonl file {api_jsonl_file} not found")
+        return {}
+
+def load_api_capabilities() -> List[Dict[str, Any]]:
+    """
+    加载 API 能力描述
+    
+    Returns:
+        API 能力描述列表
+    """
+    api_descriptions_file = config.files.api_descriptions_file
+    try:
+        api_capabilities = load_jsonl(api_descriptions_file)
+        logger.info(f"[_load_api_capabilities] Loaded {len(api_capabilities)} API capabilities")
+        return api_capabilities
+    except FileNotFoundError:
+        logger.warning(f"[_load_api_capabilities] API descriptions file {api_descriptions_file} not found")
+        return []
+    except Exception as e:
+        logger.error(f"[_load_api_capabilities] Error loading API capabilities: {e}")
+        return []
 
 def get_api_data_cache() -> Dict[str, Dict[str, Any]]:
     """
