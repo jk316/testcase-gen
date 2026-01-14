@@ -74,12 +74,16 @@
    - 来源于 API 的参数（query / path / body）
    - 每一项必须包含：
      - name
-     - type
+     - type, 如果参数包含schema字段, type 为object
      - description
+   - 如果参数中包含schema字段，则包含$ref对应的定义
    - 使用**逻辑清晰、便于测试的变量名**（如 SESSION_ID、TIMESTAMP）
 6. `output`：
-   - 来源于 API 的响应
-   - 重点选择**可能被后续测试步骤复用的关键字段**
+   - 来源于 API 的responses
+   - 输出规则:
+      - 仅输出 response body 的 schema
+      - 不包含 HTTP 状态码（如 200）
+      - 不做字段筛选，完整保留 schema 描述
 7. 必须遵循参考示例的：
    - 表达风格
    - 抽象层级
