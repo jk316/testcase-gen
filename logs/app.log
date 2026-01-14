@@ -2771,3 +2771,263 @@ DEBUG    | urllib3.connectionpool | connectionpool.py:544 | https://api.smith.la
 DEBUG    | langsmith.client | _background_thread.py:854 | Compressed traces control thread is shutting down
 DEBUG    | langsmith.client | client.py:273 | Closing Client.session
 DEBUG    | langsmith.client | client.py:273 | Closing Client.session
+| 2026-01-14 16:10:33,011 | INFO     | __main__ | state.py:63 | ============================================================
+| 2026-01-14 16:10:33,012 | INFO     | __main__ | state.py:64 | Graph Structure:
+| 2026-01-14 16:10:33,012 | INFO     | __main__ | state.py:65 | ============================================================
+| 2026-01-14 16:10:33,012 | INFO     | __main__ | state.py:69 | Nodes: ['__start__', 'load_intent_list', 'generate_steps', 'generate_testcase', 'write_testcase', 'loop_control_intent', 'loop_control_step', 'should_continue_intent', 'should_continue_step']
+| 2026-01-14 16:10:33,013 | INFO     | __main__ | state.py:76 | ============================================================
+| 2026-01-14 16:10:33,013 | INFO     | __main__ | state.py:89 | Invoking graph with initial state
+| 2026-01-14 16:10:33,013 | INFO     | __main__ | state.py:93 | Starting graph execution
+| 2026-01-14 16:10:33,292 | INFO     | nodes.load_intent_list_node | load_intent_list_node.py:27 | Starting intent list loading
+| 2026-01-14 16:10:33,294 | INFO     | nodes.load_intent_list_node | load_intent_list_node.py:33 | Loaded intent list from intent.txt
+| 2026-01-14 16:10:33,296 | INFO     | __main__ | state.py:101 | Graph event (iteration 1)
+| 2026-01-14 16:10:33,298 | INFO     | nodes.generate_steps_node | generate_steps_node.py:78 | Starting steps generation
+| 2026-01-14 16:10:33,303 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 503 items from outputs/api_descriptions.jsonl
+| 2026-01-14 16:10:33,303 | INFO     | nodes.shared | shared.py:110 | [_load_api_capabilities] Loaded 503 API capabilities
+| 2026-01-14 16:10:33,304 | INFO     | nodes.generate_steps_node | generate_steps_node.py:103 | Calling LLM to generate test steps plan
+| 2026-01-14 16:10:33,305 | INFO     | chains.generate_steps_chain | generate_steps_chain.py:54 | [create_generate_steps_chain] Creating generate steps chain
+| 2026-01-14 16:10:33,309 | INFO     | nodes.shared | shared.py:151 | Initializing LLM...
+| 2026-01-14 16:10:34,358 | INFO     | nodes.shared | shared.py:153 | LLM initialized successfully
+| 2026-01-14 16:10:34,359 | INFO     | chains.generate_steps_chain | generate_steps_chain.py:84 | [create_generate_steps_chain] Chain created successfully
+| 2026-01-14 16:11:11,672 | INFO     | nodes.generate_steps_node | generate_steps_node.py:122 | Successfully parsed 8 test steps
+| 2026-01-14 16:11:11,673 | INFO     | FileProcess | file_process.py:91 | [save_json_file] Saved JSON file steps.json
+| 2026-01-14 16:11:11,674 | INFO     | nodes.generate_steps_node | generate_steps_node.py:138 | Extracted 8 steps from generated steps
+| 2026-01-14 16:11:11,675 | INFO     | __main__ | state.py:101 | Graph event (iteration 2)
+| 2026-01-14 16:11:11,676 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+| 2026-01-14 16:11:11,688 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+| 2026-01-14 16:11:11,689 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+| 2026-01-14 16:11:11,689 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 330, step: 使用测试用户登录系统以获取后续操作权限
+| 2026-01-14 16:11:11,689 | INFO     | GenerateTestcaseChain | generate_testcase_chain.py:54 | [create_generate_testcase_chain] Creating generate testcase chain
+| 2026-01-14 16:11:11,690 | INFO     | GenerateTestcaseChain | generate_testcase_chain.py:83 | [create_generate_testcase_chain] Chain created successfully
+| 2026-01-14 16:11:32,666 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:89 | Successfully generated testcase for API ID: 330
+| 2026-01-14 16:11:32,667 | INFO     | __main__ | state.py:101 | Graph event (iteration 3)
+| 2026-01-14 16:11:32,667 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+| 2026-01-14 16:11:32,669 | INFO     | FileProcess | file_process.py:91 | [save_json_file] Saved JSON file outputs/new_generated_testcase.json
+| 2026-01-14 16:11:32,669 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/new_generated_testcase.json
+| 2026-01-14 16:11:32,670 | INFO     | __main__ | state.py:101 | Graph event (iteration 4)
+| 2026-01-14 16:11:32,671 | INFO     | nodes.update_step_index_node | update_step_index_node.py:23 | Processing step 1 of 8: 使用测试用户登录系统以获取后续操作权限
+| 2026-01-14 16:11:32,672 | INFO     | nodes.should_continue | should_continue.py:51 | Continuing: 1/8 steps processed
+| 2026-01-14 16:11:32,673 | INFO     | __main__ | state.py:101 | Graph event (iteration 5)
+| 2026-01-14 16:11:32,674 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+| 2026-01-14 16:11:32,686 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+| 2026-01-14 16:11:32,686 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+| 2026-01-14 16:11:32,687 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 66, step: 查找并选择一个已有的DDoS攻击配置文件模板作为基础
+| 2026-01-14 16:11:38,356 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:89 | Successfully generated testcase for API ID: 66
+| 2026-01-14 16:11:38,357 | INFO     | __main__ | state.py:101 | Graph event (iteration 6)
+| 2026-01-14 16:11:38,357 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+| 2026-01-14 16:11:38,359 | INFO     | FileProcess | file_process.py:91 | [save_json_file] Saved JSON file outputs/new_generated_testcase.json
+| 2026-01-14 16:11:38,359 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/new_generated_testcase.json
+| 2026-01-14 16:11:38,359 | INFO     | __main__ | state.py:101 | Graph event (iteration 7)
+| 2026-01-14 16:11:38,360 | INFO     | nodes.update_step_index_node | update_step_index_node.py:23 | Processing step 2 of 8: 查找并选择一个已有的DDoS攻击配置文件模板作为基础
+| 2026-01-14 16:11:38,361 | INFO     | nodes.should_continue | should_continue.py:51 | Continuing: 2/8 steps processed
+| 2026-01-14 16:11:38,361 | INFO     | __main__ | state.py:101 | Graph event (iteration 8)
+| 2026-01-14 16:11:38,362 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+| 2026-01-14 16:11:38,371 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+| 2026-01-14 16:11:38,371 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+| 2026-01-14 16:11:38,371 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 50, step: 根据测试需求创建一个新的UDP flood攻击流量模板，设置峰值为500Mbps，持续时间为60秒，目标IP为11.0.0.1/24
+| 2026-01-14 16:11:47,523 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:89 | Successfully generated testcase for API ID: 50
+| 2026-01-14 16:11:47,525 | INFO     | __main__ | state.py:101 | Graph event (iteration 9)
+| 2026-01-14 16:11:47,525 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+| 2026-01-14 16:11:47,527 | INFO     | FileProcess | file_process.py:91 | [save_json_file] Saved JSON file outputs/new_generated_testcase.json
+| 2026-01-14 16:11:47,527 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/new_generated_testcase.json
+| 2026-01-14 16:11:47,528 | INFO     | __main__ | state.py:101 | Graph event (iteration 10)
+| 2026-01-14 16:11:47,529 | INFO     | nodes.update_step_index_node | update_step_index_node.py:23 | Processing step 3 of 8: 根据测试需求创建一个新的UDP flood攻击流量模板，设置峰值为500Mbps，持续时间为60秒，目标IP为11.0.0.1/24
+| 2026-01-14 16:11:47,530 | INFO     | nodes.should_continue | should_continue.py:51 | Continuing: 3/8 steps processed
+| 2026-01-14 16:11:47,531 | INFO     | __main__ | state.py:101 | Graph event (iteration 11)
+| 2026-01-14 16:11:47,531 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+| 2026-01-14 16:11:47,541 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+| 2026-01-14 16:11:47,541 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+| 2026-01-14 16:11:47,541 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 56, step: 保存新创建的UDP flood攻击流量模板以便后续使用
+| 2026-01-14 16:12:01,034 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:89 | Successfully generated testcase for API ID: 56
+| 2026-01-14 16:12:01,035 | INFO     | __main__ | state.py:101 | Graph event (iteration 12)
+| 2026-01-14 16:12:01,036 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+| 2026-01-14 16:12:01,037 | INFO     | FileProcess | file_process.py:91 | [save_json_file] Saved JSON file outputs/new_generated_testcase.json
+| 2026-01-14 16:12:01,037 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/new_generated_testcase.json
+| 2026-01-14 16:12:01,038 | INFO     | __main__ | state.py:101 | Graph event (iteration 13)
+| 2026-01-14 16:12:01,038 | INFO     | nodes.update_step_index_node | update_step_index_node.py:23 | Processing step 4 of 8: 保存新创建的UDP flood攻击流量模板以便后续使用
+| 2026-01-14 16:12:01,039 | INFO     | nodes.should_continue | should_continue.py:51 | Continuing: 4/8 steps processed
+| 2026-01-14 16:12:01,039 | INFO     | __main__ | state.py:101 | Graph event (iteration 14)
+| 2026-01-14 16:12:01,039 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+| 2026-01-14 16:12:01,048 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+| 2026-01-14 16:12:01,049 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+| 2026-01-14 16:12:01,049 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 298, step: 执行刚刚创建和配置好的UDP flood攻击测试用例
+| 2026-01-14 16:12:20,679 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:89 | Successfully generated testcase for API ID: 298
+| 2026-01-14 16:12:20,685 | INFO     | __main__ | state.py:101 | Graph event (iteration 15)
+| 2026-01-14 16:12:20,688 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+| 2026-01-14 16:12:20,693 | INFO     | FileProcess | file_process.py:91 | [save_json_file] Saved JSON file outputs/new_generated_testcase.json
+| 2026-01-14 16:12:20,693 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/new_generated_testcase.json
+| 2026-01-14 16:12:20,694 | INFO     | __main__ | state.py:101 | Graph event (iteration 16)
+| 2026-01-14 16:12:20,694 | INFO     | nodes.update_step_index_node | update_step_index_node.py:23 | Processing step 5 of 8: 执行刚刚创建和配置好的UDP flood攻击测试用例
+| 2026-01-14 16:12:20,695 | INFO     | nodes.should_continue | should_continue.py:51 | Continuing: 5/8 steps processed
+| 2026-01-14 16:12:20,695 | INFO     | __main__ | state.py:101 | Graph event (iteration 17)
+| 2026-01-14 16:12:20,697 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+| 2026-01-14 16:12:20,714 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+| 2026-01-14 16:12:20,715 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+| 2026-01-14 16:12:20,715 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 252, step: 获取当前测试用例可以收集到的所有统计类别信息
+| 2026-01-14 16:12:28,126 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:89 | Successfully generated testcase for API ID: 252
+| 2026-01-14 16:12:28,127 | INFO     | __main__ | state.py:101 | Graph event (iteration 18)
+| 2026-01-14 16:12:28,127 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+| 2026-01-14 16:12:28,128 | INFO     | FileProcess | file_process.py:91 | [save_json_file] Saved JSON file outputs/new_generated_testcase.json
+| 2026-01-14 16:12:28,128 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/new_generated_testcase.json
+| 2026-01-14 16:12:28,129 | INFO     | __main__ | state.py:101 | Graph event (iteration 19)
+| 2026-01-14 16:12:28,129 | INFO     | nodes.update_step_index_node | update_step_index_node.py:23 | Processing step 6 of 8: 获取当前测试用例可以收集到的所有统计类别信息
+| 2026-01-14 16:12:28,130 | INFO     | nodes.should_continue | should_continue.py:51 | Continuing: 6/8 steps processed
+| 2026-01-14 16:12:28,130 | INFO     | __main__ | state.py:101 | Graph event (iteration 20)
+| 2026-01-14 16:12:28,131 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+| 2026-01-14 16:12:28,142 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+| 2026-01-14 16:12:28,143 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+| 2026-01-14 16:12:28,143 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 258, step: 从已经完成的测试中获取具体的性能统计数据
+| 2026-01-14 16:12:39,839 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:89 | Successfully generated testcase for API ID: 258
+| 2026-01-14 16:12:39,840 | INFO     | __main__ | state.py:101 | Graph event (iteration 21)
+| 2026-01-14 16:12:39,840 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+| 2026-01-14 16:12:39,842 | INFO     | FileProcess | file_process.py:91 | [save_json_file] Saved JSON file outputs/new_generated_testcase.json
+| 2026-01-14 16:12:39,842 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/new_generated_testcase.json
+| 2026-01-14 16:12:39,842 | INFO     | __main__ | state.py:101 | Graph event (iteration 22)
+| 2026-01-14 16:12:39,843 | INFO     | nodes.update_step_index_node | update_step_index_node.py:23 | Processing step 7 of 8: 从已经完成的测试中获取具体的性能统计数据
+| 2026-01-14 16:12:39,843 | INFO     | nodes.should_continue | should_continue.py:51 | Continuing: 7/8 steps processed
+| 2026-01-14 16:12:39,844 | INFO     | __main__ | state.py:101 | Graph event (iteration 23)
+| 2026-01-14 16:12:39,844 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+| 2026-01-14 16:12:39,854 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+| 2026-01-14 16:12:39,854 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+| 2026-01-14 16:12:39,855 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 331, step: 完成所有测试后，安全地登出当前用户会话
+| 2026-01-14 16:12:54,022 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:89 | Successfully generated testcase for API ID: 331
+| 2026-01-14 16:12:54,023 | INFO     | __main__ | state.py:101 | Graph event (iteration 24)
+| 2026-01-14 16:12:54,023 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+| 2026-01-14 16:12:54,024 | INFO     | FileProcess | file_process.py:91 | [save_json_file] Saved JSON file outputs/new_generated_testcase.json
+| 2026-01-14 16:12:54,024 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/new_generated_testcase.json
+| 2026-01-14 16:12:54,025 | INFO     | __main__ | state.py:101 | Graph event (iteration 25)
+| 2026-01-14 16:12:54,025 | INFO     | nodes.update_step_index_node | update_step_index_node.py:23 | Processing step 8 of 8: 完成所有测试后，安全地登出当前用户会话
+| 2026-01-14 16:12:54,026 | INFO     | nodes.should_continue | should_continue.py:54 | All steps processed (8/8), ending
+| 2026-01-14 16:12:54,026 | INFO     | __main__ | state.py:101 | Graph event (iteration 26)
+| 2026-01-14 16:12:54,027 | INFO     | __main__ | state.py:108 | Graph execution completed successfully after 26 iterations
+| 2026-01-14 16:12:54,027 | INFO     | __main__ | state.py:110 | Final generated_testcase: None
+| 2026-01-14 16:17:50,868 | INFO     | __main__ | state.py:63 | ============================================================
+| 2026-01-14 16:17:50,868 | INFO     | __main__ | state.py:64 | Graph Structure:
+| 2026-01-14 16:17:50,869 | INFO     | __main__ | state.py:65 | ============================================================
+| 2026-01-14 16:17:50,869 | INFO     | __main__ | state.py:69 | Nodes: ['__start__', 'load_intent_list', 'generate_steps', 'generate_testcase', 'write_testcase', 'loop_control_intent', 'loop_control_step', 'should_continue_intent', 'should_continue_step']
+| 2026-01-14 16:17:50,870 | INFO     | __main__ | state.py:76 | ============================================================
+| 2026-01-14 16:17:50,870 | INFO     | __main__ | state.py:89 | Invoking graph with initial state
+| 2026-01-14 16:17:50,870 | INFO     | __main__ | state.py:93 | Starting graph execution
+| 2026-01-14 16:17:51,185 | INFO     | nodes.load_intent_list_node | load_intent_list_node.py:27 | Starting intent list loading
+| 2026-01-14 16:17:51,186 | INFO     | nodes.load_intent_list_node | load_intent_list_node.py:33 | Loaded intent list from intent.txt
+| 2026-01-14 16:17:51,187 | INFO     | __main__ | state.py:101 | Graph event (iteration 1)
+| 2026-01-14 16:17:51,188 | INFO     | nodes.generate_steps_node | generate_steps_node.py:78 | Starting steps generation
+| 2026-01-14 16:17:51,191 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 503 items from outputs/api_descriptions.jsonl
+| 2026-01-14 16:17:51,191 | INFO     | nodes.shared | shared.py:110 | [_load_api_capabilities] Loaded 503 API capabilities
+| 2026-01-14 16:17:51,191 | INFO     | nodes.generate_steps_node | generate_steps_node.py:103 | Calling LLM to generate test steps plan
+| 2026-01-14 16:17:51,192 | INFO     | chains.generate_steps_chain | generate_steps_chain.py:54 | [create_generate_steps_chain] Creating generate steps chain
+| 2026-01-14 16:17:51,194 | INFO     | nodes.shared | shared.py:151 | Initializing LLM...
+| 2026-01-14 16:17:51,708 | INFO     | nodes.shared | shared.py:153 | LLM initialized successfully
+| 2026-01-14 16:17:51,709 | INFO     | chains.generate_steps_chain | generate_steps_chain.py:84 | [create_generate_steps_chain] Chain created successfully
+| 2026-01-14 16:18:18,376 | INFO     | nodes.generate_steps_node | generate_steps_node.py:122 | Successfully parsed 8 test steps
+| 2026-01-14 16:18:18,377 | INFO     | FileProcess | file_process.py:91 | [save_json_file] Saved JSON file steps.json
+| 2026-01-14 16:18:18,378 | INFO     | nodes.generate_steps_node | generate_steps_node.py:138 | Extracted 8 steps from generated steps
+| 2026-01-14 16:18:18,379 | INFO     | __main__ | state.py:101 | Graph event (iteration 2)
+| 2026-01-14 16:18:18,380 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+| 2026-01-14 16:18:18,390 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+| 2026-01-14 16:18:18,390 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+| 2026-01-14 16:18:18,390 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 330, step: 使用测试用户登录系统以获取后续操作权限
+| 2026-01-14 16:18:18,391 | INFO     | GenerateTestcaseChain | generate_testcase_chain.py:54 | [create_generate_testcase_chain] Creating generate testcase chain
+| 2026-01-14 16:18:18,392 | INFO     | GenerateTestcaseChain | generate_testcase_chain.py:83 | [create_generate_testcase_chain] Chain created successfully
+| 2026-01-14 16:18:27,105 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:89 | Successfully generated testcase for API ID: 330
+| 2026-01-14 16:18:27,106 | INFO     | __main__ | state.py:101 | Graph event (iteration 3)
+| 2026-01-14 16:18:27,106 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+| 2026-01-14 16:18:27,107 | INFO     | FileProcess | file_process.py:91 | [save_json_file] Saved JSON file outputs/new_generated_testcase.json
+| 2026-01-14 16:18:27,108 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/new_generated_testcase.json
+| 2026-01-14 16:18:27,108 | INFO     | __main__ | state.py:101 | Graph event (iteration 4)
+| 2026-01-14 16:18:27,109 | INFO     | nodes.update_step_index_node | update_step_index_node.py:23 | Processing step 1 of 8: 使用测试用户登录系统以获取后续操作权限
+| 2026-01-14 16:18:27,109 | INFO     | nodes.should_continue | should_continue.py:51 | Continuing: 1/8 steps processed
+| 2026-01-14 16:18:27,110 | INFO     | __main__ | state.py:101 | Graph event (iteration 5)
+| 2026-01-14 16:18:27,110 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+| 2026-01-14 16:18:27,120 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+| 2026-01-14 16:18:27,121 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+| 2026-01-14 16:18:27,121 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 50, step: 根据测试需求创建一个UDP flood攻击的流量模板，设置峰值为500Mbps，持续时间为60秒，目标IP为11.0.0.1/24
+| 2026-01-14 16:18:35,419 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:89 | Successfully generated testcase for API ID: 50
+| 2026-01-14 16:18:35,421 | INFO     | __main__ | state.py:101 | Graph event (iteration 6)
+| 2026-01-14 16:18:35,421 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+| 2026-01-14 16:18:35,422 | INFO     | FileProcess | file_process.py:91 | [save_json_file] Saved JSON file outputs/new_generated_testcase.json
+| 2026-01-14 16:18:35,422 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/new_generated_testcase.json
+| 2026-01-14 16:18:35,423 | INFO     | __main__ | state.py:101 | Graph event (iteration 7)
+| 2026-01-14 16:18:35,423 | INFO     | nodes.update_step_index_node | update_step_index_node.py:23 | Processing step 2 of 8: 根据测试需求创建一个UDP flood攻击的流量模板，设置峰值为500Mbps，持续时间为60秒，目标IP为11.0.0.1/24
+| 2026-01-14 16:18:35,424 | INFO     | nodes.should_continue | should_continue.py:51 | Continuing: 2/8 steps processed
+| 2026-01-14 16:18:35,424 | INFO     | __main__ | state.py:101 | Graph event (iteration 8)
+| 2026-01-14 16:18:35,425 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+| 2026-01-14 16:18:35,434 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+| 2026-01-14 16:18:35,434 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+| 2026-01-14 16:18:35,435 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 49, step: 验证刚刚创建的DDoS攻击流量模板是否有效
+| 2026-01-14 16:18:48,889 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:89 | Successfully generated testcase for API ID: 49
+| 2026-01-14 16:18:48,890 | INFO     | __main__ | state.py:101 | Graph event (iteration 9)
+| 2026-01-14 16:18:48,891 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+| 2026-01-14 16:18:48,893 | INFO     | FileProcess | file_process.py:91 | [save_json_file] Saved JSON file outputs/new_generated_testcase.json
+| 2026-01-14 16:18:48,894 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/new_generated_testcase.json
+| 2026-01-14 16:18:48,895 | INFO     | __main__ | state.py:101 | Graph event (iteration 10)
+| 2026-01-14 16:18:48,895 | INFO     | nodes.update_step_index_node | update_step_index_node.py:23 | Processing step 3 of 8: 验证刚刚创建的DDoS攻击流量模板是否有效
+| 2026-01-14 16:18:48,896 | INFO     | nodes.should_continue | should_continue.py:51 | Continuing: 3/8 steps processed
+| 2026-01-14 16:18:48,897 | INFO     | __main__ | state.py:101 | Graph event (iteration 11)
+| 2026-01-14 16:18:48,898 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+| 2026-01-14 16:18:48,908 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+| 2026-01-14 16:18:48,908 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+| 2026-01-14 16:18:48,908 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 56, step: 将创建并验证过的DDoS攻击流量模板保存下来以便后续使用
+| 2026-01-14 16:18:55,084 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:89 | Successfully generated testcase for API ID: 56
+| 2026-01-14 16:18:55,085 | INFO     | __main__ | state.py:101 | Graph event (iteration 12)
+| 2026-01-14 16:18:55,085 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+| 2026-01-14 16:18:55,086 | INFO     | FileProcess | file_process.py:91 | [save_json_file] Saved JSON file outputs/new_generated_testcase.json
+| 2026-01-14 16:18:55,087 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/new_generated_testcase.json
+| 2026-01-14 16:18:55,087 | INFO     | __main__ | state.py:101 | Graph event (iteration 13)
+| 2026-01-14 16:18:55,088 | INFO     | nodes.update_step_index_node | update_step_index_node.py:23 | Processing step 4 of 8: 将创建并验证过的DDoS攻击流量模板保存下来以便后续使用
+| 2026-01-14 16:18:55,088 | INFO     | nodes.should_continue | should_continue.py:51 | Continuing: 4/8 steps processed
+| 2026-01-14 16:18:55,088 | INFO     | __main__ | state.py:101 | Graph event (iteration 14)
+| 2026-01-14 16:18:55,089 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+| 2026-01-14 16:18:55,097 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+| 2026-01-14 16:18:55,098 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+| 2026-01-14 16:18:55,098 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 298, step: 执行已经配置好的DDoS攻击测试用例
+| 2026-01-14 16:19:02,923 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:89 | Successfully generated testcase for API ID: 298
+| 2026-01-14 16:19:02,925 | INFO     | __main__ | state.py:101 | Graph event (iteration 15)
+| 2026-01-14 16:19:02,925 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+| 2026-01-14 16:19:02,926 | INFO     | FileProcess | file_process.py:91 | [save_json_file] Saved JSON file outputs/new_generated_testcase.json
+| 2026-01-14 16:19:02,927 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/new_generated_testcase.json
+| 2026-01-14 16:19:02,927 | INFO     | __main__ | state.py:101 | Graph event (iteration 16)
+| 2026-01-14 16:19:02,928 | INFO     | nodes.update_step_index_node | update_step_index_node.py:23 | Processing step 5 of 8: 执行已经配置好的DDoS攻击测试用例
+| 2026-01-14 16:19:02,928 | INFO     | nodes.should_continue | should_continue.py:51 | Continuing: 5/8 steps processed
+| 2026-01-14 16:19:02,929 | INFO     | __main__ | state.py:101 | Graph event (iteration 17)
+| 2026-01-14 16:19:02,929 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+| 2026-01-14 16:19:02,939 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+| 2026-01-14 16:19:02,939 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+| 2026-01-14 16:19:02,939 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 252, step: 查询可用于此测试用例的所有统计类别
+| 2026-01-14 16:19:13,999 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:89 | Successfully generated testcase for API ID: 252
+| 2026-01-14 16:19:14,000 | INFO     | __main__ | state.py:101 | Graph event (iteration 18)
+| 2026-01-14 16:19:14,001 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+| 2026-01-14 16:19:14,002 | INFO     | FileProcess | file_process.py:91 | [save_json_file] Saved JSON file outputs/new_generated_testcase.json
+| 2026-01-14 16:19:14,003 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/new_generated_testcase.json
+| 2026-01-14 16:19:14,003 | INFO     | __main__ | state.py:101 | Graph event (iteration 19)
+| 2026-01-14 16:19:14,004 | INFO     | nodes.update_step_index_node | update_step_index_node.py:23 | Processing step 6 of 8: 查询可用于此测试用例的所有统计类别
+| 2026-01-14 16:19:14,005 | INFO     | nodes.should_continue | should_continue.py:51 | Continuing: 6/8 steps processed
+| 2026-01-14 16:19:14,005 | INFO     | __main__ | state.py:101 | Graph event (iteration 20)
+| 2026-01-14 16:19:14,005 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+| 2026-01-14 16:19:14,014 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+| 2026-01-14 16:19:14,015 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+| 2026-01-14 16:19:14,015 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 258, step: 根据上一步获取到的统计类别ID，查询详细的统计数据
+| 2026-01-14 16:19:23,197 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:89 | Successfully generated testcase for API ID: 258
+| 2026-01-14 16:19:23,199 | INFO     | __main__ | state.py:101 | Graph event (iteration 21)
+| 2026-01-14 16:19:23,200 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+| 2026-01-14 16:19:23,202 | INFO     | FileProcess | file_process.py:91 | [save_json_file] Saved JSON file outputs/new_generated_testcase.json
+| 2026-01-14 16:19:23,202 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/new_generated_testcase.json
+| 2026-01-14 16:19:23,203 | INFO     | __main__ | state.py:101 | Graph event (iteration 22)
+| 2026-01-14 16:19:23,204 | INFO     | nodes.update_step_index_node | update_step_index_node.py:23 | Processing step 7 of 8: 根据上一步获取到的统计类别ID，查询详细的统计数据
+| 2026-01-14 16:19:23,205 | INFO     | nodes.should_continue | should_continue.py:51 | Continuing: 7/8 steps processed
+| 2026-01-14 16:19:23,205 | INFO     | __main__ | state.py:101 | Graph event (iteration 23)
+| 2026-01-14 16:19:23,206 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+| 2026-01-14 16:19:23,215 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+| 2026-01-14 16:19:23,216 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+| 2026-01-14 16:19:23,216 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 331, step: 完成所有测试步骤后，安全地登出当前会话
+| 2026-01-14 16:19:35,096 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:89 | Successfully generated testcase for API ID: 331
+| 2026-01-14 16:19:35,098 | INFO     | __main__ | state.py:101 | Graph event (iteration 24)
+| 2026-01-14 16:19:35,099 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+| 2026-01-14 16:19:35,101 | INFO     | FileProcess | file_process.py:91 | [save_json_file] Saved JSON file outputs/new_generated_testcase.json
+| 2026-01-14 16:19:35,102 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/new_generated_testcase.json
+| 2026-01-14 16:19:35,103 | INFO     | __main__ | state.py:101 | Graph event (iteration 25)
+| 2026-01-14 16:19:35,104 | INFO     | nodes.update_step_index_node | update_step_index_node.py:23 | Processing step 8 of 8: 完成所有测试步骤后，安全地登出当前会话
+| 2026-01-14 16:19:35,105 | INFO     | nodes.should_continue | should_continue.py:54 | All steps processed (8/8), ending
+| 2026-01-14 16:19:35,106 | INFO     | __main__ | state.py:101 | Graph event (iteration 26)
+| 2026-01-14 16:19:35,107 | INFO     | __main__ | state.py:108 | Graph execution completed successfully after 26 iterations
+| 2026-01-14 16:19:35,107 | INFO     | __main__ | state.py:110 | Final generated_testcase: None

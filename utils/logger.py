@@ -53,7 +53,7 @@ def _configure_logging(config=None):
             @dataclass
             class DefaultLogConfig:
                 level: str = "INFO"
-                format: str = "%(levelname)-8s | %(name)s | %(filename)s:%(lineno)d | %(message)s"
+                format: str = "| %(asctime)s | %(levelname)-8s | %(name)s | %(filename)s:%(lineno)d | %(message)s"
                 file_path: Optional[str] = "logs/app.log"
                 file_mode: str = "a"
                 max_bytes: int = 10 * 1024 * 1024

@@ -35,7 +35,7 @@ def generate_testcase_node(state: "AgentState") -> dict:
             "generated_testcase": None
         }
     
-    current_step = steps_list[current_step_index]
+    current_step = steps_list[current_step_index] # 当前步骤
     # 取第一个候选 API ID（可以根据需要修改为遍历所有）
     current_candidate_api_ids = candidate_api_ids[current_step_index]
     api_index = load_api_jsonl_index()
@@ -77,7 +77,8 @@ def generate_testcase_node(state: "AgentState") -> dict:
 
             testcase_json = generate_testcase_chain.invoke({
                 "api_json_here": api_json_here,
-                "current_step_index": current_step_index
+                "current_step_index": current_step_index,
+                "current_step": current_step
             })
             if testcase_json is None:
                 logger.error(f"Failed to generate testcase for API ID {api_id}")
