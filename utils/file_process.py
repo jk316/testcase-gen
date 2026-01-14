@@ -69,7 +69,7 @@ def load_text_file(file_path: str, strip: bool = True) -> Optional[List[str]]:
         return []
 
 
-def save_json_file(data: Any, file_path: str, indent: int = 2, ensure_ascii: bool = False) -> None:
+def save_json_file(data: Any, file_path: str, indent: int = 2, ensure_ascii: bool = False, append: bool = False) -> None:
     """
     保存 JSON 数据到文件
     
@@ -85,7 +85,7 @@ def save_json_file(data: Any, file_path: str, indent: int = 2, ensure_ascii: boo
         os.makedirs(output_dir, exist_ok=True)
     try:
         # 保存 JSON 文件
-        with open(file_path, "w", encoding="utf-8") as f:
+        with open(file_path, "a" if append else "w", encoding="utf-8") as f:
             f.write(json.dumps(data, ensure_ascii=ensure_ascii, indent=indent))
             f.write("\n")
             logger.info(f"[save_json_file] Saved JSON file {file_path}")

@@ -6,10 +6,12 @@ from schemas.state import AgentState
 from nodes import (
     load_intent_list_node,
     generate_steps_node,
-    update_index_node,
+    update_intent_index_node,
+    update_step_index_node,
     generate_testcase_node,
     write_testcase_node,
-    should_continue,
+    should_continue_intent,
+    should_continue_step,
 )
 
 load_dotenv()
@@ -24,11 +26,13 @@ builder.add_node("generate_steps", generate_steps_node)
 # builder.add_node("get_steps", get_steps_node)
 builder.add_node("generate_testcase", generate_testcase_node)
 builder.add_node("write_testcase", write_testcase_node)
-builder.add_node("loop_control", update_index_node)
-builder.add_node("should_continue", should_continue)
+builder.add_node("loop_control_intent", update_intent_index_node)
+builder.add_node("loop_control_step", update_step_index_node)
+builder.add_node("should_continue_intent", should_continue_intent)
+builder.add_node("should_continue_step", should_continue_step)
 builder.set_entry_point("load_intent_list")
 
-# 从 load_intent_list 到 generate_intent 的边
+# 从 load_intent_list 到 generate_steps 的边
 builder.add_edge("load_intent_list", "generate_steps")
 
 # 从 generate_steps 到 generate_testcase 的边
@@ -37,14 +41,14 @@ builder.add_edge("generate_steps", "generate_testcase")
 # 从 generate_testcase 到 write_testcase 的边
 builder.add_edge("generate_testcase", "write_testcase")
 
-builder.add_edge("write_testcase", "loop_control")
+builder.add_edge("write_testcase", "loop_control_step")
 
 
 
 # 从 generate_testcase 使用条件边：根据是否还有更多步骤决定继续循环或结束
 builder.add_conditional_edges(
-    "loop_control",
-    should_continue,
+    "loop_control_step",
+    should_continue_step,
     {
         "continue": "generate_testcase",  # 还有更多步骤，继续生成 testcase
         "end": END  # 所有步骤处理完毕，结束

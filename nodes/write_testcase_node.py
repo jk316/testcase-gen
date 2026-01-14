@@ -5,7 +5,7 @@
 import json
 from typing import TYPE_CHECKING
 from utils.logger import get_logger
-from utils.file_process import write_testcase_jsonl
+from utils.file_process import save_json_file
 from config import get_config
 
 if TYPE_CHECKING:
@@ -37,7 +37,7 @@ def write_testcase_node(state: "AgentState") -> dict:
     
     try:
         # 写入 testcase 到文件（追加模式）
-        write_testcase_jsonl(generated_testcase, output_path, append=True)
+        save_json_file(generated_testcase, output_path, append=True)
         logger.info(f"Successfully wrote testcase to {output_path}")
         logger.debug(f"Testcase content: {json.dumps(generated_testcase, ensure_ascii=False)[:200]}...")
     except Exception as e:

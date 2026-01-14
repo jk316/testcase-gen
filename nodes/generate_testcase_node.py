@@ -23,24 +23,24 @@ def generate_testcase_node(state: "AgentState") -> dict:
     """
     logger.info("Starting testcase generation")
     candidate_api_ids = state.get("candidate_api_ids", [])
-    intent_list = state.get("intent_list", [])
-    current_index = state.get("current_intent_index", 0)
+    steps_list = state.get("steps_list", [])
+    current_step_index = state.get("current_step_index", 0)
     
     logger.debug(f"Received candidate_api_ids: {candidate_api_ids}")
-    logger.debug(f"Received intent_list: {intent_list}")
-    logger.debug(f"Received current_index: {current_index}")
+    logger.debug(f"Received steps_list: {steps_list}")  
+    logger.debug(f"Received current_step_index: {current_step_index}")
     if not candidate_api_ids:
         logger.warning("No candidate API IDs, skipping testcase generation")
         return {
             "generated_testcase": None
         }
     
-    current_intent = intent_list[current_index]
+    current_step = steps_list[current_step_index]
     # 取第一个候选 API ID（可以根据需要修改为遍历所有）
-    current_candidate_api_ids = candidate_api_ids[current_index]
+    current_candidate_api_ids = candidate_api_ids[current_step_index]
     api_index = load_api_jsonl_index()
     for api_id in current_candidate_api_ids:
-        logger.info(f"Generating testcase for API ID: {api_id}, intent: {current_intent}")
+        logger.info(f"Generating testcase for API ID: {api_id}, step: {current_step}")
     
         try:
             # 获取 API 数据缓存
@@ -76,7 +76,8 @@ def generate_testcase_node(state: "AgentState") -> dict:
             generate_testcase_chain = create_generate_testcase_chain()
 
             testcase_json = generate_testcase_chain.invoke({
-                "API_JSON_HERE": api_json_here
+                "api_json_here": api_json_here,
+                "current_step_index": current_step_index
             })
             if testcase_json is None:
                 logger.error(f"Failed to generate testcase for API ID {api_id}")

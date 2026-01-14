@@ -12,7 +12,7 @@ class AgentState(TypedDict):
     current_intent_index: int
 
     steps_list: List[str]
-    current_steps_index: int
+    current_step_index: int
 
     # 当前候选 API ID 列表
     candidate_api_ids: List[List[str]]

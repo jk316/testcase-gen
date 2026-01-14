@@ -43,7 +43,7 @@ def create_generate_testcase_chain():
     
     Returns:
         配置好的 LangChain chain
-        - 输入：{"api_json_here": str}
+        - 输入：{"API_JSON_HERE": str, "CURRENT_STEP_INDEX": int}
         - 输出：List[Dict[str, Any]] 或 None
     """
     global _generate_testcase_chain
@@ -58,7 +58,7 @@ def create_generate_testcase_chain():
     
     # 2. 创建 PromptTemplate
     prompt_template = PromptTemplate(
-        input_variables=["API_JSON_HERE"],
+        input_variables=["API_JSON_HERE", "CURRENT_STEP_INDEX"],
         template=template_str,
         template_format="jinja2"
     )
@@ -71,10 +71,11 @@ def create_generate_testcase_chain():
     
     # 5. 组合 chain: prompt | llm | json_parser
     # 注意：需要将输入格式转换为 PromptTemplate 期望的格式
-    def format_input(api_json_here: str) -> Dict[str, str]:
+    def format_input(input_dict: Dict[str, Any]) -> Dict[str, Any]:
         """将输入格式转换为 PromptTemplate 期望的格式"""
         return {
-            "API_JSON_HERE": api_json_here
+            "API_JSON_HERE": input_dict["api_json_here"],
+            "CURRENT_STEP_INDEX": input_dict["current_step_index"]
         }
     input_formatter = RunnableLambda(format_input)
     _generate_testcase_chain = input_formatter | prompt_template | llm | json_parser

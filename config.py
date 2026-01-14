@@ -18,7 +18,7 @@ class FilePaths:
     # 输出文件
     generated_steps_file: str = "steps.json"
     api_descriptions_file: str = "outputs/api_descriptions.jsonl"
-    generated_testcases_file: str = "outputs/generated_testcases.jsonl"
+    generated_testcases_file: str = "outputs/new_generated_testcase.json"
     experience_pool_file: str = "outputs/experience_pool.jsonl"
     experience_pool_label_file: str = "outputs/experience_pool_label.jsonl"
     
@@ -57,7 +57,7 @@ class GraphConfig:
 class LogConfig:
     """日志配置"""
     level: str = "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
-    format: str = "%(asctime)s | %(levelname)-8s | %(name)s | %(filename)s:%(lineno)d | %(message)s"
+    format: str = "%(levelname)-8s | %(name)s | %(filename)s:%(lineno)d | %(message)s"
     file_path: Optional[str] = "logs/app.log"  # None 表示不输出到文件
     file_mode: str = "a"  # 'a' 追加, 'w' 覆盖
     max_bytes: int = 10 * 1024 * 1024  # 10MB

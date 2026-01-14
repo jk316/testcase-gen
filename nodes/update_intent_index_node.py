@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 logger = get_logger(__name__)
 
 
-def update_index_node(state: "AgentState") -> dict:
+def update_intent_index_node(state: "AgentState") -> dict:
     """
     处理当前 intent：从 intent_list 中取出当前索引的 intent
     """
@@ -20,17 +20,15 @@ def update_index_node(state: "AgentState") -> dict:
     
     if current_index < len(intent_list):
         current_intent = intent_list[current_index]
-        logger.info(f"Processing intent [{current_index + 1}/{len(intent_list)}]: {current_intent}")
+        logger.info(f"Processing intent {current_index  + 1} of {len(intent_list)}: {current_intent}")
         
         # 返回 delta：更新当前 intent 和索引
         return {
-            "intent": current_intent,
             "current_intent_index": current_index + 1
         }
     else:
-        logger.warning(f"No more intents to process (current_index={current_index}, total={len(intent_list)})")
+        logger.warning(f"No more intents to process (current_index={current_index + 1}, total={len(intent_list)})")
         # 即使没有更多 intent，也要更新索引，确保 should_continue 能正确判断
         return {
-            "intent": "",
             "current_intent_index": current_index  # 保持当前索引，确保 >= len(intent_list)
         }

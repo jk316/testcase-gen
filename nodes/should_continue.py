@@ -13,7 +13,7 @@ else:
 logger = get_logger(__name__)
 
 
-def should_continue(state: "AgentState") -> Literal["continue", "end"]:
+def should_continue_intent(state: "AgentState") -> Literal["continue", "end"]:
     """
     条件函数：判断是否还有更多 intent 需要处理
     
@@ -32,4 +32,24 @@ def should_continue(state: "AgentState") -> Literal["continue", "end"]:
         return "continue"
     else:
         logger.info(f"All intents processed ({current_index}/{len(intent_list)}), ending")
+        return "end"
+
+
+def should_continue_step(state: "AgentState") -> Literal["continue", "end"]:
+    """
+    条件函数：判断是否还有更多 step 需要处理
+    
+    Returns:
+        "continue": 还有更多步骤，继续循环
+        "end": 所有步骤处理完毕，结束
+    """
+    steps_list = state.get("steps_list", [])
+    current_index = state.get("current_step_index", 0)
+    
+    logger.debug(f"Checking continuation: current_index={current_index}, steps_list_length={len(steps_list)}")
+    if current_index < len(steps_list):
+        logger.info(f"Continuing: {current_index}/{len(steps_list)} steps processed")
+        return "continue"
+    else:
+        logger.info(f"All steps processed ({current_index}/{len(steps_list)}), ending")
         return "end"
