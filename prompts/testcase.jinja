@@ -12,6 +12,7 @@
 
 <TESTCASE_EXAMPLE>
 {
+  "step": 0,
   "description": "Login WITH signature",
   "guidance": "Call /v1/cl/user/login with signature, which should be calculated with password and something else",
   "input": [
@@ -52,12 +53,15 @@
 {{ API_JSON_HERE }}
 </API_SPEC>
 
+{{CURRENT_STEP_INDEX}}
+
 ########################
 ### 生成规则（非常重要） ###
 ########################
 
 1. **只输出一个 JSON 对象**，不要输出 Markdown、注释或任何额外说明文字。
 2. 输出的 JSON 必须包含以下顶层字段：
+   - step
    - description
    - guidance
    - input
@@ -72,10 +76,11 @@
      - 关键使用约束（如时间戳有效期、鉴权依赖、前置条件等）
 5. `input`：
    - 来源于 API 的参数（query / path / body）
-   - 每一项必须包含：
+   - 每一项包含以下字段：
      - name
-     - type, 如果参数包含schema字段, type 为object
+     - type, 如果参数包含schema字段, type 为 object
      - description
+     - schema(如果包含)
    - 如果参数中包含schema字段，则包含$ref对应的定义
    - 使用**逻辑清晰、便于测试的变量名**（如 SESSION_ID、TIMESTAMP）
 6. `output`：
@@ -89,6 +94,8 @@
    - 抽象层级
    - 命名习惯
 8. 不要虚构 API 规范中不存在的参数或返回字段。
+9. `step`
+  - step的值必须与CURRENT_STEP_INDEX的值保持一致
 
 ####################
 ### 最终输出 ###

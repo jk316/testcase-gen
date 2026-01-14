@@ -15,7 +15,7 @@ load_dotenv()
 
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
+    format="%(levelname)-8s | %(name)s | %(message)s",
     handlers=[
         logging.StreamHandler(),                    # 控制台
         logging.FileHandler("logs/app.log",  mode="a", encoding="utf-8"),  # 文件
