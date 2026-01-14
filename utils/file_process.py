@@ -1,18 +1,24 @@
 import json
 import os
 from typing import Any, Dict, Optional, List
-
+from utils.logger import get_logger
+logger = get_logger("FileProcess")
 
 def load_jinja_template(path: str) -> str:
     with open(path, "r", encoding="utf-8") as f:
         return f.read()
 
-def load_api_jsonl(path):
-    apis = []
-    with open(path, "r", encoding="utf-8") as f:
-        for line in f:
-            apis.append(json.loads(line))
-    return apis
+def load_jsonl(path) -> List[Dict[str, Any]]:
+    file_data = []
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            for line in f:
+                file_data.append(json.loads(line))
+        logger.info(f"[load_jsonl] Loaded {len(file_data)} items from {path}")
+        return file_data
+    except Exception as e:
+        logger.error(f"[load_jsonl] Error loading JSONL file {path}: {e}")
+        return []
 
 def write_testcase_jsonl(testcase: Optional[Dict[str, Any]], output_path: str, append: bool = True):
     """
@@ -31,12 +37,15 @@ def write_testcase_jsonl(testcase: Optional[Dict[str, Any]], output_path: str, a
     if output_dir and not os.path.exists(output_dir):
         os.makedirs(output_dir, exist_ok=True)
     
-    # 写入文件
-    mode = "a" if append else "w"
-    with open(output_path, mode, encoding="utf-8") as f:
-        json_str = json.dumps(testcase, ensure_ascii=False)
-        f.write(json_str)
-        f.write("\n")
+    try:
+        mode = "a" if append else "w"
+        with open(output_path, mode, encoding="utf-8") as f:
+            json_str = json.dumps(testcase, ensure_ascii=False)
+            f.write(json_str)
+            f.write("\n")
+            logger.info(f"[write_testcase_jsonl] Wrote testcase to JSONL file {output_path}")
+    except Exception as e:
+        logger.error(f"[write_testcase_jsonl] Error writing JSONL file {output_path}: {e}")
 
 
 def load_text_file(file_path: str, strip: bool = True) -> Optional[List[str]]:
@@ -56,6 +65,7 @@ def load_text_file(file_path: str, strip: bool = True) -> Optional[List[str]]:
             content = [line.strip() if strip else line for line in lines]
             return content
     else:
+        logger.error(f"[load_text_file] File {file_path} not found")
         return []
 
 
@@ -73,7 +83,11 @@ def save_json_file(data: Any, file_path: str, indent: int = 2, ensure_ascii: boo
     output_dir = os.path.dirname(file_path)
     if output_dir and not os.path.exists(output_dir):
         os.makedirs(output_dir, exist_ok=True)
-    
-    # 保存 JSON 文件
-    with open(file_path, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=ensure_ascii, indent=indent)
+    try:
+        # 保存 JSON 文件
+        with open(file_path, "w", encoding="utf-8") as f:
+            f.write(json.dumps(data, ensure_ascii=ensure_ascii, indent=indent))
+            f.write("\n")
+            logger.info(f"[save_json_file] Saved JSON file {file_path}")
+    except Exception as e:
+        logger.error(f"[save_json_file] Error saving JSON file {file_path}: {e}")

@@ -964,3 +964,443 @@
 2025-12-31 16:26:43,750 | INFO | ApiIntent | Appended experience record to pool, id=59e76b20
 2025-12-31 16:26:43,750 | INFO | Main | Found 3 results for query: 释放端口
 2025-12-31 16:26:43,752 | INFO | Main | 结果已保存到: outputs/intent_search_results.jsonl
+2026-01-14 00:38:25,893 | INFO     | test.module1 | test_logger.py:26 | This is an INFO message
+2026-01-14 00:38:25,894 | WARNING  | test.module1 | test_logger.py:27 | This is a WARNING message
+2026-01-14 00:38:25,894 | ERROR    | test.module1 | test_logger.py:28 | This is an ERROR message
+2026-01-14 00:38:25,894 | INFO     | __main__ | test_logger.py:36 | Testing logger with __name__
+2026-01-14 00:38:25,894 | INFO     | test.module1 | test_logger.py:44 | Processing started
+2026-01-14 00:38:25,894 | INFO     | test.module1 | test_logger.py:45 | Processing completed
+2026-01-14 00:38:25,894 | ERROR    | test.module1 | test_logger.py:55 | Caught exception
+Traceback (most recent call last):
+  File "F:\Code\testcase-gen\test_logger.py", line 53, in test_logger
+    raise ValueError("Test exception")
+ValueError: Test exception
+2026-01-14 00:42:56,652 | INFO     | __main__ | state.py:59 | ============================================================
+2026-01-14 00:42:56,653 | INFO     | __main__ | state.py:60 | Graph Structure:
+2026-01-14 00:42:56,653 | INFO     | __main__ | state.py:61 | ============================================================
+2026-01-14 00:42:56,653 | INFO     | __main__ | state.py:65 | Nodes: ['__start__', 'load_intent_list', 'generate_intent', 'generate_testcase', 'write_testcase', 'loop_control', 'should_continue']
+2026-01-14 00:42:56,653 | INFO     | __main__ | state.py:72 | ============================================================
+2026-01-14 00:42:56,653 | INFO     | __main__ | state.py:85 | Invoking graph with initial state
+2026-01-14 00:42:56,653 | INFO     | __main__ | state.py:89 | Starting graph execution
+2026-01-14 00:42:56,654 | INFO     | nodes.load_intent_list_node | load_intent_list_node.py:27 | Starting intent list loading
+2026-01-14 00:42:56,654 | INFO     | nodes.load_intent_list_node | load_intent_list_node.py:33 | Loaded intent list from intent.txt
+2026-01-14 00:42:56,655 | INFO     | __main__ | state.py:97 | Graph event (iteration 1)
+2026-01-14 00:42:56,655 | INFO     | nodes.generate_intent_node | generate_intent_node.py:78 | Starting intent generation
+2026-01-14 00:42:56,656 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 503 items from outputs/api_descriptions.jsonl
+2026-01-14 00:42:56,656 | INFO     | nodes.shared | shared.py:110 | [_load_api_capabilities] Loaded 503 API capabilities
+2026-01-14 00:42:56,656 | INFO     | nodes.generate_intent_node | generate_intent_node.py:105 | Calling LLM to generate test steps plan
+2026-01-14 00:42:56,656 | INFO     | GenerateIntentChain | generate_intent_chain.py:54 | [create_generate_intent_chain] Creating generate intent chain
+2026-01-14 00:42:56,657 | INFO     | nodes.shared | shared.py:151 | Initializing LLM...
+2026-01-14 00:42:57,186 | INFO     | nodes.shared | shared.py:153 | LLM initialized successfully
+2026-01-14 00:42:57,186 | INFO     | GenerateIntentChain | generate_intent_chain.py:84 | [create_generate_intent_chain] Chain created successfully
+2026-01-14 00:43:29,477 | INFO     | nodes.generate_intent_node | generate_intent_node.py:123 | Successfully parsed 9 test steps
+2026-01-14 00:43:29,478 | INFO     | FileProcess | file_process.py:91 | [save_json_file] Saved JSON file intent.json
+2026-01-14 00:43:29,478 | INFO     | nodes.generate_intent_node | generate_intent_node.py:139 | Extracted 9 intents from generated steps
+2026-01-14 00:43:29,479 | INFO     | __main__ | state.py:97 | Graph event (iteration 2)
+2026-01-14 00:43:29,479 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+2026-01-14 00:43:29,488 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+2026-01-14 00:43:29,489 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+2026-01-14 00:43:29,489 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 330, intent: 使用测试用户登录系统以获取后续操作权限
+2026-01-14 00:43:29,489 | INFO     | GenerateTestcaseChain | generate_testcase_chain.py:54 | [create_generate_testcase_chain] Creating generate testcase chain
+2026-01-14 00:43:29,490 | INFO     | GenerateTestcaseChain | generate_testcase_chain.py:81 | [create_generate_testcase_chain] Chain created successfully
+2026-01-14 00:43:37,490 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:87 | Successfully generated testcase for API ID: 330
+2026-01-14 00:43:37,491 | INFO     | __main__ | state.py:97 | Graph event (iteration 3)
+2026-01-14 00:43:37,491 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+2026-01-14 00:43:37,491 | INFO     | FileProcess | file_process.py:46 | [write_testcase_jsonl] Wrote testcase to JSONL file outputs/generated_testcases.jsonl
+2026-01-14 00:43:37,492 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/generated_testcases.jsonl
+2026-01-14 00:43:37,492 | INFO     | __main__ | state.py:97 | Graph event (iteration 4)
+2026-01-14 00:43:37,492 | INFO     | nodes.update_index_node | update_index_node.py:23 | Processing intent [1/9]: 使用测试用户登录系统以获取后续操作权限
+2026-01-14 00:43:37,493 | INFO     | nodes.should_continue | should_continue.py:31 | Continuing: 1/9 intents processed
+2026-01-14 00:43:37,493 | INFO     | __main__ | state.py:97 | Graph event (iteration 5)
+2026-01-14 00:43:37,493 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+2026-01-14 00:43:37,500 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+2026-01-14 00:43:37,500 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+2026-01-14 00:43:37,500 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 66, intent: 检查是否存在适用于UDP flood攻击的已有配置，以便进行复用或修改
+2026-01-14 00:43:46,840 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:87 | Successfully generated testcase for API ID: 66
+2026-01-14 00:43:46,842 | INFO     | __main__ | state.py:97 | Graph event (iteration 6)
+2026-01-14 00:43:46,842 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+2026-01-14 00:43:46,842 | INFO     | FileProcess | file_process.py:46 | [write_testcase_jsonl] Wrote testcase to JSONL file outputs/generated_testcases.jsonl
+2026-01-14 00:43:46,842 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/generated_testcases.jsonl
+2026-01-14 00:43:46,843 | INFO     | __main__ | state.py:97 | Graph event (iteration 7)
+2026-01-14 00:43:46,843 | INFO     | nodes.update_index_node | update_index_node.py:23 | Processing intent [2/9]: 检查是否存在适用于UDP flood攻击的已有配置，以便进行复用或修改
+2026-01-14 00:43:46,843 | INFO     | nodes.should_continue | should_continue.py:31 | Continuing: 2/9 intents processed
+2026-01-14 00:43:46,843 | INFO     | __main__ | state.py:97 | Graph event (iteration 8)
+2026-01-14 00:43:46,843 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+2026-01-14 00:43:46,852 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+2026-01-14 00:43:46,853 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+2026-01-14 00:43:46,853 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 63, intent: 根据测试意图设置针对UDP flood攻击的具体参数，如流量峰值、目标IP等
+2026-01-14 00:43:56,481 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:87 | Successfully generated testcase for API ID: 63
+2026-01-14 00:43:56,482 | INFO     | __main__ | state.py:97 | Graph event (iteration 9)
+2026-01-14 00:43:56,482 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+2026-01-14 00:43:56,482 | INFO     | FileProcess | file_process.py:46 | [write_testcase_jsonl] Wrote testcase to JSONL file outputs/generated_testcases.jsonl
+2026-01-14 00:43:56,483 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/generated_testcases.jsonl
+2026-01-14 00:43:56,483 | INFO     | __main__ | state.py:97 | Graph event (iteration 10)
+2026-01-14 00:43:56,483 | INFO     | nodes.update_index_node | update_index_node.py:23 | Processing intent [3/9]: 根据测试意图设置针对UDP flood攻击的具体参数，如流量峰值、目标IP等
+2026-01-14 00:43:56,483 | INFO     | nodes.should_continue | should_continue.py:31 | Continuing: 3/9 intents processed
+2026-01-14 00:43:56,483 | INFO     | __main__ | state.py:97 | Graph event (iteration 11)
+2026-01-14 00:43:56,484 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+2026-01-14 00:43:56,491 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+2026-01-14 00:43:56,491 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+2026-01-14 00:43:56,491 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 70, intent: 将当前配置保存为新的模板，方便后续直接调用
+2026-01-14 00:44:06,441 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:87 | Successfully generated testcase for API ID: 70
+2026-01-14 00:44:06,443 | INFO     | __main__ | state.py:97 | Graph event (iteration 12)
+2026-01-14 00:44:06,444 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+2026-01-14 00:44:06,445 | INFO     | FileProcess | file_process.py:46 | [write_testcase_jsonl] Wrote testcase to JSONL file outputs/generated_testcases.jsonl
+2026-01-14 00:44:06,445 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/generated_testcases.jsonl
+2026-01-14 00:44:06,446 | INFO     | __main__ | state.py:97 | Graph event (iteration 13)
+2026-01-14 00:44:06,446 | INFO     | nodes.update_index_node | update_index_node.py:23 | Processing intent [4/9]: 将当前配置保存为新的模板，方便后续直接调用
+2026-01-14 00:44:06,447 | INFO     | nodes.should_continue | should_continue.py:31 | Continuing: 4/9 intents processed
+2026-01-14 00:44:06,447 | INFO     | __main__ | state.py:97 | Graph event (iteration 14)
+2026-01-14 00:44:06,448 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+2026-01-14 00:44:06,456 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+2026-01-14 00:44:06,460 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+2026-01-14 00:44:06,466 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 31, intent: 开始一个数据包捕获过程来记录攻击期间的所有网络活动
+2026-01-14 00:44:20,286 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:87 | Successfully generated testcase for API ID: 31
+2026-01-14 00:44:20,288 | INFO     | __main__ | state.py:97 | Graph event (iteration 15)
+2026-01-14 00:44:20,289 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+2026-01-14 00:44:20,290 | INFO     | FileProcess | file_process.py:46 | [write_testcase_jsonl] Wrote testcase to JSONL file outputs/generated_testcases.jsonl
+2026-01-14 00:44:20,291 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/generated_testcases.jsonl
+2026-01-14 00:44:20,292 | INFO     | __main__ | state.py:97 | Graph event (iteration 16)
+2026-01-14 00:44:20,293 | INFO     | nodes.update_index_node | update_index_node.py:23 | Processing intent [5/9]: 开始一个数据包捕获过程来记录攻击期间的所有网络活动
+2026-01-14 00:44:20,293 | INFO     | nodes.should_continue | should_continue.py:31 | Continuing: 5/9 intents processed
+2026-01-14 00:44:20,294 | INFO     | __main__ | state.py:97 | Graph event (iteration 17)
+2026-01-14 00:44:20,295 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+2026-01-14 00:44:20,304 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+2026-01-14 00:44:20,305 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+2026-01-14 00:44:20,305 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 298, intent: 运行之前配置好的DDoS攻击场景，模拟UDP flood攻击
+2026-01-14 00:44:29,312 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:87 | Successfully generated testcase for API ID: 298
+2026-01-14 00:44:29,313 | INFO     | __main__ | state.py:97 | Graph event (iteration 18)
+2026-01-14 00:44:29,313 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+2026-01-14 00:44:29,313 | INFO     | FileProcess | file_process.py:46 | [write_testcase_jsonl] Wrote testcase to JSONL file outputs/generated_testcases.jsonl
+2026-01-14 00:44:29,313 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/generated_testcases.jsonl
+2026-01-14 00:44:29,314 | INFO     | __main__ | state.py:97 | Graph event (iteration 19)
+2026-01-14 00:44:29,314 | INFO     | nodes.update_index_node | update_index_node.py:23 | Processing intent [6/9]: 运行之前配置好的DDoS攻击场景，模拟UDP flood攻击
+2026-01-14 00:44:29,314 | INFO     | nodes.should_continue | should_continue.py:31 | Continuing: 6/9 intents processed
+2026-01-14 00:44:29,314 | INFO     | __main__ | state.py:97 | Graph event (iteration 20)
+2026-01-14 00:44:29,314 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+2026-01-14 00:44:29,321 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+2026-01-14 00:44:29,321 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+2026-01-14 00:44:29,322 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 33, intent: 在完成预定时长（60秒）的攻击后，停止捕获网络数据
+2026-01-14 00:44:42,817 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:87 | Successfully generated testcase for API ID: 33
+2026-01-14 00:44:42,820 | INFO     | __main__ | state.py:97 | Graph event (iteration 21)
+2026-01-14 00:44:42,821 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+2026-01-14 00:44:42,821 | INFO     | FileProcess | file_process.py:46 | [write_testcase_jsonl] Wrote testcase to JSONL file outputs/generated_testcases.jsonl
+2026-01-14 00:44:42,821 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/generated_testcases.jsonl
+2026-01-14 00:44:42,822 | INFO     | __main__ | state.py:97 | Graph event (iteration 22)
+2026-01-14 00:44:42,822 | INFO     | nodes.update_index_node | update_index_node.py:23 | Processing intent [7/9]: 在完成预定时长（60秒）的攻击后，停止捕获网络数据
+2026-01-14 00:44:42,822 | INFO     | nodes.should_continue | should_continue.py:31 | Continuing: 7/9 intents processed
+2026-01-14 00:44:42,823 | INFO     | __main__ | state.py:97 | Graph event (iteration 23)
+2026-01-14 00:44:42,823 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+2026-01-14 00:44:42,831 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+2026-01-14 00:44:42,831 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+2026-01-14 00:44:42,831 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 25, intent: 将捕获到的数据包文件下载下来，并进行解析分析，评估攻击效果
+2026-01-14 00:44:52,772 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:87 | Successfully generated testcase for API ID: 25
+2026-01-14 00:44:52,772 | INFO     | __main__ | state.py:97 | Graph event (iteration 24)
+2026-01-14 00:44:52,773 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+2026-01-14 00:44:52,773 | INFO     | FileProcess | file_process.py:46 | [write_testcase_jsonl] Wrote testcase to JSONL file outputs/generated_testcases.jsonl
+2026-01-14 00:44:52,773 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/generated_testcases.jsonl
+2026-01-14 00:44:52,774 | INFO     | __main__ | state.py:97 | Graph event (iteration 25)
+2026-01-14 00:44:52,774 | INFO     | nodes.update_index_node | update_index_node.py:23 | Processing intent [8/9]: 将捕获到的数据包文件下载下来，并进行解析分析，评估攻击效果
+2026-01-14 00:44:52,774 | INFO     | nodes.should_continue | should_continue.py:31 | Continuing: 8/9 intents processed
+2026-01-14 00:44:52,774 | INFO     | __main__ | state.py:97 | Graph event (iteration 26)
+2026-01-14 00:44:52,774 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+2026-01-14 00:44:52,782 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+2026-01-14 00:44:52,783 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+2026-01-14 00:44:52,783 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 331, intent: 完成所有测试活动后，安全地退出用户会话
+2026-01-14 00:44:58,250 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:87 | Successfully generated testcase for API ID: 331
+2026-01-14 00:44:58,251 | INFO     | __main__ | state.py:97 | Graph event (iteration 27)
+2026-01-14 00:44:58,252 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+2026-01-14 00:44:58,253 | INFO     | FileProcess | file_process.py:46 | [write_testcase_jsonl] Wrote testcase to JSONL file outputs/generated_testcases.jsonl
+2026-01-14 00:44:58,253 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/generated_testcases.jsonl
+2026-01-14 00:44:58,254 | INFO     | __main__ | state.py:97 | Graph event (iteration 28)
+2026-01-14 00:44:58,254 | INFO     | nodes.update_index_node | update_index_node.py:23 | Processing intent [9/9]: 完成所有测试活动后，安全地退出用户会话
+2026-01-14 00:44:58,254 | INFO     | nodes.should_continue | should_continue.py:34 | All intents processed (9/9), ending
+2026-01-14 00:44:58,254 | INFO     | __main__ | state.py:97 | Graph event (iteration 29)
+2026-01-14 00:44:58,254 | INFO     | __main__ | state.py:104 | Graph execution completed successfully after 29 iterations
+2026-01-14 00:44:58,254 | INFO     | __main__ | state.py:106 | Final generated_testcase: None
+2026-01-14 00:48:09,605 | INFO     | __main__ | state.py:59 | ============================================================
+2026-01-14 00:48:09,605 | INFO     | __main__ | state.py:60 | Graph Structure:
+2026-01-14 00:48:09,605 | INFO     | __main__ | state.py:61 | ============================================================
+2026-01-14 00:48:09,606 | INFO     | __main__ | state.py:65 | Nodes: ['__start__', 'load_intent_list', 'generate_intent', 'generate_testcase', 'write_testcase', 'loop_control', 'should_continue']
+2026-01-14 00:48:09,606 | INFO     | __main__ | state.py:72 | ============================================================
+2026-01-14 00:48:09,606 | INFO     | __main__ | state.py:85 | Invoking graph with initial state
+2026-01-14 00:48:09,606 | INFO     | __main__ | state.py:89 | Starting graph execution
+2026-01-14 00:48:09,607 | INFO     | nodes.load_intent_list_node | load_intent_list_node.py:27 | Starting intent list loading
+2026-01-14 00:48:09,607 | INFO     | nodes.load_intent_list_node | load_intent_list_node.py:33 | Loaded intent list from intent.txt
+2026-01-14 00:48:09,607 | INFO     | __main__ | state.py:97 | Graph event (iteration 1)
+2026-01-14 00:48:09,607 | INFO     | nodes.generate_intent_node | generate_intent_node.py:78 | Starting intent generation
+2026-01-14 00:48:09,608 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 503 items from outputs/api_descriptions.jsonl
+2026-01-14 00:48:09,609 | INFO     | nodes.shared | shared.py:110 | [_load_api_capabilities] Loaded 503 API capabilities
+2026-01-14 00:48:09,609 | INFO     | nodes.generate_intent_node | generate_intent_node.py:105 | Calling LLM to generate test steps plan
+2026-01-14 00:48:09,609 | INFO     | GenerateIntentChain | generate_intent_chain.py:54 | [create_generate_intent_chain] Creating generate intent chain
+2026-01-14 00:48:09,610 | INFO     | nodes.shared | shared.py:151 | Initializing LLM...
+2026-01-14 00:48:10,106 | INFO     | nodes.shared | shared.py:153 | LLM initialized successfully
+2026-01-14 00:48:10,107 | INFO     | GenerateIntentChain | generate_intent_chain.py:84 | [create_generate_intent_chain] Chain created successfully
+2026-01-14 00:48:39,657 | INFO     | nodes.generate_intent_node | generate_intent_node.py:123 | Successfully parsed 8 test steps
+2026-01-14 00:48:39,659 | INFO     | FileProcess | file_process.py:91 | [save_json_file] Saved JSON file intent.json
+2026-01-14 00:48:39,660 | INFO     | nodes.generate_intent_node | generate_intent_node.py:139 | Extracted 8 intents from generated steps
+2026-01-14 00:48:39,661 | INFO     | __main__ | state.py:97 | Graph event (iteration 2)
+2026-01-14 00:48:39,661 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+2026-01-14 00:48:39,671 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+2026-01-14 00:48:39,672 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+2026-01-14 00:48:39,672 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 330, intent: 使用测试用户登录系统以获取后续操作权限
+2026-01-14 00:48:39,672 | INFO     | GenerateTestcaseChain | generate_testcase_chain.py:54 | [create_generate_testcase_chain] Creating generate testcase chain
+2026-01-14 00:48:39,673 | INFO     | GenerateTestcaseChain | generate_testcase_chain.py:81 | [create_generate_testcase_chain] Chain created successfully
+2026-01-14 00:48:51,394 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:87 | Successfully generated testcase for API ID: 330
+2026-01-14 00:48:51,396 | INFO     | __main__ | state.py:97 | Graph event (iteration 3)
+2026-01-14 00:48:51,396 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+2026-01-14 00:48:51,397 | INFO     | FileProcess | file_process.py:46 | [write_testcase_jsonl] Wrote testcase to JSONL file outputs/generated_testcases.jsonl
+2026-01-14 00:48:51,397 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/generated_testcases.jsonl
+2026-01-14 00:48:51,397 | INFO     | __main__ | state.py:97 | Graph event (iteration 4)
+2026-01-14 00:48:51,397 | INFO     | nodes.update_index_node | update_index_node.py:23 | Processing intent [1/8]: 使用测试用户登录系统以获取后续操作权限
+2026-01-14 00:48:51,398 | INFO     | nodes.should_continue | should_continue.py:31 | Continuing: 1/8 intents processed
+2026-01-14 00:48:51,398 | INFO     | __main__ | state.py:97 | Graph event (iteration 5)
+2026-01-14 00:48:51,398 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+2026-01-14 00:48:51,405 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+2026-01-14 00:48:51,406 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+2026-01-14 00:48:51,406 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 50, intent: 根据测试需求，创建一个用于UDP flood攻击的流量模板
+2026-01-14 00:49:00,345 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:87 | Successfully generated testcase for API ID: 50
+2026-01-14 00:49:00,346 | INFO     | __main__ | state.py:97 | Graph event (iteration 6)
+2026-01-14 00:49:00,347 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+2026-01-14 00:49:00,348 | INFO     | FileProcess | file_process.py:46 | [write_testcase_jsonl] Wrote testcase to JSONL file outputs/generated_testcases.jsonl
+2026-01-14 00:49:00,348 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/generated_testcases.jsonl
+2026-01-14 00:49:00,349 | INFO     | __main__ | state.py:97 | Graph event (iteration 7)
+2026-01-14 00:49:00,349 | INFO     | nodes.update_index_node | update_index_node.py:23 | Processing intent [2/8]: 根据测试需求，创建一个用于UDP flood攻击的流量模板
+2026-01-14 00:49:00,350 | INFO     | nodes.should_continue | should_continue.py:31 | Continuing: 2/8 intents processed
+2026-01-14 00:49:00,350 | INFO     | __main__ | state.py:97 | Graph event (iteration 8)
+2026-01-14 00:49:00,350 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+2026-01-14 00:49:00,359 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+2026-01-14 00:49:00,360 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+2026-01-14 00:49:00,360 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 55, intent: 设置流量峰值为500Mbps，持续时间为60秒，目标IP为11.0.0.1/24
+2026-01-14 00:49:13,375 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:87 | Successfully generated testcase for API ID: 55
+2026-01-14 00:49:13,378 | INFO     | __main__ | state.py:97 | Graph event (iteration 9)
+2026-01-14 00:49:13,379 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+2026-01-14 00:49:13,380 | INFO     | FileProcess | file_process.py:46 | [write_testcase_jsonl] Wrote testcase to JSONL file outputs/generated_testcases.jsonl
+2026-01-14 00:49:13,380 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/generated_testcases.jsonl
+2026-01-14 00:49:13,381 | INFO     | __main__ | state.py:97 | Graph event (iteration 10)
+2026-01-14 00:49:13,381 | INFO     | nodes.update_index_node | update_index_node.py:23 | Processing intent [3/8]: 设置流量峰值为500Mbps，持续时间为60秒，目标IP为11.0.0.1/24
+2026-01-14 00:49:13,381 | INFO     | nodes.should_continue | should_continue.py:31 | Continuing: 3/8 intents processed
+2026-01-14 00:49:13,382 | INFO     | __main__ | state.py:97 | Graph event (iteration 11)
+2026-01-14 00:49:13,382 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+2026-01-14 00:49:13,389 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+2026-01-14 00:49:13,390 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+2026-01-14 00:49:13,390 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 56, intent: 将配置好的DDoS攻击流量模板进行保存
+2026-01-14 00:49:24,580 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:87 | Successfully generated testcase for API ID: 56
+2026-01-14 00:49:24,581 | INFO     | __main__ | state.py:97 | Graph event (iteration 12)
+2026-01-14 00:49:24,582 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+2026-01-14 00:49:24,583 | INFO     | FileProcess | file_process.py:46 | [write_testcase_jsonl] Wrote testcase to JSONL file outputs/generated_testcases.jsonl
+2026-01-14 00:49:24,584 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/generated_testcases.jsonl
+2026-01-14 00:49:24,584 | INFO     | __main__ | state.py:97 | Graph event (iteration 13)
+2026-01-14 00:49:24,585 | INFO     | nodes.update_index_node | update_index_node.py:23 | Processing intent [4/8]: 将配置好的DDoS攻击流量模板进行保存
+2026-01-14 00:49:24,585 | INFO     | nodes.should_continue | should_continue.py:31 | Continuing: 4/8 intents processed
+2026-01-14 00:49:24,585 | INFO     | __main__ | state.py:97 | Graph event (iteration 14)
+2026-01-14 00:49:24,585 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+2026-01-14 00:49:24,594 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+2026-01-14 00:49:24,594 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+2026-01-14 00:49:24,595 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 298, intent: 启动基于上述DDoS攻击流量模板的测试用例
+2026-01-14 00:49:31,556 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:87 | Successfully generated testcase for API ID: 298
+2026-01-14 00:49:31,557 | INFO     | __main__ | state.py:97 | Graph event (iteration 15)
+2026-01-14 00:49:31,557 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+2026-01-14 00:49:31,558 | INFO     | FileProcess | file_process.py:46 | [write_testcase_jsonl] Wrote testcase to JSONL file outputs/generated_testcases.jsonl
+2026-01-14 00:49:31,558 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/generated_testcases.jsonl
+2026-01-14 00:49:31,559 | INFO     | __main__ | state.py:97 | Graph event (iteration 16)
+2026-01-14 00:49:31,559 | INFO     | nodes.update_index_node | update_index_node.py:23 | Processing intent [5/8]: 启动基于上述DDoS攻击流量模板的测试用例
+2026-01-14 00:49:31,560 | INFO     | nodes.should_continue | should_continue.py:31 | Continuing: 5/8 intents processed
+2026-01-14 00:49:31,560 | INFO     | __main__ | state.py:97 | Graph event (iteration 17)
+2026-01-14 00:49:31,560 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+2026-01-14 00:49:31,568 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+2026-01-14 00:49:31,568 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+2026-01-14 00:49:31,568 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 252, intent: 查询可用的统计数据类型，以便后续分析
+2026-01-14 00:49:42,283 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:87 | Successfully generated testcase for API ID: 252
+2026-01-14 00:49:42,284 | INFO     | __main__ | state.py:97 | Graph event (iteration 18)
+2026-01-14 00:49:42,284 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+2026-01-14 00:49:42,285 | INFO     | FileProcess | file_process.py:46 | [write_testcase_jsonl] Wrote testcase to JSONL file outputs/generated_testcases.jsonl
+2026-01-14 00:49:42,285 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/generated_testcases.jsonl
+2026-01-14 00:49:42,285 | INFO     | __main__ | state.py:97 | Graph event (iteration 19)
+2026-01-14 00:49:42,285 | INFO     | nodes.update_index_node | update_index_node.py:23 | Processing intent [6/8]: 查询可用的统计数据类型，以便后续分析
+2026-01-14 00:49:42,286 | INFO     | nodes.should_continue | should_continue.py:31 | Continuing: 6/8 intents processed
+2026-01-14 00:49:42,286 | INFO     | __main__ | state.py:97 | Graph event (iteration 20)
+2026-01-14 00:49:42,286 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+2026-01-14 00:49:42,293 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+2026-01-14 00:49:42,293 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+2026-01-14 00:49:42,293 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 258, intent: 收集并分析与本次DDoS攻击相关的性能数据
+2026-01-14 00:49:49,801 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:87 | Successfully generated testcase for API ID: 258
+2026-01-14 00:49:49,801 | INFO     | __main__ | state.py:97 | Graph event (iteration 21)
+2026-01-14 00:49:49,802 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+2026-01-14 00:49:49,802 | INFO     | FileProcess | file_process.py:46 | [write_testcase_jsonl] Wrote testcase to JSONL file outputs/generated_testcases.jsonl
+2026-01-14 00:49:49,802 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/generated_testcases.jsonl
+2026-01-14 00:49:49,802 | INFO     | __main__ | state.py:97 | Graph event (iteration 22)
+2026-01-14 00:49:49,803 | INFO     | nodes.update_index_node | update_index_node.py:23 | Processing intent [7/8]: 收集并分析与本次DDoS攻击相关的性能数据
+2026-01-14 00:49:49,803 | INFO     | nodes.should_continue | should_continue.py:31 | Continuing: 7/8 intents processed
+2026-01-14 00:49:49,803 | INFO     | __main__ | state.py:97 | Graph event (iteration 23)
+2026-01-14 00:49:49,803 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+2026-01-14 00:49:49,810 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+2026-01-14 00:49:49,810 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+2026-01-14 00:49:49,810 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 331, intent: 完成所有测试后安全地登出系统
+2026-01-14 00:49:56,073 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:87 | Successfully generated testcase for API ID: 331
+2026-01-14 00:49:56,074 | INFO     | __main__ | state.py:97 | Graph event (iteration 24)
+2026-01-14 00:49:56,074 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+2026-01-14 00:49:56,075 | INFO     | FileProcess | file_process.py:46 | [write_testcase_jsonl] Wrote testcase to JSONL file outputs/generated_testcases.jsonl
+2026-01-14 00:49:56,075 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/generated_testcases.jsonl
+2026-01-14 00:49:56,076 | INFO     | __main__ | state.py:97 | Graph event (iteration 25)
+2026-01-14 00:49:56,076 | INFO     | nodes.update_index_node | update_index_node.py:23 | Processing intent [8/8]: 完成所有测试后安全地登出系统
+2026-01-14 00:49:56,076 | INFO     | nodes.should_continue | should_continue.py:34 | All intents processed (8/8), ending
+2026-01-14 00:49:56,076 | INFO     | __main__ | state.py:97 | Graph event (iteration 26)
+2026-01-14 00:49:56,077 | INFO     | __main__ | state.py:104 | Graph execution completed successfully after 26 iterations
+2026-01-14 00:49:56,077 | INFO     | __main__ | state.py:106 | Final generated_testcase: None
+2026-01-14 01:12:01,006 | INFO     | __main__ | state.py:59 | ============================================================
+2026-01-14 01:12:01,006 | INFO     | __main__ | state.py:60 | Graph Structure:
+2026-01-14 01:12:01,006 | INFO     | __main__ | state.py:61 | ============================================================
+2026-01-14 01:12:01,007 | INFO     | __main__ | state.py:65 | Nodes: ['__start__', 'load_intent_list', 'generate_steps', 'generate_testcase', 'write_testcase', 'loop_control', 'should_continue']
+2026-01-14 01:12:01,007 | INFO     | __main__ | state.py:72 | ============================================================
+2026-01-14 01:12:01,007 | INFO     | __main__ | state.py:85 | Invoking graph with initial state
+2026-01-14 01:12:01,007 | INFO     | __main__ | state.py:89 | Starting graph execution
+2026-01-14 01:12:01,008 | INFO     | nodes.load_intent_list_node | load_intent_list_node.py:27 | Starting intent list loading
+2026-01-14 01:12:01,008 | INFO     | nodes.load_intent_list_node | load_intent_list_node.py:33 | Loaded intent list from intent.txt
+2026-01-14 01:12:01,008 | INFO     | __main__ | state.py:97 | Graph event (iteration 1)
+2026-01-14 01:12:01,008 | INFO     | nodes.generate_steps_node | generate_steps_node.py:78 | Starting steps generation
+2026-01-14 01:12:01,009 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 503 items from outputs/api_descriptions.jsonl
+2026-01-14 01:12:01,009 | INFO     | nodes.shared | shared.py:110 | [_load_api_capabilities] Loaded 503 API capabilities
+2026-01-14 01:12:01,010 | INFO     | nodes.generate_steps_node | generate_steps_node.py:105 | Calling LLM to generate test steps plan
+2026-01-14 01:12:01,010 | INFO     | chains.generate_steps_chain | generate_steps_chain.py:54 | [create_generate_steps_chain] Creating generate steps chain
+2026-01-14 01:12:01,011 | INFO     | nodes.shared | shared.py:151 | Initializing LLM...
+2026-01-14 01:12:01,527 | INFO     | nodes.shared | shared.py:153 | LLM initialized successfully
+2026-01-14 01:12:01,527 | INFO     | chains.generate_steps_chain | generate_steps_chain.py:84 | [create_generate_steps_chain] Chain created successfully
+2026-01-14 01:12:41,209 | INFO     | nodes.generate_steps_node | generate_steps_node.py:123 | Successfully parsed 10 test steps
+2026-01-14 01:12:41,210 | INFO     | FileProcess | file_process.py:91 | [save_json_file] Saved JSON file steps.json
+2026-01-14 01:12:41,211 | INFO     | nodes.generate_steps_node | generate_steps_node.py:139 | Extracted 10 intents from generated steps
+2026-01-14 01:12:41,212 | INFO     | __main__ | state.py:97 | Graph event (iteration 2)
+2026-01-14 01:12:41,212 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+2026-01-14 01:12:41,223 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+2026-01-14 01:12:41,224 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+2026-01-14 01:12:41,224 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 330, intent: 使用测试用户登录系统以获取后续操作权限
+2026-01-14 01:12:41,224 | INFO     | GenerateTestcaseChain | generate_testcase_chain.py:54 | [create_generate_testcase_chain] Creating generate testcase chain
+2026-01-14 01:12:41,225 | INFO     | GenerateTestcaseChain | generate_testcase_chain.py:81 | [create_generate_testcase_chain] Chain created successfully
+2026-01-14 01:12:45,837 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:87 | Successfully generated testcase for API ID: 330
+2026-01-14 01:12:45,839 | INFO     | __main__ | state.py:97 | Graph event (iteration 3)
+2026-01-14 01:12:45,840 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+2026-01-14 01:12:45,841 | INFO     | FileProcess | file_process.py:46 | [write_testcase_jsonl] Wrote testcase to JSONL file outputs/generated_testcases.jsonl
+2026-01-14 01:12:45,842 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/generated_testcases.jsonl
+2026-01-14 01:12:45,843 | INFO     | __main__ | state.py:97 | Graph event (iteration 4)
+2026-01-14 01:12:45,843 | INFO     | nodes.update_index_node | update_index_node.py:23 | Processing intent [1/10]: 使用测试用户登录系统以获取后续操作权限
+2026-01-14 01:12:45,843 | INFO     | nodes.should_continue | should_continue.py:31 | Continuing: 1/10 intents processed
+2026-01-14 01:12:45,844 | INFO     | __main__ | state.py:97 | Graph event (iteration 5)
+2026-01-14 01:12:45,844 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+2026-01-14 01:12:45,855 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+2026-01-14 01:12:45,855 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+2026-01-14 01:12:45,855 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 50, intent: 根据测试需求创建一个UDP flood攻击的流量模板，设置峰值为500Mbps，持续时间为60秒，目标IP为11.0.0.1/24
+2026-01-14 01:12:56,521 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:87 | Successfully generated testcase for API ID: 50
+2026-01-14 01:12:56,523 | INFO     | __main__ | state.py:97 | Graph event (iteration 6)
+2026-01-14 01:12:56,523 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+2026-01-14 01:12:56,524 | INFO     | FileProcess | file_process.py:46 | [write_testcase_jsonl] Wrote testcase to JSONL file outputs/generated_testcases.jsonl
+2026-01-14 01:12:56,524 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/generated_testcases.jsonl
+2026-01-14 01:12:56,525 | INFO     | __main__ | state.py:97 | Graph event (iteration 7)
+2026-01-14 01:12:56,526 | INFO     | nodes.update_index_node | update_index_node.py:23 | Processing intent [2/10]: 根据测试需求创建一个UDP flood攻击的流量模板，设置峰值为500Mbps，持续时间为60秒，目标IP为11.0.0.1/24
+2026-01-14 01:12:56,526 | INFO     | nodes.should_continue | should_continue.py:31 | Continuing: 2/10 intents processed
+2026-01-14 01:12:56,526 | INFO     | __main__ | state.py:97 | Graph event (iteration 8)
+2026-01-14 01:12:56,527 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+2026-01-14 01:12:56,536 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+2026-01-14 01:12:56,536 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+2026-01-14 01:12:56,537 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 49, intent: 验证创建的UDP flood攻击流量模板是否有效
+2026-01-14 01:13:05,749 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:87 | Successfully generated testcase for API ID: 49
+2026-01-14 01:13:05,750 | INFO     | __main__ | state.py:97 | Graph event (iteration 9)
+2026-01-14 01:13:05,750 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+2026-01-14 01:13:05,751 | INFO     | FileProcess | file_process.py:46 | [write_testcase_jsonl] Wrote testcase to JSONL file outputs/generated_testcases.jsonl
+2026-01-14 01:13:05,751 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/generated_testcases.jsonl
+2026-01-14 01:13:05,751 | INFO     | __main__ | state.py:97 | Graph event (iteration 10)
+2026-01-14 01:13:05,752 | INFO     | nodes.update_index_node | update_index_node.py:23 | Processing intent [3/10]: 验证创建的UDP flood攻击流量模板是否有效
+2026-01-14 01:13:05,752 | INFO     | nodes.should_continue | should_continue.py:31 | Continuing: 3/10 intents processed
+2026-01-14 01:13:05,752 | INFO     | __main__ | state.py:97 | Graph event (iteration 11)
+2026-01-14 01:13:05,753 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+2026-01-14 01:13:05,761 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+2026-01-14 01:13:05,761 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+2026-01-14 01:13:05,761 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 56, intent: 保存已配置好的UDP flood攻击流量模板
+2026-01-14 01:13:12,172 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:87 | Successfully generated testcase for API ID: 56
+2026-01-14 01:13:12,173 | INFO     | __main__ | state.py:97 | Graph event (iteration 12)
+2026-01-14 01:13:12,173 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+2026-01-14 01:13:12,174 | INFO     | FileProcess | file_process.py:46 | [write_testcase_jsonl] Wrote testcase to JSONL file outputs/generated_testcases.jsonl
+2026-01-14 01:13:12,174 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/generated_testcases.jsonl
+2026-01-14 01:13:12,174 | INFO     | __main__ | state.py:97 | Graph event (iteration 13)
+2026-01-14 01:13:12,174 | INFO     | nodes.update_index_node | update_index_node.py:23 | Processing intent [4/10]: 保存已配置好的UDP flood攻击流量模板
+2026-01-14 01:13:12,174 | INFO     | nodes.should_continue | should_continue.py:31 | Continuing: 4/10 intents processed
+2026-01-14 01:13:12,174 | INFO     | __main__ | state.py:97 | Graph event (iteration 14)
+2026-01-14 01:13:12,174 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+2026-01-14 01:13:12,182 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+2026-01-14 01:13:12,182 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+2026-01-14 01:13:12,182 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 31, intent: 开始一个新的数据包捕获会话，以便于后续分析攻击效果
+2026-01-14 01:13:20,816 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:87 | Successfully generated testcase for API ID: 31
+2026-01-14 01:13:20,817 | INFO     | __main__ | state.py:97 | Graph event (iteration 15)
+2026-01-14 01:13:20,817 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+2026-01-14 01:13:20,818 | INFO     | FileProcess | file_process.py:46 | [write_testcase_jsonl] Wrote testcase to JSONL file outputs/generated_testcases.jsonl
+2026-01-14 01:13:20,819 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/generated_testcases.jsonl
+2026-01-14 01:13:20,819 | INFO     | __main__ | state.py:97 | Graph event (iteration 16)
+2026-01-14 01:13:20,819 | INFO     | nodes.update_index_node | update_index_node.py:23 | Processing intent [5/10]: 开始一个新的数据包捕获会话，以便于后续分析攻击效果
+2026-01-14 01:13:20,820 | INFO     | nodes.should_continue | should_continue.py:31 | Continuing: 5/10 intents processed
+2026-01-14 01:13:20,820 | INFO     | __main__ | state.py:97 | Graph event (iteration 17)
+2026-01-14 01:13:20,820 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+2026-01-14 01:13:20,828 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+2026-01-14 01:13:20,829 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+2026-01-14 01:13:20,829 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 298, intent: 执行之前创建并保存的UDP flood攻击测试用例
+2026-01-14 01:13:29,973 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:87 | Successfully generated testcase for API ID: 298
+2026-01-14 01:13:29,974 | INFO     | __main__ | state.py:97 | Graph event (iteration 18)
+2026-01-14 01:13:29,974 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+2026-01-14 01:13:29,975 | INFO     | FileProcess | file_process.py:46 | [write_testcase_jsonl] Wrote testcase to JSONL file outputs/generated_testcases.jsonl
+2026-01-14 01:13:29,975 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/generated_testcases.jsonl
+2026-01-14 01:13:29,975 | INFO     | __main__ | state.py:97 | Graph event (iteration 19)
+2026-01-14 01:13:29,975 | INFO     | nodes.update_index_node | update_index_node.py:23 | Processing intent [6/10]: 执行之前创建并保存的UDP flood攻击测试用例
+2026-01-14 01:13:29,976 | INFO     | nodes.should_continue | should_continue.py:31 | Continuing: 6/10 intents processed
+2026-01-14 01:13:29,976 | INFO     | __main__ | state.py:97 | Graph event (iteration 20)
+2026-01-14 01:13:29,976 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+2026-01-14 01:13:29,984 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+2026-01-14 01:13:29,985 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+2026-01-14 01:13:29,985 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 33, intent: 在完成攻击后停止数据包捕获会话
+2026-01-14 01:13:38,770 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:87 | Successfully generated testcase for API ID: 33
+2026-01-14 01:13:38,771 | INFO     | __main__ | state.py:97 | Graph event (iteration 21)
+2026-01-14 01:13:38,771 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+2026-01-14 01:13:38,772 | INFO     | FileProcess | file_process.py:46 | [write_testcase_jsonl] Wrote testcase to JSONL file outputs/generated_testcases.jsonl
+2026-01-14 01:13:38,773 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/generated_testcases.jsonl
+2026-01-14 01:13:38,773 | INFO     | __main__ | state.py:97 | Graph event (iteration 22)
+2026-01-14 01:13:38,774 | INFO     | nodes.update_index_node | update_index_node.py:23 | Processing intent [7/10]: 在完成攻击后停止数据包捕获会话
+2026-01-14 01:13:38,774 | INFO     | nodes.should_continue | should_continue.py:31 | Continuing: 7/10 intents processed
+2026-01-14 01:13:38,774 | INFO     | __main__ | state.py:97 | Graph event (iteration 23)
+2026-01-14 01:13:38,774 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+2026-01-14 01:13:38,785 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+2026-01-14 01:13:38,785 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+2026-01-14 01:13:38,785 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 252, intent: 获取可用于分析此次攻击效果的所有统计类别
+2026-01-14 01:13:49,372 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:87 | Successfully generated testcase for API ID: 252
+2026-01-14 01:13:49,374 | INFO     | __main__ | state.py:97 | Graph event (iteration 24)
+2026-01-14 01:13:49,374 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+2026-01-14 01:13:49,375 | INFO     | FileProcess | file_process.py:46 | [write_testcase_jsonl] Wrote testcase to JSONL file outputs/generated_testcases.jsonl
+2026-01-14 01:13:49,375 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/generated_testcases.jsonl
+2026-01-14 01:13:49,376 | INFO     | __main__ | state.py:97 | Graph event (iteration 25)
+2026-01-14 01:13:49,376 | INFO     | nodes.update_index_node | update_index_node.py:23 | Processing intent [8/10]: 获取可用于分析此次攻击效果的所有统计类别
+2026-01-14 01:13:49,376 | INFO     | nodes.should_continue | should_continue.py:31 | Continuing: 8/10 intents processed
+2026-01-14 01:13:49,376 | INFO     | __main__ | state.py:97 | Graph event (iteration 26)
+2026-01-14 01:13:49,376 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+2026-01-14 01:13:49,384 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+2026-01-14 01:13:49,384 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+2026-01-14 01:13:49,384 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 258, intent: 基于选定的统计类别获取详细的统计数据来评估攻击的影响
+2026-01-14 01:13:59,838 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:87 | Successfully generated testcase for API ID: 258
+2026-01-14 01:13:59,839 | INFO     | __main__ | state.py:97 | Graph event (iteration 27)
+2026-01-14 01:13:59,839 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+2026-01-14 01:13:59,840 | INFO     | FileProcess | file_process.py:46 | [write_testcase_jsonl] Wrote testcase to JSONL file outputs/generated_testcases.jsonl
+2026-01-14 01:13:59,840 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/generated_testcases.jsonl
+2026-01-14 01:13:59,841 | INFO     | __main__ | state.py:97 | Graph event (iteration 28)
+2026-01-14 01:13:59,841 | INFO     | nodes.update_index_node | update_index_node.py:23 | Processing intent [9/10]: 基于选定的统计类别获取详细的统计数据来评估攻击的影响
+2026-01-14 01:13:59,842 | INFO     | nodes.should_continue | should_continue.py:31 | Continuing: 9/10 intents processed
+2026-01-14 01:13:59,842 | INFO     | __main__ | state.py:97 | Graph event (iteration 29)
+2026-01-14 01:13:59,842 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:24 | Starting testcase generation
+2026-01-14 01:13:59,852 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 2099 items from inputs/xrt_openapi.jsonl
+2026-01-14 01:13:59,853 | INFO     | nodes.shared | shared.py:94 | [load_api_jsonl_index] Created 2099 API index
+2026-01-14 01:13:59,853 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:43 | Generating testcase for API ID: 331, intent: 完成所有测试活动后注销当前用户会话
+2026-01-14 01:14:09,242 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:87 | Successfully generated testcase for API ID: 331
+2026-01-14 01:14:09,243 | INFO     | __main__ | state.py:97 | Graph event (iteration 30)
+2026-01-14 01:14:09,243 | INFO     | nodes.write_testcase_node | write_testcase_node.py:28 | Starting testcase write
+2026-01-14 01:14:09,244 | INFO     | FileProcess | file_process.py:46 | [write_testcase_jsonl] Wrote testcase to JSONL file outputs/generated_testcases.jsonl
+2026-01-14 01:14:09,245 | INFO     | nodes.write_testcase_node | write_testcase_node.py:41 | Successfully wrote testcase to outputs/generated_testcases.jsonl
+2026-01-14 01:14:09,245 | INFO     | __main__ | state.py:97 | Graph event (iteration 31)
+2026-01-14 01:14:09,245 | INFO     | nodes.update_index_node | update_index_node.py:23 | Processing intent [10/10]: 完成所有测试活动后注销当前用户会话
+2026-01-14 01:14:09,245 | INFO     | nodes.should_continue | should_continue.py:34 | All intents processed (10/10), ending
+2026-01-14 01:14:09,246 | INFO     | __main__ | state.py:97 | Graph event (iteration 32)
+2026-01-14 01:14:09,246 | INFO     | __main__ | state.py:104 | Graph execution completed successfully after 32 iterations
+2026-01-14 01:14:09,246 | INFO     | __main__ | state.py:106 | Final generated_testcase: None

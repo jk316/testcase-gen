@@ -1,11 +1,11 @@
-from typing import List, Dict, Set, TypedDict, Optional, Any
 from utils.logger import get_logger
 from langgraph.graph import StateGraph, END
 from dotenv import load_dotenv
 from config import get_config
+from schemas.state import AgentState
 from nodes import (
     load_intent_list_node,
-    generate_intent_node,
+    generate_steps_node,
     update_index_node,
     generate_testcase_node,
     write_testcase_node,
@@ -14,38 +14,13 @@ from nodes import (
 
 load_dotenv()
 
-logger = get_logger("AgentState")
+logger = get_logger(__name__)
 config = get_config()
-
-class AgentState(TypedDict):
-   
-    # 循环控制
-    intent_list: List[str]
-    current_intent_index: int
-
-    # 当前候选 API ID 列表
-    candidate_api_ids: List[List[str]]
-
-    # 字段信息
-    required_input_fields: Set[str]
-    available_output_fields: Set[str]
-
-    # 中间产物
-    api_input_fields: Dict[str, Set[str]]
-    api_output_fields: Dict[str, Set[str]]
-
-    # 控制信息
-    missing_fields: Set[str]
-    step_count: int
-    max_steps: int
-
-    # 生成的 testcase
-    generated_testcase: Optional[Dict[str, Any]]
 
 builder = StateGraph(AgentState)
 
 builder.add_node("load_intent_list", load_intent_list_node)
-builder.add_node("generate_intent", generate_intent_node)
+builder.add_node("generate_steps", generate_steps_node)
 # builder.add_node("get_steps", get_steps_node)
 builder.add_node("generate_testcase", generate_testcase_node)
 builder.add_node("write_testcase", write_testcase_node)
@@ -54,10 +29,10 @@ builder.add_node("should_continue", should_continue)
 builder.set_entry_point("load_intent_list")
 
 # 从 load_intent_list 到 generate_intent 的边
-builder.add_edge("load_intent_list", "generate_intent")
+builder.add_edge("load_intent_list", "generate_steps")
 
-# 从 generate_intent 到 generate_testcase 的边
-builder.add_edge("generate_intent", "generate_testcase")
+# 从 generate_steps 到 generate_testcase 的边
+builder.add_edge("generate_steps", "generate_testcase")
 
 # 从 generate_testcase 到 write_testcase 的边
 builder.add_edge("generate_testcase", "write_testcase")
@@ -91,7 +66,7 @@ def print_graph_structure():
         if hasattr(graph, 'edges'):
             logger.info("Edges: %s", list(graph.edges))
         if hasattr(graph, '_graph'):
-            logger.info("Graph object exists")
+            logger.debug("Graph object exists")
     except Exception as e:
         logger.warning("Could not inspect graph structure: %s", e)
     logger.info("=" * 60)
@@ -107,7 +82,7 @@ if __name__ == "__main__":
         "generated_testcase": None
     }
     
-    logger.info("Invoking graph with initial state...")
+    logger.info("Invoking graph with initial state")
     logger.debug("Initial state keys: %s", list(initial_state.keys()))
     
     try:
@@ -119,9 +94,9 @@ if __name__ == "__main__":
         iteration_count = 0
         for event in graph.stream(initial_state, config=graph_config):
             iteration_count += 1
-            logger.info(f"Graph event (iteration {iteration_count}): %s", event)
+            logger.info(f"Graph event (iteration {iteration_count})")
             for node_name, node_output in event.items():
-                logger.info("  Node '%s' output keys: %s", node_name, list(node_output.keys()) if isinstance(node_output, dict) else type(node_output))
+                logger.debug("Node '%s' output keys: %s", node_name, list(node_output.keys()) if isinstance(node_output, dict) else type(node_output))
                 # 保存最后一个状态作为最终状态
                 if node_output is not None:
                     final_state = node_output

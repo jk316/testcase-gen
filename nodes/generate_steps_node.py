@@ -4,39 +4,21 @@
 """
 from typing import TYPE_CHECKING, List, Dict, Any, Tuple, Optional
 from utils.logger import get_logger
-from utils.file_process import load_api_jsonl, save_json_file
+from utils.file_process import save_json_file
 from config import get_config
 from nodes.shared import (
     create_api_title_to_id_mapping,
     format_api_capabilities,
+    load_api_capabilities,
 )
-from chains import create_generate_intent_chain
+from chains import create_generate_steps_chain
 
 if TYPE_CHECKING:
-    from state import AgentState
+    from schemas.state import AgentState
 
-logger = get_logger("GenerateIntentNode")
+logger = get_logger(__name__)
 config = get_config()
 
-
-def _load_api_capabilities() -> List[Dict[str, Any]]:
-    """
-    加载 API 能力描述
-    
-    Returns:
-        API 能力描述列表
-    """
-    api_descriptions_file = config.files.api_descriptions_file
-    try:
-        api_capabilities = load_api_jsonl(api_descriptions_file)
-        logger.info(f"[_load_api_capabilities] Loaded {len(api_capabilities)} API capabilities")
-        return api_capabilities
-    except FileNotFoundError:
-        logger.warning(f"[_load_api_capabilities] API descriptions file {api_descriptions_file} not found")
-        return []
-    except Exception as e:
-        logger.error(f"[_load_api_capabilities] Error loading API capabilities: {e}")
-        return []
 
 
 def _extract_intent_data_from_steps(
@@ -76,30 +58,30 @@ def _extract_intent_data_from_steps(
                     if title in api_title_to_id:
                         api_id = api_title_to_id[title]
                         temp_api_ids.append(api_id)
-                        logger.debug(f"[_extract_intent_data_from_steps] Found API ID {api_id} for capability: {title}")
+                        logger.debug(f"Found API ID {api_id} for capability: {title}")
                     else:
-                        logger.warning(f"[_extract_intent_data_from_steps] API title not found in mapping: {title}")
+                        logger.warning(f"API title not found in mapping: {title}")
                 candidate_api_ids_list.append(temp_api_ids)
             else:
                 # 如果没有 related_capability，添加空列表
                 candidate_api_ids_list.append([])
     
-    logger.info(f"[_extract_intent_data_from_steps] Extracted {len(intent_lines)} intents and {len(candidate_api_ids_list)} API ID lists")
+    logger.debug(f"Extracted {len(intent_lines)} intents and {len(candidate_api_ids_list)} API ID lists")
     return intent_lines, candidate_api_ids_list
 
 
-def generate_intent_node(state: "AgentState") -> dict:
+def generate_steps_node(state: "AgentState") -> dict:
     """
-    根据 state 中的 intent，参考 gen_intent.jinja 的需求，生成测试意图
-    传递给 get_steps Node，并保存在 intent.json 中
+    根据 state 中的 intent，参考 gen_intent.jinja 的需求，生成测试步骤
+    传递给 generate_testcase_node，并保存在 steps.json 中
     """
-    logger.info("[generate_intent_node] Starting execution")
+    logger.info("Starting steps generation")
     
     # 1. 从 state 中读取测试意图
     intent_list = state.get("intent_list")
     current_intent_index = state.get("current_intent_index")
     if not intent_list or current_intent_index is None or current_intent_index >= len(intent_list):
-        logger.warning("[generate_intent_node] intent_list is None or empty in state or current_intent_index is out of range")
+        logger.warning("intent_list is None or empty, or current_intent_index is out of range")
         return {
             "intent_list": [],
             "current_intent_index": current_intent_index,
@@ -108,7 +90,7 @@ def generate_intent_node(state: "AgentState") -> dict:
     current_intent = intent_list[current_intent_index]
     
     # 2. 加载 API 能力描述
-    api_capabilities = _load_api_capabilities()
+    api_capabilities = load_api_capabilities()
     if not api_capabilities:
         return {
             "intent_list": [],
@@ -120,11 +102,11 @@ def generate_intent_node(state: "AgentState") -> dict:
     api_capabilities_str = format_api_capabilities(api_capabilities)
     
     # 4. 使用 chain 生成测试步骤计划
-    logger.info("[generate_intent_node] Calling LLM to generate test steps plan")
+    logger.info("Calling LLM to generate test steps plan")
     
     try:
         # 获取或创建 chain
-        chain = create_generate_intent_chain()
+        chain = create_generate_steps_chain()
         
         # 调用 chain
         steps_json = chain.invoke({
@@ -133,20 +115,20 @@ def generate_intent_node(state: "AgentState") -> dict:
         })
         
         if steps_json is None:
-            logger.warning("[generate_intent_node] Failed to parse LLM response as JSON")
+            logger.warning("Failed to parse LLM response as JSON")
             return {
 
             }
         
-        logger.info(f"[generate_intent_node] Successfully parsed {len(steps_json)} test steps")
+        logger.info(f"Successfully parsed {len(steps_json)} test steps")
         
-        # 7. 保存到 intent.json
-        intent_output_file = config.files.intent_json_file
-        save_json_file(steps_json, intent_output_file)
+        # 7. 保存到 steps.json
+        steps_output_file = config.files.generated_steps_file
+        save_json_file(steps_json, steps_output_file)
         
         # 8. 创建 API title 到 ID 的映射
         api_title_to_id = create_api_title_to_id_mapping(api_capabilities)
-        logger.info(f"[generate_intent_node] Created API title to ID mapping with {len(api_title_to_id)} entries")
+        logger.debug(f"Created API title to ID mapping with {len(api_title_to_id)} entries")
         
         # 9. 提取 intent_list 和 candidate_api_ids
         intent_lines, candidate_api_ids_list = _extract_intent_data_from_steps(
@@ -154,18 +136,17 @@ def generate_intent_node(state: "AgentState") -> dict:
             api_title_to_id
         )
         
-        logger.info(f"[generate_intent_node] Extracted {len(intent_lines)} intents from generated steps")
-        logger.info(f"[generate_intent_node] Found {len(candidate_api_ids_list)} API ID lists: {candidate_api_ids_list}")
+        logger.info(f"Extracted {len(intent_lines)} intents from generated steps")
+        logger.debug(f"API ID lists: {candidate_api_ids_list}")
         
         # 10. 返回 delta，更新 intent_list 和 candidate_api_ids
         return {
             "intent_list": intent_lines,
-            "current_intent_index": current_intent_index + 1,
             "candidate_api_ids": candidate_api_ids_list
         }
         
     except Exception as e:
-        logger.error(f"[generate_intent_node] Error generating intent: {e}", exc_info=True)
+        logger.error(f"Error generating intent: {e}", exc_info=True)
         return {
             "intent_list": [],
             "current_intent_index": 0,
