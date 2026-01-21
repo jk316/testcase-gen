@@ -72,7 +72,7 @@ def aggregate_api_params(input_file: str, output_file: str):
         })
     
     # 4. 按 api_id 排序输出
-    aggregated_results.sort(key=lambda x: x["api_id"])
+    # aggregated_results.sort(key=lambda x: x["api_id"])
     
     # 5. 保存结果
     print(f"\n正在保存结果到 {output_file}...")
