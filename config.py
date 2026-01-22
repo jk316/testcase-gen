@@ -66,6 +66,16 @@ class LogConfig:
 
 
 @dataclass
+class RedisConfig:
+    """Redis 配置"""
+    host: str = "10.99.80.159"
+    port: int = 6379
+    password: Optional[str] = "abcd@123"
+    db: int = 0
+    decode_responses: bool = True  # 自动解码响应为字符串
+
+
+@dataclass
 class AppConfig:
     """应用配置主类"""
     files: FilePaths = None
@@ -73,6 +83,7 @@ class AppConfig:
     index: IndexConfig = None
     graph: GraphConfig = None
     log: LogConfig = None
+    redis: RedisConfig = None
     
     def __post_init__(self):
         """初始化默认配置"""
@@ -86,6 +97,8 @@ class AppConfig:
             self.graph = GraphConfig()
         if self.log is None:
             self.log = LogConfig()
+        if self.redis is None:
+            self.redis = RedisConfig()
     
     @classmethod
     def from_env(cls) -> "AppConfig":
@@ -99,6 +112,22 @@ class AppConfig:
             config.log.file_path = os.getenv("LOG_FILE")
         if os.getenv("LOG_CONSOLE"):
             config.log.console_output = os.getenv("LOG_CONSOLE").lower() in ("true", "1", "yes")
+        
+        # 从环境变量覆盖 Redis 配置
+        if os.getenv("REDIS_HOST"):
+            config.redis.host = os.getenv("REDIS_HOST")
+        if os.getenv("REDIS_PORT"):
+            try:
+                config.redis.port = int(os.getenv("REDIS_PORT"))
+            except ValueError:
+                pass
+        if os.getenv("REDIS_PASSWORD"):
+            config.redis.password = os.getenv("REDIS_PASSWORD")
+        if os.getenv("REDIS_DB"):
+            try:
+                config.redis.db = int(os.getenv("REDIS_DB"))
+            except ValueError:
+                pass
         
         # 可以从环境变量覆盖其他配置
         # 例如：
