@@ -48,7 +48,7 @@ def write_testcase_jsonl(testcase: Optional[Dict[str, Any]], output_path: str, a
         logger.error(f"[write_testcase_jsonl] Error writing JSONL file {output_path}: {e}")
 
 
-def load_text_file(file_path: str, strip: bool = True) -> Optional[List[str]]:
+def load_file(file_path: str, strip: bool = True) -> Optional[List[str]]:
     """
     读取文本文件内容
     

@@ -1,0 +1,1163 @@
+[
+  {
+    "step": 0,
+    "description": "用户登录系统",
+    "guidance": "调用 /v1/cl/user/login 接口以使用用户名和密码进行登录。需要提供一个在10分钟内有效的Unix时间戳。",
+    "input": [
+      {
+        "name": "BASE_URL",
+        "type": "str",
+        "description": "API base without trailing slash"
+      },
+      {
+        "name": "USERNAME",
+        "type": "str",
+        "description": "username for login"
+      },
+      {
+        "name": "PASSWORD",
+        "type": "str",
+        "description": "password for login"
+      },
+      {
+        "name": "TIMESTAMP",
+        "type": "int",
+        "description": "unix timestamp, expired in 10 minutes, type is int"
+      }
+    ],
+    "output": [
+      {
+        "$ref": "#/definitions/alps.UserLoginResponse"
+      }
+    ]
+  },
+  {
+    "step": 1,
+    "description": "Create a DDoS attack flow template for simulating UDP flood attacks",
+    "guidance": "Call /v1/cl/ddos/attack/flow/create to create a new DDoS attack flow template. This step is aimed at setting up a UDP flood attack simulation. The request should include a timestamp (valid within 10 minutes), an allocated session ID, and the body containing details of the attack flow. Note that the timestamp must be in Unix format.",
+    "input": [
+      {
+        "name": "BASE_URL",
+        "type": "str",
+        "description": "API base without trailing slash"
+      },
+      {
+        "name": "TIMESTAMP",
+        "type": "int",
+        "description": "Unix timestamp, expired in 10 minutes"
+      },
+      {
+        "name": "SESSION_ID",
+        "type": "str",
+        "description": "Allocated session id"
+      },
+      {
+        "name": "body",
+        "type": "object",
+        "description": "Details of the attack flow to be created, including parameters such as attack type, duration, and target IP. Refer to the definition of attackapi.AttackFlowCreateRequest for more details.",
+        "schema": {
+          "$ref": "#/definitions/attackapi.AttackFlowCreateRequest"
+        }
+      }
+    ],
+    "output": [
+      {
+        "name": "response",
+        "type": "object",
+        "description": "The response object will contain the result of creating the DDoS attack flow template. For exact structure, refer to the definition of attackapi.AttackFlowCreateResponse.",
+        "schema": {
+          "$ref": "#/definitions/attackapi.AttackFlowCreateResponse"
+        }
+      }
+    ]
+  },
+  {
+    "step": 2,
+    "description": "Update DDoS attack flow parameters",
+    "guidance": "This step aims to set the peak traffic to 500Mbps, test duration to 60 seconds, and target IP to 11.0.0.1/24 by calling /v1/cl/ddos/attack/flow/param/update with POST method. The timestamp must be a Unix timestamp and valid within 10 minutes. A session ID is also required as part of the query parameters.",
+    "input": [
+      {
+        "name": "BASE_URL",
+        "type": "str",
+        "description": "API base without trailing slash"
+      },
+      {
+        "name": "TIMESTAMP",
+        "type": "int",
+        "description": "unix timestamp, expired in 10 minutes, type is int"
+      },
+      {
+        "name": "SESSION_ID",
+        "type": "str",
+        "description": "allocated session id"
+      },
+      {
+        "name": "body",
+        "type": "object",
+        "description": "Request body for updating DDoS attack flow parameters",
+        "schema": {
+          "$ref": "#/definitions/attackapi.AttackFlowParamUpdateRequest"
+        }
+      }
+    ],
+    "output": [
+      {
+        "name": "response_body",
+        "type": "object",
+        "description": "Response from updating DDoS attack flow parameters",
+        "schema": {
+          "$ref": "#/definitions/attackapi.AttackFlowParamUpdateResponse"
+        }
+      }
+    ]
+  },
+  {
+    "step": 3,
+    "description": "Save DDoS attack flow template for future use",
+    "guidance": "Use the /v1/cl/ddos/attack/flow/save endpoint to save a configured DDoS attack flow template. This step requires a valid session ID and timestamp, where the timestamp should be a Unix timestamp that is not older than 10 minutes.",
+    "input": [
+      {
+        "name": "BASE_URL",
+        "type": "str",
+        "description": "API base without trailing slash"
+      },
+      {
+        "name": "TIMESTAMP",
+        "type": "int",
+        "description": "Unix timestamp, must be within 10 minutes of current time"
+      },
+      {
+        "name": "SESSION_ID",
+        "type": "str",
+        "description": "Allocated session ID from previous login or session creation"
+      },
+      {
+        "name": "body",
+        "type": "object",
+        "description": "DDoS attack flow configuration details",
+        "schema": {
+          "$ref": "#/definitions/attackapi.AttackFlowSaveRequest"
+        }
+      }
+    ],
+    "output": [
+      {
+        "name": "response_body",
+        "type": "object",
+        "description": "Response body containing the result of saving the DDoS attack flow template",
+        "schema": {
+          "$ref": "#/definitions/attackapi.AttackFlowSaveResponse"
+        }
+      }
+    ]
+  },
+  {
+    "step": 4,
+    "description": "初始化一个新的数据捕获过程，准备记录即将发生的攻击流量",
+    "guidance": "通过调用/v1/cl/capture/start接口使用POST方法开始一个新的数据捕获。此步骤依赖于有效的会话ID，并且提供的UNIX时间戳应在接下来的10分钟内有效。",
+    "input": [
+      {
+        "name": "BASE_URL",
+        "type": "str",
+        "description": "API base without trailing slash"
+      },
+      {
+        "name": "TIMESTAMP",
+        "type": "int",
+        "description": "unix timestamp, expired in 10 minutes, type is int"
+      },
+      {
+        "name": "SESSION_ID",
+        "type": "str",
+        "description": "allocated session id"
+      },
+      {
+        "name": "body",
+        "type": "object",
+        "description": "请求体，符合CaptureStartRequest定义",
+        "schema": {
+          "$ref": "#/definitions/captureapi.CaptureStartRequest"
+        }
+      }
+    ],
+    "output": [
+      {
+        "name": "response",
+        "type": "object",
+        "description": "响应体，符合CaptureStartResponse定义",
+        "schema": {
+          "$ref": "#/definitions/captureapi.CaptureStartResponse"
+        }
+      }
+    ]
+  },
+  {
+    "step": 5,
+    "description": "Run a specified testcase with given session ID and timestamp",
+    "guidance": "Call /v1/cl/testcase/run to execute a predefined DDoS attack template, initiating an UDP flood. Ensure the timestamp is within 10 minutes of the current time and that you have a valid session ID.",
+    "input": [
+      {
+        "name": "BASE_URL",
+        "type": "str",
+        "description": "API base without trailing slash"
+      },
+      {
+        "name": "TIMESTAMP",
+        "type": "int",
+        "description": "unix timestamp, expired in 10 minutes"
+      },
+      {
+        "name": "SESSION_ID",
+        "type": "str",
+        "description": "allocated session id"
+      },
+      {
+        "name": "body",
+        "type": "object",
+        "description": "request body for running the testcase, see schema for details",
+        "schema": {
+          "$ref": "#/definitions/testapi.TestcaseRunRequest"
+        }
+      }
+    ],
+    "output": [
+      {
+        "name": "response_body",
+        "type": "object",
+        "description": "The response body will contain the result of the testcase run, see schema for details",
+        "schema": {
+          "$ref": "#/definitions/testapi.TestcaseRunResponse"
+        }
+      }
+    ]
+  },
+  {
+    "step": 6,
+    "description": "Stop the data capture process after an attack",
+    "guidance": "Call /v1/cl/capture/stop to stop the data capture process. This API requires a valid session ID and a timestamp that is valid for 10 minutes.",
+    "input": [
+      {
+        "name": "BASE_URL",
+        "type": "str",
+        "description": "API base without trailing slash"
+      },
+      {
+        "name": "TIMESTAMP",
+        "type": "int",
+        "description": "unix timestamp, expired in 10 minutes, type is int"
+      },
+      {
+        "name": "SESSION_ID",
+        "type": "str",
+        "description": "allocated session id"
+      },
+      {
+        "name": "body",
+        "type": "object",
+        "description": "Request body for stopping the capture",
+        "schema": {
+          "$ref": "#/definitions/captureapi.CaptureStopRequest"
+        }
+      }
+    ],
+    "output": [
+      {
+        "name": "response",
+        "type": "object",
+        "description": "Response body for stopping the capture",
+        "schema": {
+          "$ref": "#/definitions/captureapi.CaptureStopResponse"
+        }
+      }
+    ]
+  },
+  {
+    "step": 7,
+    "description": "Start downloading captured packets for local analysis",
+    "guidance": "Call /v1/cl/capture/download/start to initiate the download of captured packets. This requires a valid session_id and a timestamp that is not older than 10 minutes, along with the request body containing the necessary details for the download process.",
+    "input": [
+      {
+        "name": "BASE_URL",
+        "type": "str",
+        "description": "API base without trailing slash"
+      },
+      {
+        "name": "TIMESTAMP",
+        "type": "int",
+        "description": "unix timestamp, expired in 10 minutes"
+      },
+      {
+        "name": "SESSION_ID",
+        "type": "str",
+        "description": "allocated session id"
+      },
+      {
+        "name": "body",
+        "type": "object",
+        "description": "Request body containing the necessary details for starting the download",
+        "schema": {
+          "$ref": "#/definitions/captureapi.DownloadStartRequest"
+        }
+      }
+    ],
+    "output": [
+      {
+        "name": "response",
+        "type": "object",
+        "description": "Response object containing the result of the download start request",
+        "schema": {
+          "$ref": "#/definitions/captureapi.DownloadStartResponse"
+        }
+      }
+    ]
+  },
+  {
+    "step": 1,
+    "description": "Search for statistics history of a specified testcase instance",
+    "guidance": "Call /v1/cl/stats/search with POST method to retrieve the specific statistics data. Ensure that the timestamp is within the last 10 minutes and a valid session_id is provided.",
+    "input": [
+      {
+        "name": "BASE_URL",
+        "type": "str",
+        "description": "API base without trailing slash"
+      },
+      {
+        "name": "TIMESTAMP",
+        "type": "int",
+        "description": "unix timestamp, expired in 10 minutes, type is int"
+      },
+      {
+        "name": "SESSION_ID",
+        "type": "str",
+        "description": "allocated session id"
+      },
+      {
+        "name": "body",
+        "type": "object",
+        "description": "Request body containing the search criteria as per StatsSearchRequest schema",
+        "schema": {
+          "$ref": "#/definitions/statsapi.StatsSearchRequest"
+        }
+      }
+    ],
+    "output": [
+      {
+        "name": "response_body",
+        "type": "object",
+        "description": "Response body containing the result of the stats search as per StatsSearchResponse schema",
+        "schema": {
+          "$ref": "#/definitions/statsapi.StatsSearchResponse"
+        }
+      }
+    ]
+  },
+  {
+    "step": 9,
+    "description": "用户注销当前登录状态",
+    "guidance": "通过调用/v1/cl/user/logout接口来注销当前用户的登录状态。此步骤需要提供有效的session_id以及一个在10分钟内有效的时间戳。使用POST方法发送请求，并确保Content-Type为application/json。",
+    "input": [
+      {
+        "name": "BASE_URL",
+        "type": "str",
+        "description": "API base without trailing slash"
+      },
+      {
+        "name": "TIMESTAMP",
+        "type": "int",
+        "description": "unix timestamp, expired in 10 minutes"
+      },
+      {
+        "name": "SESSION_ID",
+        "type": "str",
+        "description": "allocated session id"
+      }
+    ],
+    "output": [
+      {
+        "$ref": "#/definitions/alps.UserLogoutResponse"
+      }
+    ]
+  }
+]
+[
+  {
+    "step": 0,
+    "description": "用户登录以获取会话ID",
+    "guidance": "调用 /v1/cl/user/login 接口进行用户登录，需要提供一个有效的时间戳参数（有效期为10分钟），并携带登录请求体。",
+    "input": [
+      {
+        "name": "BASE_URL",
+        "type": "str",
+        "description": "API base URL without trailing slash"
+      },
+      {
+        "name": "TIMESTAMP",
+        "type": "int",
+        "description": "unix timestamp, expired in 10 minutes"
+      },
+      {
+        "name": "body",
+        "type": "object",
+        "description": "User login request body, containing username and password for login",
+        "schema": {
+          "$ref": "#/definitions/alps.UserLoginRequest"
+        }
+      }
+    ],
+    "output": [
+      {
+        "name": "response",
+        "type": "object",
+        "description": "User login response, containing session_id and other related information",
+        "schema": {
+          "$ref": "#/definitions/alps.UserLoginResponse"
+        }
+      }
+    ]
+  },
+  {
+    "step": 1,
+    "description": "List all DDoS attack flow template information",
+    "guidance": "The purpose of this step is to check for the availability of DDoS attack flow templates, particularly those that can be used for UDP flood attacks. To achieve this, call the /v1/cl/ddos/attack/flow/list endpoint using the GET method. Note that the 'timestamp' parameter should be a valid Unix timestamp and must not have expired (valid for 10 minutes). Additionally, the 'session_id' parameter, which is allocated upon successful login or session creation, is required.",
+    "input": [
+      {
+        "name": "BASE_URL",
+        "type": "str",
+        "description": "API base without trailing slash"
+      },
+      {
+        "name": "TIMESTAMP",
+        "type": "int",
+        "description": "unix timestamp, expired in 10 minutes, type is int"
+      },
+      {
+        "name": "SESSION_ID",
+        "type": "str",
+        "description": "allocated session id"
+      }
+    ],
+    "output": [
+      {
+        "name": "response",
+        "type": "object",
+        "description": "Response body containing the list of DDoS attack flow templates",
+        "schema": {
+          "$ref": "#/definitions/attackapi.AttackFlowListResponse"
+        }
+      }
+    ]
+  },
+  {
+    "step": 1,
+    "description": "Create or update a DDoS attack flow template",
+    "guidance": "Call /v1/cl/ddos/attack/flow/create with POST method to either create a new DDoS attack flow template or update an existing one. The request must include a valid session_id and timestamp, where the timestamp should be a Unix timestamp and is valid for 10 minutes.",
+    "input": [
+      {
+        "name": "BASE_URL",
+        "type": "str",
+        "description": "API base without trailing slash"
+      },
+      {
+        "name": "TIMESTAMP",
+        "type": "int",
+        "description": "unix timestamp, expired in 10 minutes"
+      },
+      {
+        "name": "SESSION_ID",
+        "type": "str",
+        "description": "allocated session id"
+      },
+      {
+        "name": "body",
+        "type": "object",
+        "description": "Request body for creating or updating DDoS attack flow template, refer to #/definitions/attackapi.AttackFlowCreateRequest for schema details",
+        "schema": "#/definitions/attackapi.AttackFlowCreateRequest"
+      }
+    ],
+    "output": [
+      {
+        "name": "response",
+        "type": "object",
+        "description": "Response object containing result of the operation, refer to #/definitions/attackapi.AttackFlowCreateResponse for schema details",
+        "schema": "#/definitions/attackapi.AttackFlowCreateResponse"
+      }
+    ]
+  },
+  {
+    "step": 3,
+    "description": "Update DDoS attack flow parameters",
+    "guidance": "Call /v1/cl/ddos/attack/flow/param/update to set the target IP address of a DDoS attack to 11.0.0.1/24, configure the peak attack traffic to 500Mbps, and set the duration to 60 seconds. The timestamp should be a Unix timestamp that is valid for 10 minutes, and the session_id must be provided.",
+    "input": [
+      {
+        "name": "BASE_URL",
+        "type": "str",
+        "description": "API base without trailing slash"
+      },
+      {
+        "name": "TIMESTAMP",
+        "type": "int",
+        "description": "unix timestamp, expired in 10 minutes"
+      },
+      {
+        "name": "SESSION_ID",
+        "type": "str",
+        "description": "allocated session id"
+      },
+      {
+        "name": "body",
+        "type": "object",
+        "description": "Request body for updating DDoS attack flow parameters",
+        "schema": {
+          "$ref": "#/definitions/attackapi.AttackFlowParamUpdateRequest"
+        }
+      }
+    ],
+    "output": [
+      {
+        "name": "response_body",
+        "type": "object",
+        "description": "Response body from the API call",
+        "schema": {
+          "$ref": "#/definitions/attackapi.AttackFlowParamUpdateResponse"
+        }
+      }
+    ]
+  },
+  {
+    "step": 4,
+    "description": "开始新的数据包捕获过程，以便记录攻击期间的数据流",
+    "guidance": "使用POST方法调用/v1/cl/capture/start接口来启动一个新的数据包捕获过程。此操作需要一个有效的session_id和一个未过期（10分钟内）的时间戳。",
+    "input": [
+      {
+        "name": "BASE_URL",
+        "type": "str",
+        "description": "API base without trailing slash"
+      },
+      {
+        "name": "TIMESTAMP",
+        "type": "int",
+        "description": "unix timestamp, expired in 10 minutes, type is int"
+      },
+      {
+        "name": "SESSION_ID",
+        "type": "str",
+        "description": "allocated session id"
+      },
+      {
+        "name": "body",
+        "type": "object",
+        "description": "请求体，包含CaptureStartRequest所需的所有信息",
+        "schema": {
+          "$ref": "#/definitions/captureapi.CaptureStartRequest"
+        }
+      }
+    ],
+    "output": [
+      {
+        "name": "response_body",
+        "type": "object",
+        "description": "响应体，包含CaptureStartResponse定义的所有字段",
+        "schema": {
+          "$ref": "#/definitions/captureapi.CaptureStartResponse"
+        }
+      }
+    ]
+  },
+  {
+    "step": 5,
+    "description": "Run a specified testcase with provided session and timestamp",
+    "guidance": "This step aims to execute a pre-defined testcase by calling the /v1/cl/testcase/run endpoint. Use POST method, ensure the timestamp is a valid Unix timestamp within the last 10 minutes, and provide an allocated session id as part of the query parameters. The body should contain the TestcaseRunRequest object.",
+    "input": [
+      {
+        "name": "BASE_URL",
+        "type": "str",
+        "description": "API base without trailing slash"
+      },
+      {
+        "name": "TIMESTAMP",
+        "type": "int",
+        "description": "unix timestamp, expired in 10 minutes"
+      },
+      {
+        "name": "SESSION_ID",
+        "type": "str",
+        "description": "allocated session id"
+      },
+      {
+        "name": "body",
+        "type": "object",
+        "description": "TestcaseRunRequest object that contains details about the testcase to run",
+        "schema": {
+          "$ref": "#/definitions/testapi.TestcaseRunRequest"
+        }
+      }
+    ],
+    "output": [
+      {
+        "name": "response",
+        "type": "object",
+        "description": "TestcaseRunResponse object containing the result of running the testcase",
+        "schema": {
+          "$ref": "#/definitions/testapi.TestcaseRunResponse"
+        }
+      }
+    ]
+  },
+  {
+    "step": 6,
+    "description": "Stop the current packet capture process",
+    "guidance": "After completing an attack, call /v1/cl/capture/stop to stop the ongoing packet capture. This API requires a valid session ID and a timestamp (valid for 10 minutes) as query parameters, and a request body conforming to CaptureStopRequest schema.",
+    "input": [
+      {
+        "name": "BASE_URL",
+        "type": "str",
+        "description": "API base without trailing slash"
+      },
+      {
+        "name": "SESSION_ID",
+        "type": "str",
+        "description": "allocated session id"
+      },
+      {
+        "name": "TIMESTAMP",
+        "type": "int",
+        "description": "unix timestamp, expired in 10 minutes, type is int"
+      },
+      {
+        "name": "body",
+        "type": "object",
+        "description": "CaptureStopRequest object containing necessary fields to stop the capture",
+        "schema": {
+          "$ref": "#/definitions/captureapi.CaptureStopRequest"
+        }
+      }
+    ],
+    "output": [
+      {
+        "name": "response_body",
+        "type": "object",
+        "description": "CaptureStopResponse object from the response",
+        "schema": {
+          "$ref": "#/definitions/captureapi.CaptureStopResponse"
+        }
+      }
+    ]
+  },
+  {
+    "step": 7,
+    "description": "获取与本次攻击相关的统计数据类别",
+    "guidance": "通过调用/v1/cl/stats/category/search接口并提供必要的参数（如时间戳、会话ID以及请求体）来搜索指定测试实例的实时统计类别数据。注意，时间戳应为Unix时间戳格式且在10分钟内有效。",
+    "input": [
+      {
+        "name": "BASE_URL",
+        "type": "str",
+        "description": "API base without trailing slash"
+      },
+      {
+        "name": "TIMESTAMP",
+        "type": "int",
+        "description": "unix timestamp, expired in 10 minutes"
+      },
+      {
+        "name": "SESSION_ID",
+        "type": "str",
+        "description": "allocated session id"
+      },
+      {
+        "name": "body",
+        "type": "object",
+        "description": "Request body for the stats category search request",
+        "schema": {
+          "$ref": "#/definitions/statsapi.StatsCategorySearchRequest"
+        }
+      }
+    ],
+    "output": [
+      {
+        "name": "response_body",
+        "type": "object",
+        "description": "Response body containing the result of the stats category search",
+        "schema": {
+          "$ref": "#/definitions/statsapi.StatsCategorySearchResponse"
+        }
+      }
+    ]
+  },
+  {
+    "step": 1,
+    "description": "查询指定测试用例实例的历史统计信息",
+    "guidance": "使用POST方法调用/v1/cl/stats/search接口来搜索特定测试用例的统计数据历史。确保timestamp参数为当前时间且在接下来10分钟内有效，同时需要提供一个有效的session_id。",
+    "input": [
+      {
+        "name": "BASE_URL",
+        "type": "str",
+        "description": "API base without trailing slash"
+      },
+      {
+        "name": "TIMESTAMP",
+        "type": "int",
+        "description": "unix timestamp, expired in 10 minutes, type is int"
+      },
+      {
+        "name": "SESSION_ID",
+        "type": "str",
+        "description": "allocated session id"
+      },
+      {
+        "name": "body",
+        "type": "object",
+        "description": "请求体，包含统计搜索请求的具体内容",
+        "schema": {
+          "$ref": "#/definitions/statsapi.StatsSearchRequest"
+        }
+      }
+    ],
+    "output": [
+      {
+        "name": "response",
+        "type": "object",
+        "description": "返回的统计搜索响应对象",
+        "schema": {
+          "$ref": "#/definitions/statsapi.StatsSearchResponse"
+        }
+      }
+    ]
+  },
+  {
+    "step": 1,
+    "description": "User logout",
+    "guidance": "Call /v1/cl/user/logout to safely end the user's session. This API requires a valid session_id and a timestamp (valid for 10 minutes). The request body must follow the schema defined in alps.UserLogoutRequest.",
+    "input": [
+      {
+        "name": "BASE_URL",
+        "type": "str",
+        "description": "API base without trailing slash"
+      },
+      {
+        "name": "TIMESTAMP",
+        "type": "int",
+        "description": "unix timestamp, expired in 10 minutes, type is int"
+      },
+      {
+        "name": "SESSION_ID",
+        "type": "str",
+        "description": "allocated session id"
+      },
+      {
+        "name": "body",
+        "type": "object",
+        "description": "request body following the schema of alps.UserLogoutRequest",
+        "schema": {
+          "$ref": "#/definitions/alps.UserLogoutRequest"
+        }
+      }
+    ],
+    "output": [
+      {
+        "name": "response_body",
+        "type": "object",
+        "description": "response body following the schema of alps.UserLogoutResponse",
+        "schema": {
+          "$ref": "#/definitions/alps.UserLogoutResponse"
+        }
+      }
+    ]
+  }
+]
+[
+  {
+    "step": 0,
+    "description": "用户登录以获取系统访问权限",
+    "guidance": "调用 /v1/cl/user/login 接口进行用户登录，该接口需要一个在请求体中的UserLoginRequest对象和一个作为查询参数的UNIX时间戳（有效期10分钟）。通过此步骤可以获取用户的session_id。",
+    "input": [
+      {
+        "name": "BASE_URL",
+        "type": "str",
+        "description": "API的基础URL，不带尾部斜杠"
+      },
+      {
+        "name": "TIMESTAMP",
+        "type": "int",
+        "description": "当前时间的UNIX时间戳，必须在接下来的10分钟内有效"
+      },
+      {
+        "name": "body",
+        "type": "object",
+        "description": "包含用户名和密码等信息的UserLoginRequest对象",
+        "schema": {
+          "$ref": "#/definitions/alps.UserLoginRequest"
+        }
+      }
+    ],
+    "output": [
+      {
+        "name": "session_id",
+        "type": "str",
+        "description": "从响应中获取的会话ID",
+        "schema": {
+          "$ref": "#/definitions/alps.UserLoginResponse"
+        }
+      }
+    ]
+  },
+  {
+    "step": 1,
+    "description": "Create a UDP flood attack DDoS flow template",
+    "guidance": "Call /v1/cl/ddos/attack/flow/create to create a DDoS attack flow template for a UDP flood. The request must include a valid timestamp, session_id, and the body should contain the AttackFlowCreateRequest details. Note that the timestamp is a Unix timestamp and it should be valid within 10 minutes.",
+    "input": [
+      {
+        "name": "BASE_URL",
+        "type": "str",
+        "description": "API base without trailing slash"
+      },
+      {
+        "name": "TIMESTAMP",
+        "type": "int",
+        "description": "Unix timestamp, expired in 10 minutes"
+      },
+      {
+        "name": "SESSION_ID",
+        "type": "str",
+        "description": "allocated session id"
+      },
+      {
+        "name": "body",
+        "type": "object",
+        "description": "Details of the attack flow creation request",
+        "schema": {
+          "$ref": "#/definitions/attackapi.AttackFlowCreateRequest"
+        }
+      }
+    ],
+    "output": [
+      {
+        "name": "response",
+        "type": "object",
+        "description": "The response from creating a DDoS attack flow template",
+        "schema": {
+          "$ref": "#/definitions/attackapi.AttackFlowCreateResponse"
+        }
+      }
+    ]
+  },
+  {
+    "step": 2,
+    "description": "Update DDoS attack flow parameters",
+    "guidance": "Call /v1/cl/ddos/attack/flow/param/update to update the DDoS attack flow parameters, including setting the peak traffic and test duration. This call requires a valid session ID and a timestamp that is not older than 10 minutes.",
+    "input": [
+      {
+        "name": "BASE_URL",
+        "type": "str",
+        "description": "API base without trailing slash"
+      },
+      {
+        "name": "TIMESTAMP",
+        "type": "int",
+        "description": "unix timestamp, expired in 10 minutes"
+      },
+      {
+        "name": "SESSION_ID",
+        "type": "str",
+        "description": "allocated session id"
+      },
+      {
+        "name": "body",
+        "type": "object",
+        "description": "Request body containing the updated DDoS attack flow parameters",
+        "schema": {
+          "$ref": "#/definitions/attackapi.AttackFlowParamUpdateRequest"
+        }
+      }
+    ],
+    "output": [
+      {
+        "name": "response_body",
+        "type": "object",
+        "description": "Response from updating DDoS attack flow parameters",
+        "schema": {
+          "$ref": "#/definitions/attackapi.AttackFlowParamUpdateResponse"
+        }
+      }
+    ]
+  },
+  {
+    "step": 3,
+    "description": "Save DDoS attack flow template",
+    "guidance": "Call /v1/cl/ddos/attack/flow/save to save a configured DDoS attack flow template. This step requires a valid session ID and timestamp within the last 10 minutes.",
+    "input": [
+      {
+        "name": "BASE_URL",
+        "type": "str",
+        "description": "API base without trailing slash"
+      },
+      {
+        "name": "TIMESTAMP",
+        "type": "int",
+        "description": "unix timestamp, expired in 10 minutes"
+      },
+      {
+        "name": "SESSION_ID",
+        "type": "str",
+        "description": "allocated session id"
+      },
+      {
+        "name": "body",
+        "type": "object",
+        "description": "DDoS attack flow template data",
+        "schema": {
+          "$ref": "#/definitions/attackapi.AttackFlowSaveRequest"
+        }
+      }
+    ],
+    "output": [
+      {
+        "name": "response",
+        "type": "object",
+        "description": "Response containing the result of saving the DDoS attack flow template",
+        "schema": {
+          "$ref": "#/definitions/attackapi.AttackFlowSaveResponse"
+        }
+      }
+    ]
+  },
+  {
+    "step": 4,
+    "description": "Create a new testcase based on a saved DDoS attack traffic template",
+    "guidance": "This step aims to create a new test case using the provided DDoS attack traffic template. To achieve this, you need to POST to /v1/cl/testcase/create with required parameters including a timestamp valid within 10 minutes and an allocated session id. The request body should follow the structure defined in TestcaseCreateRequest.",
+    "input": [
+      {
+        "name": "BASE_URL",
+        "type": "str",
+        "description": "API base without trailing slash"
+      },
+      {
+        "name": "TIMESTAMP",
+        "type": "int",
+        "description": "unix timestamp, expired in 10 minutes, type is int"
+      },
+      {
+        "name": "SESSION_ID",
+        "type": "str",
+        "description": "allocated session id"
+      },
+      {
+        "name": "body",
+        "type": "object",
+        "description": "The content of the request body following the schema of TestcaseCreateRequest as defined in the API specification",
+        "schema": {
+          "$ref": "#/definitions/testapi.TestcaseCreateRequest"
+        }
+      }
+    ],
+    "output": [
+      {
+        "name": "response",
+        "type": "object",
+        "description": "The response object follows the schema of TestcaseCreateResponse as defined in the API specification",
+        "schema": {
+          "$ref": "#/definitions/testapi.TestcaseCreateResponse"
+        }
+      }
+    ]
+  },
+  {
+    "step": 1,
+    "description": "Update a test parameter",
+    "guidance": "Call /v1/cl/testcase/param/update to update a specific test parameter. This step requires a valid session_id and a timestamp that is not older than 10 minutes. The request body should contain the necessary information for updating the parameter, as defined in the TestcaseParamUpdateRequest schema.",
+    "input": [
+      {
+        "name": "BASE_URL",
+        "type": "str",
+        "description": "API base without trailing slash"
+      },
+      {
+        "name": "TIMESTAMP",
+        "type": "int",
+        "description": "unix timestamp, expired in 10 minutes, type is int"
+      },
+      {
+        "name": "SESSION_ID",
+        "type": "str",
+        "description": "allocated session id"
+      },
+      {
+        "name": "body",
+        "type": "object",
+        "description": "The request body containing the details of the test parameter to be updated, as per the TestcaseParamUpdateRequest schema",
+        "schema": {
+          "$ref": "#/definitions/testapi.TestcaseParamUpdateRequest"
+        }
+      }
+    ],
+    "output": [
+      {
+        "name": "response",
+        "type": "object",
+        "description": "The response object, as per the TestcaseParamUpdateResponse schema",
+        "schema": {
+          "$ref": "#/definitions/testapi.TestcaseParamUpdateResponse"
+        }
+      }
+    ]
+  },
+  {
+    "step": 1,
+    "description": "Run a specified testcase",
+    "guidance": "Call /v1/cl/testcase/run to execute a predefined testcase. This API requires a valid session_id and timestamp, which should be generated within the last 10 minutes.",
+    "input": [
+      {
+        "name": "BASE_URL",
+        "type": "str",
+        "description": "API base without trailing slash"
+      },
+      {
+        "name": "TIMESTAMP",
+        "type": "int",
+        "description": "unix timestamp, expired in 10 minutes"
+      },
+      {
+        "name": "SESSION_ID",
+        "type": "str",
+        "description": "allocated session id"
+      },
+      {
+        "name": "body",
+        "type": "object",
+        "description": "Request body for running a testcase",
+        "schema": {
+          "$ref": "#/definitions/testapi.TestcaseRunRequest"
+        }
+      }
+    ],
+    "output": [
+      {
+        "name": "response_body",
+        "type": "object",
+        "description": "Response body from running a testcase",
+        "schema": {
+          "$ref": "#/definitions/testapi.TestcaseRunResponse"
+        }
+      }
+    ]
+  },
+  {
+    "step": 7,
+    "description": "查询当前测试用例支持的所有统计类别",
+    "guidance": "通过调用 /v1/cl/stats/category/search 接口来获取指定测试实例的实时统计类别。此步骤需要提供一个有效的 session_id 和 timestamp，其中 timestamp 是一个 Unix 时间戳，有效期为 10 分钟。",
+    "input": [
+      {
+        "name": "BASE_URL",
+        "type": "str",
+        "description": "API base without trailing slash"
+      },
+      {
+        "name": "TIMESTAMP",
+        "type": "int",
+        "description": "unix timestamp, expired in 10 minutes"
+      },
+      {
+        "name": "SESSION_ID",
+        "type": "str",
+        "description": "allocated session id"
+      },
+      {
+        "name": "body",
+        "type": "object",
+        "description": "请求体，包含搜索统计类别的具体参数",
+        "schema": {
+          "$ref": "#/definitions/statsapi.StatsCategorySearchRequest"
+        }
+      }
+    ],
+    "output": [
+      {
+        "name": "response",
+        "type": "object",
+        "description": "返回结果，包含统计类别的信息",
+        "schema": {
+          "$ref": "#/definitions/statsapi.StatsCategorySearchResponse"
+        }
+      }
+    ]
+  },
+  {
+    "step": 1,
+    "description": "Search for detailed statistics of a specified testcase instance based on selected statistical categories",
+    "guidance": "Call /v1/cl/stats/search using POST method with required parameters to fetch the history of statistics. Ensure that the timestamp is within the last 10 minutes and use an allocated session id.",
+    "input": [
+      {
+        "name": "BASE_URL",
+        "type": "str",
+        "description": "API base without trailing slash"
+      },
+      {
+        "name": "TIMESTAMP",
+        "type": "int",
+        "description": "unix timestamp, expired in 10 minutes, type is int"
+      },
+      {
+        "name": "SESSION_ID",
+        "type": "str",
+        "description": "allocated session id"
+      },
+      {
+        "name": "body",
+        "type": "object",
+        "description": "Request body for stats search request",
+        "schema": {
+          "$ref": "#/definitions/statsapi.StatsSearchRequest"
+        }
+      }
+    ],
+    "output": [
+      {
+        "name": "response_body",
+        "type": "object",
+        "description": "Response containing the result of the stats search",
+        "schema": {
+          "$ref": "#/definitions/statsapi.StatsSearchResponse"
+        }
+      }
+    ]
+  },
+  {
+    "step": 9,
+    "description": "User logout",
+    "guidance": "Call /v1/cl/user/logout to safely log out the user after all tests are completed. This endpoint requires a valid session_id and a timestamp that is not older than 10 minutes. The body of the request should follow the UserLogoutRequest schema.",
+    "input": [
+      {
+        "name": "BASE_URL",
+        "type": "str",
+        "description": "API base without trailing slash"
+      },
+      {
+        "name": "TIMESTAMP",
+        "type": "int",
+        "description": "Unix timestamp, must be within the last 10 minutes"
+      },
+      {
+        "name": "SESSION_ID",
+        "type": "str",
+        "description": "Allocated session id from login response"
+      },
+      {
+        "name": "body",
+        "type": "object",
+        "description": "Request body following the UserLogoutRequest schema",
+        "schema": {
+          "$ref": "#/definitions/alps.UserLogoutRequest"
+        }
+      }
+    ],
+    "output": [
+      {
+        "name": "response",
+        "type": "object",
+        "description": "Response body following the UserLogoutResponse schema",
+        "schema": {
+          "$ref": "#/definitions/alps.UserLogoutResponse"
+        }
+      }
+    ]
+  }
+]

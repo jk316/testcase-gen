@@ -20,15 +20,15 @@ def write_testcase_node(state: "AgentState") -> dict:
     LangGraph Node: 将生成的 testcase 写入到文件
     
     Args:
-        state: AgentState 对象，必须包含 generated_testcase 字段
+        state: AgentState 对象，必须包含 generated_testcases 字段
         
     Returns:
         空的 delta（不更新状态）
     """
     logger.info("Starting testcase write")
-    generated_testcase = state.get("generated_testcase")
+    generated_testcases = state.get("generated_testcases", [])
     
-    if generated_testcase is None:
+    if not generated_testcases:
         logger.warning("No testcase to write, skipping")
         return {}
     
@@ -37,9 +37,9 @@ def write_testcase_node(state: "AgentState") -> dict:
     
     try:
         # 写入 testcase 到文件（追加模式）
-        save_json_file(generated_testcase, output_path, append=True)
+        save_json_file(generated_testcases, output_path, append=True)
         logger.info(f"Successfully wrote testcase to {output_path}")
-        logger.debug(f"Testcase content: {json.dumps(generated_testcase, ensure_ascii=False)[:200]}...")
+        logger.debug(f"Testcase content: {json.dumps(generated_testcases, ensure_ascii=False, indent=2)}")
     except Exception as e:
         logger.error(f"Error writing testcase: {e}", exc_info=True)
     

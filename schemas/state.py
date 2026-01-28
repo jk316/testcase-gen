@@ -21,9 +21,9 @@ class AgentState(TypedDict):
     required_input_fields: Set[str]
     available_output_fields: Set[str]
 
-    # 中间产物
-    api_input_fields: Dict[str, Set[str]]
-    api_output_fields: Dict[str, Set[str]]
+
+    all_input_fields: List[List[Dict[str, Any]]] # 输入字段列表
+    all_output_fields: List[List[Dict[str, Any]]] # 输出字段列表
 
     # 控制信息
     missing_fields: Set[str]
@@ -31,4 +31,7 @@ class AgentState(TypedDict):
     max_steps: int
 
     # 生成的 testcase
-    generated_testcase: Optional[Dict[str, Any]]
+    generated_testcases: List[Dict[str, Any]]
+
+    # 参数推理
+    params_reasoning: List[Dict[str, Any]]

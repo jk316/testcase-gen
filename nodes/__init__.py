@@ -9,7 +9,7 @@ from nodes.update_step_index_node import update_step_index_node
 from nodes.generate_testcase_node import generate_testcase_node
 from nodes.write_testcase_node import write_testcase_node
 from nodes.should_continue import should_continue_intent, should_continue_step
-
+from nodes.params_reasoning_node import params_reasoning_node
 __all__ = [
     "load_intent_list_node",
     "generate_steps_node",
@@ -19,4 +19,5 @@ __all__ = [
     "write_testcase_node",
     "should_continue_intent",
     "should_continue_step",
+    "params_reasoning_node",
 ]

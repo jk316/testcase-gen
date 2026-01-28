@@ -10,55 +10,71 @@
   {
     "step_id": 2,
     "name": "创建 DDoS 攻击流量模板",
-    "description": "根据测试需求创建一个UDP flood攻击的流量模板，设置峰值为500Mbps，持续时间为60秒，目标IP为11.0.0.1/24",
+    "description": "根据测试需求创建一个UDP flood攻击的DDoS攻击流量模板",
     "related_capability": "paths./v1/cl/ddos/attack/flow/create",
-    "based_on_template_step": 7,
+    "based_on_template_step": null,
     "skip_reason": null
   },
   {
     "step_id": 3,
-    "name": "检查 DDoS 攻击流量模板有效性",
-    "description": "验证刚刚创建的DDoS攻击流量模板是否有效",
-    "related_capability": "paths./v1/cl/ddos/attack/flow/check",
+    "name": "配置 DDoS 攻击流量参数",
+    "description": "设置攻击流量的峰值为500Mbps，测试时长为60秒，目的IP为11.0.0.1/24",
+    "related_capability": "paths./v1/cl/ddos/attack/flow/param/update",
     "based_on_template_step": null,
     "skip_reason": null
   },
   {
     "step_id": 4,
     "name": "保存 DDoS 攻击流量模板",
-    "description": "将创建并验证过的DDoS攻击流量模板保存下来以便后续使用",
+    "description": "将配置好的DDoS攻击流量模板保存下来",
     "related_capability": "paths./v1/cl/ddos/attack/flow/save",
     "based_on_template_step": null,
     "skip_reason": null
   },
   {
     "step_id": 5,
-    "name": "运行 DDoS 测试用例",
-    "description": "执行已经配置好的DDoS攻击测试用例",
+    "name": "创建测试用例",
+    "description": "基于已保存的DDoS攻击流量模板创建一个新的测试用例",
+    "related_capability": "paths./v1/cl/testcase/create",
+    "based_on_template_step": 7,
+    "skip_reason": null
+  },
+  {
+    "step_id": 6,
+    "name": "修改测试用例参数",
+    "description": "根据测试需求调整测试用例的具体参数（如攻击持续时间等）",
+    "related_capability": "paths./v1/cl/testcase/param/update",
+    "based_on_template_step": 8,
+    "skip_reason": null
+  },
+  {
+    "step_id": 7,
+    "name": "运行测试用例",
+    "description": "执行之前创建并配置好的测试用例",
     "related_capability": "paths./v1/cl/testcase/run",
     "based_on_template_step": 9,
     "skip_reason": null
   },
   {
-    "step_id": 6,
+    "step_id": 8,
     "name": "获取统计类别",
-    "description": "查询可用于此测试用例的所有统计类别",
+    "description": "查询当前测试用例支持的所有统计类别",
     "related_capability": "paths./v1/cl/stats/category/search",
     "based_on_template_step": 10,
     "skip_reason": null
   },
   {
-    "step_id": 7,
+    "step_id": 9,
     "name": "获取指定统计类别的详细统计值",
-    "description": "根据上一步获取到的统计类别ID，查询详细的统计数据",
+    "description": "根据选定的统计类别获取详细的统计结果",
     "related_capability": "paths./v1/cl/stats/search",
     "based_on_template_step": 11,
     "skip_reason": null
   },
   {
-    "step_id": 8,
+    "step_id": 10,
     "name": "退出客户端登录",
-    "description": "完成所有测试步骤后，安全地登出当前会话",
+    "description": "完成所有测试后安全地登出系统",
     "related_capability": "paths./v1/cl/user/logout",
     "based_on_template_step": 12,
     "skip_reason": null

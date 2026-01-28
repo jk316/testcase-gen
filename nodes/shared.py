@@ -37,7 +37,7 @@ def get_api_index() -> ApiIntentIndexNew:
         logger.info("Initializing API index...")
         
         # 加载 API 数据
-        api_jsonl = load_api_jsonl(config.files.api_openapi_file)
+        api_jsonl = load_jsonl(config.files.api_openapi_file)
         apis = [ApiItem(id=api_dict["id"], title=api_dict["title"], content=api_dict["content"]) 
                 for api_dict in api_jsonl]
         logger.info(f"Loaded {len(apis)} APIs")
@@ -127,7 +127,7 @@ def get_api_data_cache() -> Dict[str, Dict[str, Any]]:
     
     if _api_data_cache is None:
         logger.info("Loading API data cache...")
-        api_jsonl = load_api_jsonl(config.files.api_openapi_file)
+        api_jsonl = load_jsonl(config.files.api_openapi_file)
         _api_data_cache = {}
         for api_dict in api_jsonl:
             api_id = api_dict.get("id")

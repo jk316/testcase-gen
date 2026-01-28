@@ -221,3 +221,35 @@ State: 存取了一些状态
 plan：
 - 给定Node，有对应的能力
 - plan需要哪一个node
+
+
+递归遍历所有的参数，
+构建Redis正向索引 api path -> input & output 参数
+
+input：
+1. 可以让LLM 去设置一个值，timestamp
+
+input语义是符号表里有，这一步要用到的。
+加一个这一步的middle, 这一步需要使用的中间符号，通过代码把middle生成。
+
+input是由前n-1步传递下来的，包括一些base url
+middle是这一步的中间变量，模型去设置出来的。
+
+output: 调用之后，要给后面的。和 output参数 选择一部分作为output，一开始就用response，后处理把有用的拿出来。
+
+第1步，设置middle，然后output出去。
+
+
+保持和之前的格式一致，能否理解
+
+优化：
+只拿到第一层，
+
+
+把api调用顺序给固定，2月份去跑测试时，生成一部分，提取出一个api调用顺序，写在先验知识中，把测
+
+TODO
+- 修改好的testcase
+- 反向索引，
+
+

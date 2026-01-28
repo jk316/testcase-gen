@@ -26,14 +26,14 @@ def generate_testcase_node(state: "AgentState") -> dict:
     candidate_api_ids = state.get("candidate_api_ids", [])
     steps_list = state.get("steps_list", [])
     current_step_index = state.get("current_step_index", 0)
-    
+    generated_testcases = state.get("generated_testcases", [])
     logger.debug(f"Received candidate_api_ids: {candidate_api_ids}")
     logger.debug(f"Received steps_list: {steps_list}")  
     logger.debug(f"Received current_step_index: {current_step_index}")
     if not candidate_api_ids:
         logger.warning("No candidate API IDs, skipping testcase generation")
         return {
-            "generated_testcase": None
+            "generated_testcases": generated_testcases
         }
     
     current_step = steps_list[current_step_index] # 当前步骤
@@ -58,7 +58,7 @@ def generate_testcase_node(state: "AgentState") -> dict:
             if api_id not in api_index:
                 logger.error(f"API ID {api_id} not found in api_index")
                 return {
-                    "generated_testcase": None,
+                    "generated_testcases": generated_testcases,
                     "all_input_fields": all_input_fields,
                     "all_output_fields": all_output_fields,
                 }
@@ -72,7 +72,7 @@ def generate_testcase_node(state: "AgentState") -> dict:
                 except json.JSONDecodeError:
                     logger.error(f"Failed to parse API content for ID {api_id}")
                     return {
-                        "generated_testcase": None,
+                        "generated_testcases": generated_testcases,
                         "all_input_fields": all_input_fields,
                         "all_output_fields": all_output_fields,
                     }
@@ -141,15 +141,16 @@ def generate_testcase_node(state: "AgentState") -> dict:
             if testcase_json is None:
                 logger.error(f"Failed to generate testcase for API ID {api_id}")
                 return {
-                    "generated_testcase": None,
+                    "generated_testcases": generated_testcases,
                     "all_input_fields": all_input_fields,
                     "all_output_fields": all_output_fields,
                 }
             
             logger.info(f"Successfully generated testcase for API ID: {api_id}")
             logger.debug(f"Generated testcase content: {testcase_json}")
+            
             return {
-                "generated_testcase": testcase_json,
+                "generated_testcases": generated_testcases + [testcase_json],
                 "all_input_fields": all_input_fields,
                 "all_output_fields": all_output_fields,
             }
@@ -164,7 +165,7 @@ def generate_testcase_node(state: "AgentState") -> dict:
             while len(all_output_fields) <= current_step_index:
                 all_output_fields.append([])
             return {
-                "generated_testcase": None,
+                "generated_testcases": generated_testcases,
                 "all_input_fields": all_input_fields,
                 "all_output_fields": all_output_fields,
             }

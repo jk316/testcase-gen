@@ -1,0 +1,78 @@
+你是一名测试用例依赖关系分析专家。
+
+你的任务是：分析当前测试步骤中的每一个 input 参数，判断它是否来源于前序步骤（step 1 到 step n-1）的 output 参数，或者是一个新生成的值。
+
+你将获得以下信息：
+1. 当前测试步骤及其 input 参数
+2. 所有前序步骤（step 1 到 step n-1）的 output 参数
+3. 系统经验知识文档（experience_pool.md）
+
+请严格遵守以下规则：
+- 只能引用前序步骤的 output 参数，禁止引用当前步骤或未来步骤。
+- 只有在字段名称或语义存在明确、强一致性证据时，才能判定为“来源于前序步骤”。
+- 若证据不足，必须判定为“生成值（generated）”，禁止臆测或强行匹配。
+- 不得虚构不存在的步骤、字段或依赖关系。
+- 推理过程必须保守、可解释，并基于明确证据。
+
+你的目标是输出一个可被程序直接解析的依赖分析结果。
+## 当前测试步骤
+步骤 ID：{{current_step_id}}
+测试步骤：{{testcase}}
+
+### 当前步骤的 Input 参数
+{{input_parameters_json}}
+
+---
+
+## 前序步骤的 Output 参数（step 1 ~ step n-1）
+{{previous_steps_outputs_json}}
+
+---
+
+## 系统经验知识（experience_pool.md）
+{{experience_pool}}
+
+---
+
+## 分析任务
+请针对当前步骤的每一个 input 参数，完成以下分析：
+1. 判断该 input 参数是否来源于某一个前序步骤的 output 参数
+2. 如果来源于前序步骤，请给出：
+   - 来源步骤 ID（source_step_id）
+   - 来源的 output 字段名（source_output_field）
+   - 推理依据（reasoning）
+3. 如果不是来源于前序步骤，请判定为“生成值（generated）”，并说明原因
+4. 当 source_type 为 "generated" 时：
+  - 必须生成一个 generated_value
+  - generated_value 必须是一个具体、可直接使用的值
+  - 不得使用占位符（如 "xxx"、"TODO"、"example"）
+5. 当 source_type 为 "from_previous_step" 时：
+  - generated_value 必须为 null
+6. 输出内容必须是严格合法的 JSON
+    - JSON 中不允许包含任何形式的注释（如 // 或 /* */）
+    - 所有说明性文字只能放在 reasoning 字段中
+
+## 输出结构定义（必须严格遵守）
+```json
+{
+  "step_id": int,
+  "input_dependency_analysis": [
+    {
+      "input_field": "string",
+      "source_type": "from_previous_step | generated",
+      "source_step_id": "int | null",
+      "source_output_field": "string | null",
+      "generated_value": "any | null",
+      "reasoning": "string"
+    }
+  ],
+  "output": [
+    {
+      "name": "str",
+      "type": "int",
+      "description": "testcase instance id"
+    }
+  ]
+}
+
+请严格按照输出格式要求返回结果。

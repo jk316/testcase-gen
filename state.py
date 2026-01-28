@@ -12,6 +12,7 @@ from nodes import (
     write_testcase_node,
     should_continue_intent,
     should_continue_step,
+    params_reasoning_node,
 )
 
 load_dotenv()
@@ -30,6 +31,7 @@ builder.add_node("loop_control_intent", update_intent_index_node)
 builder.add_node("loop_control_step", update_step_index_node)
 builder.add_node("should_continue_intent", should_continue_intent)
 builder.add_node("should_continue_step", should_continue_step)
+builder.add_node("params_reasoning", params_reasoning_node)
 builder.set_entry_point("load_intent_list")
 
 # 从 load_intent_list 到 generate_steps 的边
@@ -38,22 +40,24 @@ builder.add_edge("load_intent_list", "generate_steps")
 # 从 generate_steps 到 generate_testcase 的边
 builder.add_edge("generate_steps", "generate_testcase")
 
-# 从 generate_testcase 到 write_testcase 的边
-builder.add_edge("generate_testcase", "write_testcase")
+# 从 generate_testcase 到 params_reasoning 的边
+builder.add_edge("generate_testcase", "params_reasoning")
 
-builder.add_edge("write_testcase", "loop_control_step")
+# 从 params_reasoning 到 loop_control_step 的边
+builder.add_edge("params_reasoning", "loop_control_step")
 
-
-
-# 从 generate_testcase 使用条件边：根据是否还有更多步骤决定继续循环或结束
+# 从 loop_control_step 到 write_testcase 的边
 builder.add_conditional_edges(
     "loop_control_step",
     should_continue_step,
     {
-        "continue": "generate_testcase",  # 还有更多步骤，继续生成 testcase
-        "end": END  # 所有步骤处理完毕，结束
+        "continue": "generate_testcase",
+        "end": "write_testcase",
     }
 )
+
+builder.add_edge("write_testcase", END)
+
 
 graph = builder.compile()
 

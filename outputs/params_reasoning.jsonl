@@ -1,0 +1,856 @@
+{
+  "step_id": 0,
+  "input_dependency_analysis": [
+    {
+      "input_field": "timestamp",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "1633072800",
+      "reasoning": "当前步骤的输入参数 timestamp 是一个 Unix 时间戳，且没有在前序步骤中找到相应的输出参数。根据描述，这个时间戳应该是在调用时生成的。这里提供了一个示例值（1633072800），实际应用中应使用当前时间加上10分钟的有效期来生成。"
+    },
+    {
+      "input_field": "name",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "admin",
+      "reasoning": "系统经验知识文档中提到 USERNAME 的默认值为 'admin'。由于没有从前序步骤中找到 name 字段，因此可以推断该值是生成的，并且基于经验知识文档设置为 'admin'。"
+    },
+    {
+      "input_field": "observer",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "",
+      "reasoning": "当前步骤的输入参数 observer 没有在前序步骤中找到相应的输出参数。根据描述，默认值为空字符串。"
+    },
+    {
+      "input_field": "password",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "admin",
+      "reasoning": "系统经验知识文档中提到 PASSWORD 的默认值为 'admin'。由于没有从前序步骤中找到 password 字段，因此可以推断该值是生成的，并且基于经验知识文档设置为 'admin'。"
+    },
+    {
+      "input_field": "signature",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "d4f5e9b7c8a2b3a4f5e9b7c8a2b3a4f5e9b7c8a2",
+      "reasoning": "当前步骤的输入参数 signature 需要通过 SHA-1 加密生成。由于没有从前序步骤中找到相关的输出参数，因此可以推断该值是生成的。这里提供了一个示例值（d4f5e9b7c8a2b3a4f5e9b7c8a2b3a4f5e9b7c8a2），实际应用中应使用正确的加密算法生成。"
+    }
+  ]
+}
+{
+  "step_id": 1,
+  "input_dependency_analysis": [
+    {
+      "input_field": "timestamp",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": 1633072800,
+      "reasoning": "timestamp是一个当前时间戳，需要根据当前时间生成。前序步骤中没有提供直接可用的时间戳值。"
+    },
+    {
+      "input_field": "session_id",
+      "source_type": "from_previous_step",
+      "source_step_id": 0,
+      "source_output_field": "result.session_id",
+      "generated_value": null,
+      "reasoning": "session_id字段在前序步骤的output参数中存在，并且字段名称完全一致，因此可以确定来源于前序步骤。"
+    },
+    {
+      "input_field": "flow_name",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "UDP_Flood_Attack_1",
+      "reasoning": "flow_name是攻击流量模板的名称，这是一个新生成的值，前序步骤中没有提供该字段的具体值。"
+    },
+    {
+      "input_field": "overwrite",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": true,
+      "reasoning": "overwrite是一个布尔值，表示是否覆盖现有的攻击流量模板。这是一个新生成的值，前序步骤中没有提供该字段的具体值。"
+    }
+  ]
+}
+{
+  "step_id": 2,
+  "input_dependency_analysis": [
+    {
+      "input_field": "timestamp",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "1633072800",
+      "reasoning": "没有前序步骤的输出参数直接提供时间戳，因此该值是生成的。这里假设当前时间为2021-10-01T00:00:00Z，对应的Unix时间戳为1633072800。"
+    },
+    {
+      "input_field": "session_id",
+      "source_type": "from_previous_step",
+      "source_step_id": 1,
+      "source_output_field": "result.session_id",
+      "generated_value": null,
+      "reasoning": "session_id在第一个前序步骤的输出参数中被明确指定为'result.session_id'，字段名称和语义一致。"
+    },
+    {
+      "input_field": "flow_id",
+      "source_type": "from_previous_step",
+      "source_step_id": 2,
+      "source_output_field": "result.flow_id",
+      "generated_value": null,
+      "reasoning": "第二个前序步骤的输出参数中包含'flow_id'作为'result.flow_id'，这与当前输入参数'flow_id'相匹配。"
+    },
+    {
+      "input_field": "flow_name",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "TestFlow",
+      "reasoning": "前序步骤的输出参数中没有直接提供flow_name的信息，因此这个值应该是新生成的。这里假设了一个测试用例中常见的名称'TestFlow'。"
+    },
+    {
+      "input_field": "param",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "attack_peak",
+      "reasoning": "没有前序步骤提供了名为'param'的具体值，根据上下文推测这是描述攻击流量峰值的参数名。"
+    },
+    {
+      "input_field": "value",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": {
+        "peak": "500Mbps",
+        "duration": "60s",
+        "destination_ip": "11.0.0.1/24"
+      },
+      "reasoning": "value是一个对象，包含了设置攻击流量峰值、测试时长及目的IP的信息。这些信息未从前序步骤获取，而是基于测试需求新生成的。"
+    }
+  ]
+}
+{
+  "step_id": 3,
+  "input_dependency_analysis": [
+    {
+      "input_field": "timestamp",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": 1672531200,
+      "reasoning": "timestamp是一个当前时间戳，需要根据当前时间生成。前序步骤中没有提供直接可用的timestamp值。"
+    },
+    {
+      "input_field": "session_id",
+      "source_type": "from_previous_step",
+      "source_step_id": 1,
+      "source_output_field": "result.session_id",
+      "generated_value": null,
+      "reasoning": "session_id在第一个步骤的输出参数中明确给出，字段名称和语义一致。"
+    },
+    {
+      "input_field": "flow_id",
+      "source_type": "from_previous_step",
+      "source_step_id": 2,
+      "source_output_field": "result.flow_id",
+      "generated_value": null,
+      "reasoning": "flow_id在第二个步骤的输出参数中明确给出，字段名称和语义一致。"
+    },
+    {
+      "input_field": "flow_info",
+      "source_type": "from_previous_step",
+      "source_step_id": 2,
+      "source_output_field": "result.flow_info",
+      "generated_value": null,
+      "reasoning": "flow_info在第二个步骤的输出参数中明确给出，字段名称和语义一致。"
+    },
+    {
+      "input_field": "desc",
+      "source_type": "from_previous_step",
+      "source_step_id": 2,
+      "source_output_field": "result.flow_info.desc",
+      "generated_value": null,
+      "reasoning": "desc在第二个步骤的输出参数中明确给出，字段名称和语义一致。"
+    },
+    {
+      "input_field": "flows",
+      "source_type": "from_previous_step",
+      "source_step_id": 2,
+      "source_output_field": "result.flow_info.flows",
+      "generated_value": null,
+      "reasoning": "flows在第二个步骤的输出参数中明确给出，字段名称和语义一致。"
+    },
+    {
+      "input_field": "display",
+      "source_type": "from_previous_step",
+      "source_step_id": 2,
+      "source_output_field": "result.flow_info.flows.display",
+      "generated_value": null,
+      "reasoning": "display在第二个步骤的输出参数中明确给出，字段名称和语义一致。"
+    },
+    {
+      "input_field": "fields",
+      "source_type": "from_previous_step",
+      "source_step_id": 2,
+      "source_output_field": "result.flow_info.flows.fields",
+      "generated_value": null,
+      "reasoning": "fields在第二个步骤的输出参数中明确给出，字段名称和语义一致。"
+    },
+    {
+      "input_field": "alter_option",
+      "source_type": "from_previous_step",
+      "source_step_id": 2,
+      "source_output_field": "result.flow_info.flows.fields.alter_option",
+      "generated_value": null,
+      "reasoning": "alter_option在第二个步骤的输出参数中明确给出，字段名称和语义一致。"
+    },
+    {
+      "input_field": "disable",
+      "source_type": "from_previous_step",
+      "source_step_id": 2,
+      "source_output_field": "result.flow_info.flows.fields.disable",
+      "generated_value": null,
+      "reasoning": "disable在第二个步骤的输出参数中明确给出，字段名称和语义一致。"
+    },
+    {
+      "input_field": "display",
+      "source_type": "from_previous_step",
+      "source_step_id": 2,
+      "source_output_field": "result.flow_info.flows.fields.display",
+      "generated_value": null,
+      "reasoning": "display在第二个步骤的输出参数中明确给出，字段名称和语义一致。"
+    },
+    {
+      "input_field": "is_hide",
+      "source_type": "from_previous_step",
+      "source_step_id": 2,
+      "source_output_field": "result.flow_info.flows.fields.is_hide",
+      "generated_value": null,
+      "reasoning": "is_hide在第二个步骤的输出参数中明确给出，字段名称和语义一致。"
+    },
+    {
+      "input_field": "name",
+      "source_type": "from_previous_step",
+      "source_step_id": 2,
+      "source_output_field": "result.flow_info.flows.fields.name",
+      "generated_value": null,
+      "reasoning": "name在第二个步骤的输出参数中明确给出，字段名称和语义一致。"
+    },
+    {
+      "input_field": "range",
+      "source_type": "from_previous_step",
+      "source_step_id": 2,
+      "source_output_field": "result.flow_info.flows.fields.range",
+      "generated_value": null,
+      "reasoning": "range在第二个步骤的输出参数中明确给出，字段名称和语义一致。"
+    },
+    {
+      "input_field": "section",
+      "source_type": "from_previous_step",
+      "source_step_id": 2,
+      "source_output_field": "result.flow_info.flows.fields.section",
+      "generated_value": null,
+      "reasoning": "section在第二个步骤的输出参数中明确给出，字段名称和语义一致。"
+    },
+    {
+      "input_field": "value",
+      "source_type": "from_previous_step",
+      "source_step_id": 2,
+      "source_output_field": "result.flow_info.flows.fields.value",
+      "generated_value": null,
+      "reasoning": "value在第二个步骤的输出参数中明确给出，字段名称和语义一致。"
+    },
+    {
+      "input_field": "type",
+      "source_type": "from_previous_step",
+      "source_step_id": 2,
+      "source_output_field": "result.flow_info.flows.type",
+      "generated_value": null,
+      "reasoning": "type在第二个步骤的输出参数中明确给出，字段名称和语义一致。"
+    },
+    {
+      "input_field": "name",
+      "source_type": "from_previous_step",
+      "source_step_id": 2,
+      "source_output_field": "result.flow_info.name",
+      "generated_value": null,
+      "reasoning": "name在第二个步骤的输出参数中明确给出，字段名称和语义一致。"
+    }
+  ]
+}
+{
+  "step_id": 4,
+  "input_dependency_analysis": [
+    {
+      "input_field": "timestamp",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": 1633072800,
+      "reasoning": "当前步骤的输入参数 'timestamp' 是一个 Unix 时间戳，且需要在10分钟内有效。这个值通常由客户端生成，而不是从前序步骤获取。"
+    },
+    {
+      "input_field": "session_id",
+      "source_type": "from_previous_step",
+      "source_step_id": 1,
+      "source_output_field": "result.session_id",
+      "generated_value": null,
+      "reasoning": "前序步骤1的输出参数 'result.session_id' 和当前步骤的输入参数 'session_id' 在名称和语义上完全一致，可以确定 'session_id' 来源于此。"
+    },
+    {
+      "input_field": "overwrite",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": true,
+      "reasoning": "当前步骤的输入参数 'overwrite' 是一个布尔值，用于指示是否覆盖测试用例。这个值通常由客户端根据需求设置，而不是从前序步骤获取。"
+    },
+    {
+      "input_field": "testcase_name",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "New DDoS Test Case",
+      "reasoning": "当前步骤的输入参数 'testcase_name' 是一个字符串，用于指定新创建的测试用例的名称。这个值通常由客户端根据需求设置，而不是从前序步骤获取。"
+    }
+  ]
+}
+{
+  "step_id": 5,
+  "input_dependency_analysis": [
+    {
+      "input_field": "timestamp",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "1633072800",
+      "reasoning": "没有明确的前序步骤输出字段与 'timestamp' 匹配，因此判定为生成值。这里使用了一个示例 Unix 时间戳。"
+    },
+    {
+      "input_field": "session_id",
+      "source_type": "from_previous_step",
+      "source_step_id": 1,
+      "source_output_field": "result.session_id",
+      "generated_value": null,
+      "reasoning": "前序步骤 1 的 output 参数 'result.session_id' 与当前步骤的 input 参数 'session_id' 名称和语义一致。"
+    },
+    {
+      "input_field": "param",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "example_param_info",
+      "reasoning": "没有明确的前序步骤输出字段与 'param' 匹配，因此判定为生成值。这里使用了一个示例参数信息。"
+    },
+    {
+      "input_field": "testcase_id",
+      "source_type": "from_previous_step",
+      "source_step_id": 5,
+      "source_output_field": "result.testcase_id",
+      "generated_value": null,
+      "reasoning": "前序步骤 5 的 output 参数 'result.testcase_id' 与当前步骤的 input 参数 'testcase_id' 名称和语义一致。"
+    },
+    {
+      "input_field": "testcase_name",
+      "source_type": "from_previous_step",
+      "source_step_id": 5,
+      "source_output_field": "result.shared_settings.testcase_name",
+      "generated_value": null,
+      "reasoning": "前序步骤 5 的 output 参数 'result.shared_settings.testcase_name' 与当前步骤的 input 参数 'testcase_name' 名称和语义一致。"
+    },
+    {
+      "input_field": "value",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": {
+        "key": "example_value"
+      },
+      "reasoning": "没有明确的前序步骤输出字段与 'value' 匹配，因此判定为生成值。这里使用了一个示例对象。"
+    }
+  ]
+}
+{
+  "step_id": 6,
+  "input_dependency_analysis": [
+    {
+      "input_field": "timestamp",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "1633072800",
+      "reasoning": "timestamp 是一个当前时间戳，需要在运行时生成。"
+    },
+    {
+      "input_field": "session_id",
+      "source_type": "from_previous_step",
+      "source_step_id": 1,
+      "source_output_field": "result.session_id",
+      "generated_value": null,
+      "reasoning": "session_id 在前序步骤 1 中的 output 参数 result.session_id 中明确存在。"
+    },
+    {
+      "input_field": "port_mapping",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": {},
+      "reasoning": "port_mapping 是一个对象，且没有明确的前序步骤输出参数与之对应。"
+    },
+    {
+      "input_field": "client",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": [],
+      "reasoning": "client 是一个数组对象，且没有明确的前序步骤输出参数与之对应。"
+    },
+    {
+      "input_field": "group_id",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "group_1",
+      "reasoning": "group_id 是一个字符串，且没有明确的前序步骤输出参数与之对应。"
+    },
+    {
+      "input_field": "interface_id",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": 1,
+      "reasoning": "interface_id 是一个整数，且没有明确的前序步骤输出参数与之对应。"
+    },
+    {
+      "input_field": "port_id",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "port_1",
+      "reasoning": "port_id 是一个字符串，且没有明确的前序步骤输出参数与之对应。"
+    },
+    {
+      "input_field": "server",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": [],
+      "reasoning": "server 是一个数组对象，且没有明确的前序步骤输出参数与之对应。"
+    },
+    {
+      "input_field": "group_id",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "group_1",
+      "reasoning": "group_id 是一个字符串，且没有明确的前序步骤输出参数与之对应。"
+    },
+    {
+      "input_field": "interface_id",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": 1,
+      "reasoning": "interface_id 是一个整数，且没有明确的前序步骤输出参数与之对应。"
+    },
+    {
+      "input_field": "port_id",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "port_1",
+      "reasoning": "port_id 是一个字符串，且没有明确的前序步骤输出参数与之对应。"
+    },
+    {
+      "input_field": "testcase_id",
+      "source_type": "from_previous_step",
+      "source_step_id": 5,
+      "source_output_field": "result.testcase_id",
+      "generated_value": null,
+      "reasoning": "testcase_id 在前序步骤 5 中的 output 参数 result.testcase_id 中明确存在。"
+    },
+    {
+      "input_field": "testcase_name",
+      "source_type": "from_previous_step",
+      "source_step_id": 5,
+      "source_output_field": "result.shared_settings.testcase_name",
+      "generated_value": null,
+      "reasoning": "testcase_name 在前序步骤 5 中的 output 参数 result.shared_settings.testcase_name 中明确存在。"
+    }
+  ]
+}
+{
+  "step_id": 7,
+  "input_dependency_analysis": [
+    {
+      "input_field": "timestamp",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": 1633072800,
+      "reasoning": "timestamp 是一个 UNIX 时间戳，需要根据当前时间生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "session_id",
+      "source_type": "from_previous_step",
+      "source_step_id": 1,
+      "source_output_field": "result.session_id",
+      "generated_value": null,
+      "reasoning": "session_id 在第一个步骤的输出中明确提供了 result.session_id 字段。"
+    },
+    {
+      "input_field": "category",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "network",
+      "reasoning": "category 是一个统计类别，需要根据具体需求生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "component_name",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "test_component_1",
+      "reasoning": "component_name 是测试组件实例名称，需要根据具体需求生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "component_type",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": 1,
+      "reasoning": "component_type 是测试组件类型，需要根据具体需求生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "count",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": 100,
+      "reasoning": "count 是统计项的数量，需要根据具体需求生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "fields_info",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": [],
+      "reasoning": "fields_info 是自定义统计字段信息，需要根据具体需求生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "action",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": {},
+      "reasoning": "action 是组件属性，需要根据具体需求生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "client_category",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "client_1",
+      "reasoning": "client_category 是客户端类别，需要根据具体需求生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "display",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "Display Name",
+      "reasoning": "display 是显示名称，需要根据具体需求生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "field_type",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "string",
+      "reasoning": "field_type 是字段类型，需要根据具体需求生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "name",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "Field Name",
+      "reasoning": "name 是字段名称，需要根据具体需求生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "server_category",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "server_1",
+      "reasoning": "server_category 是服务器类别，需要根据具体需求生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "unit",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "Mbps",
+      "reasoning": "unit 是值单位，需要根据具体需求生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "value",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": 10.5,
+      "reasoning": "value 是数值，需要根据具体需求生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "value_string",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "Value String",
+      "reasoning": "value_string 是值字符串，需要根据具体需求生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "all_prop_assign_count",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": 0,
+      "reasoning": "all_prop_assign_count 是内部逻辑字段，需要根据具体需求生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "calculated_props",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": [],
+      "reasoning": "calculated_props 是计算属性列表，需要根据具体需求生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "component",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": {},
+      "reasoning": "component 是组件信息，需要根据具体需求生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "index",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": 1,
+      "reasoning": "index 是组件索引，需要根据具体需求生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "type",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": 1,
+      "reasoning": "type 是组件类型，需要根据具体需求生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "group",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "Group 1",
+      "reasoning": "group 是组件组，需要根据具体需求生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "merge_port",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": false,
+      "reasoning": "merge_port 是合并多端口统计，默认为 false。需要根据具体需求生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "operator",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "*",
+      "reasoning": "operator 是操作符，默认为 *。需要根据具体需求生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "port_list",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": [],
+      "reasoning": "port_list 是端口列表，需要根据具体需求生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "port_value",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": 0.0,
+      "reasoning": "port_value 是端口值，需要根据具体需求生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "type",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "component",
+      "reasoning": "type 是自定义统计类型，默认为 component。需要根据具体需求生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "user_defined",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": false,
+      "reasoning": "user_defined 是用户定义字段，默认为 false。需要根据具体需求生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "user_defined_value",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "",
+      "reasoning": "user_defined_value 是用户定义值，需要根据具体需求生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "value",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": 1.0,
+      "reasoning": "value 是数值，默认为 1.0。需要根据具体需求生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "flow_name",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "Flow 1",
+      "reasoning": "flow_name 是测试组件流名称，需要根据具体需求生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "instance_id",
+      "source_type": "from_previous_step",
+      "source_step_id": 6,
+      "source_output_field": "result.instance_id",
+      "generated_value": null,
+      "reasoning": "instance_id 在第六个步骤的输出中明确提供了 result.instance_id 字段。"
+    },
+    {
+      "input_field": "interval",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": 60,
+      "reasoning": "interval 是统计间隔，需要根据具体需求生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "page_no",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": 1,
+      "reasoning": "page_no 是页码，默认为 1。需要根据具体需求生成。前序步骤中没有提供此字段。"
+    },
+    {
+      "input_field": "page_size",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": 10,
+      "reasoning": "page_size 是每页大小，默认为 10。需要根据具体需求生成。前序步骤中没有提供此字段。"
+    }
+  ]
+}
+{
+  "step_id": 8,
+  "input_dependency_analysis": [
+    {
+      "input_field": "timestamp",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": 1633072800,
+      "reasoning": "timestamp 是一个 Unix 时间戳，通常在测试过程中动态生成，没有明确的证据表明它来源于前序步骤。"
+    },
+    {
+      "input_field": "session_id",
+      "source_type": "from_previous_step",
+      "source_step_id": 1,
+      "source_output_field": "result.session_id",
+      "generated_value": null,
+      "reasoning": "session_id 在第一个步骤的输出中被定义为 'allocated session id'，与当前步骤中的 session_id 字段名称和描述完全一致。"
+    },
+    {
+      "input_field": "instance_id",
+      "source_type": "from_previous_step",
+      "source_step_id": 7,
+      "source_output_field": "result.instance_id",
+      "generated_value": null,
+      "reasoning": "instance_id 在第七个步骤的输出中被定义为 'instance id'，与当前步骤中的 instance_id 字段名称和描述完全一致。"
+    },
+    {
+      "input_field": "interval",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": 60,
+      "reasoning": "interval 是一个统计间隔，通常在测试过程中根据需求动态设置，没有明确的证据表明它来源于前序步骤。"
+    },
+    {
+      "input_field": "page_no",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": 1,
+      "reasoning": "page_no 是一个页码编号，通常在测试过程中根据需求动态设置，没有明确的证据表明它来源于前序步骤。"
+    },
+    {
+      "input_field": "page_size",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": 50,
+      "reasoning": "page_size 是一个页面大小，通常在测试过程中根据需求动态设置，没有明确的证据表明它来源于前序步骤。"
+    }
+  ]
+}
+{
+  "step_id": 9,
+  "input_dependency_analysis": [
+    {
+      "input_field": "timestamp",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": 1633072800,
+      "reasoning": "timestamp 是一个当前时间戳，通常在请求时生成，没有明确的前序步骤输出字段与之对应。"
+    },
+    {
+      "input_field": "session_id",
+      "source_type": "from_previous_step",
+      "source_step_id": 1,
+      "source_output_field": "result.session_id",
+      "generated_value": null,
+      "reasoning": "session_id 字段名称和语义与前序步骤 1 的 output 参数 result.session_id 完全一致，因此可以确定它来源于该步骤。"
+    },
+    {
+      "input_field": "name",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "test_user",
+      "reasoning": "name 字段没有明确的前序步骤输出字段与之对应，且描述中指出这是一个用户名称，通常由系统或测试用例生成。"
+    }
+  ]
+}
