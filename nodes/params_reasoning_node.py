@@ -24,7 +24,7 @@ def params_reasoning_node(state: "AgentState") -> dict:
         更新后的 AgentState delta，包含 params_reasoning 字段
     """
     logger.info("Starting params reasoning")
-    steps_list = state.get("steps_list", [])
+    generated_testcases = state.get("generated_testcases", [])
     params_reasoning = state.get("params_reasoning", []) # 参数推理结果
     candidate_api_ids = state.get("candidate_api_ids", [])
     current_step_index = state.get("current_step_index", 0)
@@ -36,7 +36,7 @@ def params_reasoning_node(state: "AgentState") -> dict:
     logger.info(f"Received all_output_fields length: {len(all_output_fields)}")
 
     experience_pool = load_file(config.files.experience_pool_md_file)
-    current_step = steps_list[current_step_index] # 当前步骤
+    current_testcase = generated_testcases[current_step_index] # 当前测试用例
     current_input_fields = all_input_fields[current_step_index]
     current_api_id = candidate_api_ids[current_step_index][0]
     api_index = get_api_data_cache()
@@ -62,7 +62,7 @@ def params_reasoning_node(state: "AgentState") -> dict:
 
         params_reasoning_json = params_reasoning_chain.invoke({
             "current_step_id": current_step_index,
-            "testcase": current_step,
+            "testcase": current_testcase,
             "input_parameters_json": current_input_fields,
             "previous_steps_outputs_json": previous_steps_outputs_fields,
             "experience_pool": experience_pool,
@@ -74,7 +74,7 @@ def params_reasoning_node(state: "AgentState") -> dict:
                 "params_reasoning": params_reasoning,
             }
         logger.info(f"Successfully generated params reasoning for step {current_step_index}")
-        save_json_file(params_reasoning_json, config.files.params_reasoning_jsonl_file, append=True)
+        # save_json_file(params_reasoning_json, config.files.params_reasoning_jsonl_file, append=True)
         logger.info(f"Successfully saved params reasoning to {config.files.params_reasoning_jsonl_file}")
         logger.debug(f"Params reasoning content: {json.dumps(params_reasoning_json, ensure_ascii=False, indent=2)}")
         return {

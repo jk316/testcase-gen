@@ -147,7 +147,7 @@ def generate_testcase_node(state: "AgentState") -> dict:
                 }
             
             logger.info(f"Successfully generated testcase for API ID: {api_id}")
-            logger.debug(f"Generated testcase content: {testcase_json}")
+            logger.debug(f"Generated testcase content: {json.dumps(testcase_json, ensure_ascii=False, indent=2)}")
             
             return {
                 "generated_testcases": generated_testcases + [testcase_json],

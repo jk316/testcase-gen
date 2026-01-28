@@ -14929,3 +14929,926 @@
     }
   ]
 }
+{
+  "step_id": 0,
+  "description": "使用测试用户登录系统以获取后续操作权限",
+  "guidance": "使用测试用户登录系统以获取后续操作权限",
+  "input": [
+    {
+      "input_field": "timestamp",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "1633072800",
+      "reasoning": "timestamp 是一个 unix 时间戳，通常由客户端生成。这里没有前序步骤提供此值，因此判定为生成值。"
+    },
+    {
+      "input_field": "name",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "admin",
+      "reasoning": "根据系统经验知识文档，用户名应设置为 'admin'。"
+    },
+    {
+      "input_field": "observer",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "",
+      "reasoning": "字段描述中提到默认为空，且没有前序步骤提供此值，因此判定为生成值。"
+    },
+    {
+      "input_field": "password",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "admin",
+      "reasoning": "根据系统经验知识文档，密码应设置为 'admin'。"
+    },
+    {
+      "input_field": "signature",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "d45f7e8c3b9a3c0b9d6e7f8a9b2c3d4e5f1a2b3c",
+      "reasoning": "签名是通过特定算法生成的，这里没有前序步骤提供此值，因此判定为生成值。具体值基于示例算法生成。"
+    }
+  ],
+  "output": [
+    {
+      "name": "code",
+      "type": "integer",
+      "description": "response code, zero for success, non-zero for errors"
+    },
+    {
+      "name": "message",
+      "type": "string",
+      "description": "response message, description for the response code"
+    },
+    {
+      "name": "result",
+      "type": "object",
+      "description": "login result"
+    },
+    {
+      "name": "is_admin",
+      "type": "boolean",
+      "description": "is admin or not"
+    },
+    {
+      "name": "is_observer",
+      "type": "boolean",
+      "description": "is observer or not"
+    },
+    {
+      "name": "session_id",
+      "type": "string",
+      "description": "allocated session id"
+    },
+    {
+      "name": "timestamp_delta",
+      "type": "integer",
+      "description": "timestamp delta seconds (server datetime - local datetime)"
+    },
+    {
+      "name": "timestamp_error",
+      "type": "boolean",
+      "description": "timestamp error or not, must update the local/chassis system datetime when set to true"
+    },
+    {
+      "name": "user_id",
+      "type": "integer",
+      "description": "user id"
+    }
+  ]
+}
+{
+  "step_id": 1,
+  "description": "查找并确认是否存在可用的DDoS攻击配置模板，用于发起UDP flood攻击",
+  "guidance": "",
+  "input": [
+    {
+      "input_field": "timestamp",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "1633072800",
+      "reasoning": "前序步骤中没有提供与timestamp直接相关的输出参数。根据描述，这是一个表示当前时间戳的值，因此它应该是一个新生成的值。这里假设了一个具体的值作为示例。"
+    },
+    {
+      "input_field": "session_id",
+      "source_type": "from_previous_step",
+      "source_step_id": 1,
+      "source_output_field": "result.session_id",
+      "generated_value": null,
+      "reasoning": "在前序步骤的输出参数中找到了字段名为'result.session_id'的参数，其描述为'allocated session id'，这与当前步骤输入参数'session_id'的描述一致，可以确定是同一个参数。"
+    }
+  ],
+  "output": [
+    {
+      "name": "code",
+      "type": "integer",
+      "description": "response code, zero for success, non-zero for errors"
+    },
+    {
+      "name": "message",
+      "type": "string",
+      "description": "response message, description for the response code"
+    },
+    {
+      "name": "result",
+      "type": "array[object]",
+      "description": "result: attack profile list"
+    },
+    {
+      "name": "create_time",
+      "type": "string",
+      "description": "create time"
+    },
+    {
+      "name": "profile_id",
+      "type": "integer",
+      "description": "ddos profile id"
+    },
+    {
+      "name": "profile_name",
+      "type": "string",
+      "description": "ddos profile name"
+    },
+    {
+      "name": "update_time",
+      "type": "string",
+      "description": "update time"
+    },
+    {
+      "name": "user_id",
+      "type": "integer",
+      "description": "user id"
+    }
+  ]
+}
+{
+  "step_id": 3,
+  "description": "保存创建或更新后的DDoS攻击配置模板，确保其可用于后续测试",
+  "guidance": "",
+  "input": [
+    {
+      "input_field": "timestamp",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": 1633072800,
+      "reasoning": "timestamp 是一个 Unix 时间戳，通常在请求时生成，没有明确的前序步骤输出参数与此匹配。"
+    },
+    {
+      "input_field": "session_id",
+      "source_type": "from_previous_step",
+      "source_step_id": 1,
+      "source_output_field": "result.session_id",
+      "generated_value": null,
+      "reasoning": "session_id 在前序步骤 1 的 output 中有明确的字段 result.session_id 匹配。"
+    },
+    {
+      "input_field": "profile_id",
+      "source_type": "from_previous_step",
+      "source_step_id": 3,
+      "source_output_field": "result.profile_id",
+      "generated_value": null,
+      "reasoning": "profile_id 在前序步骤 3 的 output 中有明确的字段 result.profile_id 匹配。"
+    },
+    {
+      "input_field": "profile_info",
+      "source_type": "from_previous_step",
+      "source_step_id": 3,
+      "source_output_field": "result.profile_info",
+      "generated_value": null,
+      "reasoning": "profile_info 在前序步骤 3 的 output 中有明确的字段 result.profile_info 匹配。"
+    },
+    {
+      "input_field": "desc",
+      "source_type": "from_previous_step",
+      "source_step_id": 3,
+      "source_output_field": "result.profile_info.desc",
+      "generated_value": null,
+      "reasoning": "desc 在前序步骤 3 的 output 中有明确的字段 result.profile_info.desc 匹配。"
+    },
+    {
+      "input_field": "flow_ids",
+      "source_type": "from_previous_step",
+      "source_step_id": 3,
+      "source_output_field": "result.profile_info.flow_ids",
+      "generated_value": null,
+      "reasoning": "flow_ids 在前序步骤 3 的 output 中有明确的字段 result.profile_info.flow_ids 匹配。"
+    },
+    {
+      "input_field": "flow_rates",
+      "source_type": "from_previous_step",
+      "source_step_id": 3,
+      "source_output_field": "result.profile_info.flow_rates",
+      "generated_value": null,
+      "reasoning": "flow_rates 在前序步骤 3 的 output 中有明确的字段 result.profile_info.flow_rates 匹配。"
+    },
+    {
+      "input_field": "name",
+      "source_type": "from_previous_step",
+      "source_step_id": 3,
+      "source_output_field": "result.profile_info.name",
+      "generated_value": null,
+      "reasoning": "name 在前序步骤 3 的 output 中有明确的字段 result.profile_info.name 匹配。"
+    },
+    {
+      "input_field": "weight_for_type",
+      "source_type": "from_previous_step",
+      "source_step_id": 3,
+      "source_output_field": "result.profile_info.weight_for_type",
+      "generated_value": null,
+      "reasoning": "weight_for_type 在前序步骤 3 的 output 中有明确的字段 result.profile_info.weight_for_type 匹配。"
+    },
+    {
+      "input_field": "weights",
+      "source_type": "from_previous_step",
+      "source_step_id": 3,
+      "source_output_field": "result.profile_info.weights",
+      "generated_value": null,
+      "reasoning": "weights 在前序步骤 3 的 output 中有明确的字段 result.profile_info.weights 匹配。"
+    }
+  ],
+  "output": [
+    {
+      "name": "code",
+      "type": "integer",
+      "description": "response code, zero for success, non-zero for errors"
+    },
+    {
+      "name": "message",
+      "type": "string",
+      "description": "response message, description for the response code"
+    }
+  ]
+}
+{
+  "step_id": 4,
+  "description": "运行之前创建或更新的DDoS攻击配置模板，模拟UDP flood攻击",
+  "guidance": "",
+  "input": [
+    {
+      "input_field": "timestamp",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": 1672531200,
+      "reasoning": "虽然前序步骤中有timestamp_delta和timestamp_error字段，但它们并不直接提供一个具体的unix timestamp值。因此，这里的timestamp应该是一个新生成的值。"
+    },
+    {
+      "input_field": "session_id",
+      "source_type": "from_previous_step",
+      "source_step_id": 1,
+      "source_output_field": "result.session_id",
+      "generated_value": null,
+      "reasoning": "session_id在第一个步骤中作为output参数被明确给出，且名称一致，可以确定来源于此。"
+    },
+    {
+      "input_field": "port_mapping",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": {
+        "client": [
+          {
+            "group_id": "",
+            "interface_id": 1,
+            "port_id": "port1"
+          }
+        ],
+        "server": [
+          {
+            "group_id": "",
+            "interface_id": 2,
+            "port_id": "port2"
+          }
+        ]
+      },
+      "reasoning": "port_mapping及其子字段（如client, server等）在前序步骤中没有对应的output参数，因此这些值应该是新生成的。"
+    },
+    {
+      "input_field": "client",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": [
+        {
+          "group_id": "",
+          "interface_id": 1,
+          "port_id": "port1"
+        }
+      ],
+      "reasoning": "client及其子字段在前序步骤中没有对应的output参数，因此这些值应该是新生成的。"
+    },
+    {
+      "input_field": "group_id",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "",
+      "reasoning": "group_id在前序步骤中没有对应的output参数，因此这个值应该是新生成的。"
+    },
+    {
+      "input_field": "interface_id",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": 1,
+      "reasoning": "interface_id在前序步骤中没有对应的output参数，因此这个值应该是新生成的。"
+    },
+    {
+      "input_field": "port_id",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "port1",
+      "reasoning": "port_id在前序步骤中没有对应的output参数，因此这个值应该是新生成的。"
+    },
+    {
+      "input_field": "server",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": [
+        {
+          "group_id": "",
+          "interface_id": 2,
+          "port_id": "port2"
+        }
+      ],
+      "reasoning": "server及其子字段在前序步骤中没有对应的output参数，因此这些值应该是新生成的。"
+    },
+    {
+      "input_field": "testcase_id",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": 12345,
+      "reasoning": "testcase_id在前序步骤中没有对应的output参数，因此这个值应该是新生成的。"
+    },
+    {
+      "input_field": "testcase_name",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "Test Case 1",
+      "reasoning": "testcase_name在前序步骤中没有对应的output参数，因此这个值应该是新生成的。"
+    }
+  ],
+  "output": [
+    {
+      "name": "code",
+      "type": "integer",
+      "description": "response code, zero for success, non-zero for errors"
+    },
+    {
+      "name": "message",
+      "type": "string",
+      "description": "response message, description for the response code"
+    },
+    {
+      "name": "result",
+      "type": "object",
+      "description": "result"
+    },
+    {
+      "name": "begin_time",
+      "type": "string",
+      "description": "begin time"
+    },
+    {
+      "name": "instance_id",
+      "type": "integer",
+      "description": "instance id"
+    }
+  ]
+}
+{
+  "step_id": 5,
+  "description": "在攻击过程中实时获取相关的统计数据，以便评估攻击效果",
+  "guidance": "",
+  "input": [
+    {
+      "input_field": "timestamp",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": 1633072800,
+      "reasoning": "timestamp 是一个当前时间戳，通常由客户端生成。前序步骤中没有提供明确的 timestamp 输出参数。"
+    },
+    {
+      "input_field": "session_id",
+      "source_type": "from_previous_step",
+      "source_step_id": 1,
+      "source_output_field": "result.session_id",
+      "generated_value": null,
+      "reasoning": "session_id 在前序步骤 1 的输出参数 result.session_id 中找到，字段名称和语义一致。"
+    },
+    {
+      "input_field": "instance_id",
+      "source_type": "from_previous_step",
+      "source_step_id": 5,
+      "source_output_field": "result.instance_id",
+      "generated_value": null,
+      "reasoning": "instance_id 在前序步骤 5 的输出参数 result.instance_id 中找到，字段名称和语义一致。"
+    },
+    {
+      "input_field": "interval",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": 60,
+      "reasoning": "interval 是一个统计间隔时间，通常由客户端根据需求设置。前序步骤中没有提供明确的 interval 输出参数。"
+    }
+  ],
+  "output": [
+    {
+      "name": "code",
+      "type": "integer",
+      "description": "response code, zero for success, non-zero for errors"
+    },
+    {
+      "name": "message",
+      "type": "string",
+      "description": "response message, description for the response code"
+    },
+    {
+      "name": "result",
+      "type": "object",
+      "description": "statistics result"
+    },
+    {
+      "name": "info_list",
+      "type": "array[object]",
+      "description": "category info list"
+    },
+    {
+      "name": "display",
+      "type": "string",
+      "description": "category display name"
+    },
+    {
+      "name": "fields",
+      "type": "array[object]",
+      "description": "field list"
+    },
+    {
+      "name": "client_category",
+      "type": "string",
+      "description": "client category"
+    },
+    {
+      "name": "display",
+      "type": "string",
+      "description": "display name"
+    },
+    {
+      "name": "field_type",
+      "type": "string",
+      "description": "field type "
+    },
+    {
+      "name": "graph",
+      "type": "boolean",
+      "description": "show with graph"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "field name"
+    },
+    {
+      "name": "server_category",
+      "type": "string",
+      "description": "server category"
+    },
+    {
+      "name": "table",
+      "type": "boolean",
+      "description": "show with table"
+    },
+    {
+      "name": "unit",
+      "type": "string",
+      "description": "value unit"
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "description": "value"
+    },
+    {
+      "name": "value_string",
+      "type": "string",
+      "description": "value string"
+    },
+    {
+      "name": "fields_load",
+      "type": "array[object]",
+      "description": "field load list"
+    },
+    {
+      "name": "client_category",
+      "type": "string",
+      "description": "client category"
+    },
+    {
+      "name": "display",
+      "type": "string",
+      "description": "display name"
+    },
+    {
+      "name": "field_type",
+      "type": "string",
+      "description": "field type "
+    },
+    {
+      "name": "graph",
+      "type": "boolean",
+      "description": "show with graph"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "field name"
+    },
+    {
+      "name": "server_category",
+      "type": "string",
+      "description": "server category"
+    },
+    {
+      "name": "table",
+      "type": "boolean",
+      "description": "show with table"
+    },
+    {
+      "name": "unit",
+      "type": "string",
+      "description": "value unit"
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "description": "value"
+    },
+    {
+      "name": "value_string",
+      "type": "string",
+      "description": "value string"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "category name"
+    },
+    {
+      "name": "owned_info",
+      "type": "array[string]",
+      "description": "category parent info list"
+    },
+    {
+      "name": "overview_list",
+      "type": "array[object]",
+      "description": "overview list"
+    },
+    {
+      "name": "proto_info",
+      "type": "object",
+      "description": "protocol info"
+    },
+    {
+      "name": "client",
+      "type": "array[object]",
+      "description": "all client protocol info"
+    },
+    {
+      "name": "assign_num",
+      "type": "integer",
+      "description": "the assignment number"
+    },
+    {
+      "name": "display",
+      "type": "string",
+      "description": "category display name"
+    },
+    {
+      "name": "fields",
+      "type": "array[object]",
+      "description": "field list"
+    },
+    {
+      "name": "client_category",
+      "type": "string",
+      "description": "client category"
+    },
+    {
+      "name": "display",
+      "type": "string",
+      "description": "display name"
+    },
+    {
+      "name": "field_type",
+      "type": "string",
+      "description": "field type "
+    },
+    {
+      "name": "graph",
+      "type": "boolean",
+      "description": "show with graph"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "field name"
+    },
+    {
+      "name": "server_category",
+      "type": "string",
+      "description": "server category"
+    },
+    {
+      "name": "table",
+      "type": "boolean",
+      "description": "show with table"
+    },
+    {
+      "name": "unit",
+      "type": "string",
+      "description": "value unit"
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "description": "value"
+    },
+    {
+      "name": "value_string",
+      "type": "string",
+      "description": "value string"
+    },
+    {
+      "name": "fields_load",
+      "type": "array[object]",
+      "description": "field load list"
+    },
+    {
+      "name": "client_category",
+      "type": "string",
+      "description": "client category"
+    },
+    {
+      "name": "display",
+      "type": "string",
+      "description": "display name"
+    },
+    {
+      "name": "field_type",
+      "type": "string",
+      "description": "field type "
+    },
+    {
+      "name": "graph",
+      "type": "boolean",
+      "description": "show with graph"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "field name"
+    },
+    {
+      "name": "server_category",
+      "type": "string",
+      "description": "server category"
+    },
+    {
+      "name": "table",
+      "type": "boolean",
+      "description": "show with table"
+    },
+    {
+      "name": "unit",
+      "type": "string",
+      "description": "value unit"
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "description": "value"
+    },
+    {
+      "name": "value_string",
+      "type": "string",
+      "description": "value string"
+    },
+    {
+      "name": "info_list_index",
+      "type": "integer",
+      "description": "the corresponding info list index"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "category name"
+    },
+    {
+      "name": "owned_info",
+      "type": "array[string]",
+      "description": "category parent info list"
+    },
+    {
+      "name": "server",
+      "type": "array[object]",
+      "description": "all server protocol info"
+    },
+    {
+      "name": "assign_num",
+      "type": "integer",
+      "description": "the assignment number"
+    },
+    {
+      "name": "display",
+      "type": "string",
+      "description": "category display name"
+    },
+    {
+      "name": "fields",
+      "type": "array[object]",
+      "description": "field list"
+    },
+    {
+      "name": "client_category",
+      "type": "string",
+      "description": "client category"
+    },
+    {
+      "name": "display",
+      "type": "string",
+      "description": "display name"
+    },
+    {
+      "name": "field_type",
+      "type": "string",
+      "description": "field type "
+    },
+    {
+      "name": "graph",
+      "type": "boolean",
+      "description": "show with graph"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "field name"
+    },
+    {
+      "name": "server_category",
+      "type": "string",
+      "description": "server category"
+    },
+    {
+      "name": "table",
+      "type": "boolean",
+      "description": "show with table"
+    },
+    {
+      "name": "unit",
+      "type": "string",
+      "description": "value unit"
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "description": "value"
+    },
+    {
+      "name": "value_string",
+      "type": "string",
+      "description": "value string"
+    },
+    {
+      "name": "fields_load",
+      "type": "array[object]",
+      "description": "field load list"
+    },
+    {
+      "name": "client_category",
+      "type": "string",
+      "description": "client category"
+    },
+    {
+      "name": "display",
+      "type": "string",
+      "description": "display name"
+    },
+    {
+      "name": "field_type",
+      "type": "string",
+      "description": "field type "
+    },
+    {
+      "name": "graph",
+      "type": "boolean",
+      "description": "show with graph"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "field name"
+    },
+    {
+      "name": "server_category",
+      "type": "string",
+      "description": "server category"
+    },
+    {
+      "name": "table",
+      "type": "boolean",
+      "description": "show with table"
+    },
+    {
+      "name": "unit",
+      "type": "string",
+      "description": "value unit"
+    },
+    {
+      "name": "value",
+      "type": "string",
+      "description": "value"
+    },
+    {
+      "name": "value_string",
+      "type": "string",
+      "description": "value string"
+    },
+    {
+      "name": "info_list_index",
+      "type": "integer",
+      "description": "the corresponding info list index"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "description": "category name"
+    },
+    {
+      "name": "owned_info",
+      "type": "array[string]",
+      "description": "category parent info list"
+    },
+    {
+      "name": "type",
+      "type": "string",
+      "description": "protocol type"
+    }
+  ]
+}
+{
+  "step_id": 7,
+  "description": "完成所有测试操作后，安全地退出当前用户的登录状态",
+  "guidance": "",
+  "input": [
+    {
+      "input_field": "timestamp",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "1633072800",
+      "reasoning": "timestamp 是一个 unix 时间戳，并且在前序步骤中没有找到与之匹配的 output 字段。因此，它应该是一个新生成的值。这里提供了一个示例时间戳 '1633072800'（对应于 2021-10-01 00:00:00 UTC）。"
+    },
+    {
+      "input_field": "session_id",
+      "source_type": "from_previous_step",
+      "source_step_id": 1,
+      "source_output_field": "result.session_id",
+      "generated_value": null,
+      "reasoning": "session_id 在前序步骤 step 1 的 output 中存在，字段名为 'result.session_id'。因此，可以确定 session_id 来源于 step 1 的 output 参数。"
+    },
+    {
+      "input_field": "name",
+      "source_type": "generated",
+      "source_step_id": null,
+      "source_output_field": null,
+      "generated_value": "testuser",
+      "reasoning": "name 字段表示用户名，在前序步骤中没有找到与之匹配的 output 字段。因此，它应该是一个新生成的值。这里提供了一个示例用户名 'testuser'。"
+    }
+  ],
+  "output": [
+    {
+      "name": "code",
+      "type": "integer",
+      "description": "response code, zero for success, non-zero for errors"
+    },
+    {
+      "name": "message",
+      "type": "string",
+      "description": "response message, description for the response code"
+    }
+  ]
+}

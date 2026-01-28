@@ -40,8 +40,18 @@ class FilePaths:
 @dataclass
 class ModelConfig:
     """模型配置"""
+    #Qwen model
     llm_model: str = "qwen-max"
+
+    #GLM model
+    glm_model: str = "glm-4.7"
+    glm_base_url: str = "https://open.bigmodel.cn/api/paas/v4/"  # 智谱 OpenAI 兼容端点
+
+    #embedding model
     embedding_model: str = "text-embedding-v1"
+
+    #embedding base url
+    embedding_base_url: str = "https://dashscope.aliyuncs.com/compatible-mode/v1"
 
 
 @dataclass
@@ -74,7 +84,8 @@ class LogConfig:
 @dataclass
 class RedisConfig:
     """Redis 配置"""
-    host: str = "10.99.80.159"
+    # host: str = "10.99.80.159"
+    host: str = "127.0.0.1" # 本地redis
     port: int = 6379
     password: Optional[str] = "abcd@123"
     db: int = 0
