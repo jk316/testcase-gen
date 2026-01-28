@@ -1,4 +1,4 @@
-from nodes.shared import load_api_jsonl_index
+from nodes.shared import get_api_data_cache
 from chains.generate_testcase_chain import create_generate_testcase_chain
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -39,7 +39,7 @@ def generate_testcase_node(state: "AgentState") -> dict:
     current_step = steps_list[current_step_index] # 当前步骤
     # 取第一个候选 API ID（可以根据需要修改为遍历所有）
     current_candidate_api_ids = candidate_api_ids[current_step_index]
-    api_index = load_api_jsonl_index()
+    api_index = get_api_data_cache()
     for api_id in current_candidate_api_ids:
         logger.info(f"Generating testcase for API ID: {api_id}, step: {current_step}")
     

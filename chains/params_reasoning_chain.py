@@ -58,7 +58,7 @@ def create_params_reasoning_chain():
     
     # 2. 创建 PromptTemplate
     prompt_template = PromptTemplate(
-        input_variables=["current_step_id", "testcase", "input_parameters_json", "previous_steps_outputs_json", "experience_pool"],
+        input_variables=["current_step_id", "testcase", "input_parameters_json", "previous_steps_outputs_json", "experience_pool", "output_parameters_json"],
         template=template_str,
         template_format="jinja2"
     )
@@ -79,6 +79,7 @@ def create_params_reasoning_chain():
             "input_parameters_json": input_dict["input_parameters_json"],
             "previous_steps_outputs_json": input_dict["previous_steps_outputs_json"],
             "experience_pool": input_dict["experience_pool"],
+            "output_parameters_json": input_dict["output_parameters_json"],
         }
     input_formatter = RunnableLambda(format_input)
     _params_reasoning_chain = input_formatter | prompt_template | llm | json_parser

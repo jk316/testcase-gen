@@ -21,7 +21,6 @@ _api_index: Optional[ApiIntentIndexNew] = None
 _api_data_cache: Optional[Dict[str, Dict[str, Any]]] = None
 _llm: Optional[ChatTongyi] = None
 _testcase_template: Optional[PromptTemplate] = None
-_api_index_dict: Optional[Dict[str, Dict[str, Any]]] = None
 
 
 def get_api_index() -> ApiIntentIndexNew:
@@ -77,25 +76,6 @@ def get_api_index() -> ApiIntentIndexNew:
         logger.info("API index initialized successfully")
     
     return _api_index
-
-
-def load_api_jsonl_index() -> Dict[str, Dict[str, Any]]:
-    """
-    加载 API jsonl 文件，并创建 API id 到 API 数据的映射
-    """
-    try:
-        api_jsonl_file = config.files.api_openapi_file
-        api_jsonl = load_jsonl(api_jsonl_file)
-        _api_index_dict = {}
-        for api_dict in api_jsonl:
-            api_id = api_dict.get("id")
-            if api_id:
-                _api_index_dict[api_id] = api_dict
-        logger.info(f"[load_api_jsonl_index] Created {len(_api_index_dict)} API index")
-        return _api_index_dict
-    except FileNotFoundError:
-        logger.warning(f"[load_api_jsonl] API jsonl file {api_jsonl_file} not found")
-        return {}
 
 def load_api_capabilities() -> List[Dict[str, Any]]:
     """

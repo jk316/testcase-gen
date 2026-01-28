@@ -5,7 +5,7 @@ if TYPE_CHECKING:
 from utils.logger import get_logger
 from config import get_config
 from utils.file_process import load_file,save_json_file
-from nodes.shared import load_api_jsonl_index
+from nodes.shared import get_api_data_cache
 
 import json
 
@@ -37,8 +37,8 @@ def params_reasoning_node(state: "AgentState") -> dict:
     experience_pool = load_file(config.files.experience_pool_md_file)
     current_step = steps_list[current_step_index] # 当前步骤
     current_input_fields = all_input_fields[current_step_index]
-    current_api_id = candidate_api_ids[current_step_index]
-    api_index = load_api_jsonl_index()
+    current_api_id = candidate_api_ids[current_step_index][0]
+    api_index = get_api_data_cache()
     if current_api_id not in api_index:
         logger.error(f"API ID {current_api_id} not found in api_index")
         return {
@@ -53,6 +53,8 @@ def params_reasoning_node(state: "AgentState") -> dict:
         }
 
     previous_steps_outputs_fields = all_output_fields[:current_step_index]
+    current_step_output_fields = all_output_fields[current_step_index]
+    logger.debug(f"Received current_step_output_fields: {current_step_output_fields}")
 
     try:
         params_reasoning_chain = create_params_reasoning_chain()
@@ -63,6 +65,7 @@ def params_reasoning_node(state: "AgentState") -> dict:
             "input_parameters_json": current_input_fields,
             "previous_steps_outputs_json": previous_steps_outputs_fields,
             "experience_pool": experience_pool,
+            "output_parameters_json": current_step_output_fields,
         })
         if params_reasoning_json is None:
             logger.error(f"Failed to generate params reasoning for step {current_step_index}")
