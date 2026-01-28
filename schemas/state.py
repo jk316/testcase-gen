@@ -35,3 +35,6 @@ class AgentState(TypedDict):
 
     # 参数推理
     params_reasoning: List[Dict[str, Any]]
+
+    # 最终测试用例
+    finalized_testcase: Optional[Dict[str, Any]]

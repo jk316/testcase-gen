@@ -253,3 +253,29 @@ TODO
 - 反向索引，
 
 
+
+
+
+TODO:
+未来计划：
+- 跑真实测试用例，结果接入分析智能体 2月一周
+- 后面 做攻击策略生成，两周内做demo，让模型评估复杂度，给出评价，2周
+- 改造成多智能体，设计交互方式，agent-进程，agent之间有prompt把a的消息给b，结果是返回还是广播，消息存入队列。  
+
+node 
+openrouter 
+
+
+TODO:
+- 并发、异步
+
+RAG：
+
+Tool
+
+tool  供agent选择，让agent: 制定 mini steps, 根据tool，这块加记忆，plan写到文件中， tool-use agent 
+langchain
+
+claude code
+open code
+创新点，智能体网关

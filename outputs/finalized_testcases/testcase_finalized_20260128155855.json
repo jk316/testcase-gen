@@ -1,0 +1,41 @@
+{
+  "name": "Simple testcase",
+  "demand": "testcase v0.0.0",
+  "tester": "XRT Darpeng",
+  "steps": [
+    {
+      "step": 0,
+      "description": "结束当前会话并注销用户",
+      "guidance": "此步骤用于结束当前会话并注销用户。",
+      "input": [
+        {
+          "name": "timestamp",
+          "type": "integer",
+          "description": "这是一个由系统生成的unix时间戳，值为1633072800。"
+        },
+        {
+          "name": "session_id",
+          "type": "string",
+          "description": "session_id来自前序步骤1的输出参数result.session_id。"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "description": "用户名user123，通常由系统生成或用户输入。"
+        }
+      ],
+      "output": [
+        {
+          "name": "code",
+          "type": "integer",
+          "description": "响应代码，零表示成功，非零表示错误。"
+        },
+        {
+          "name": "message",
+          "type": "string",
+          "description": "响应消息，对响应代码的描述。"
+        }
+      ]
+    }
+  ]
+}

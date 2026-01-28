@@ -15,6 +15,7 @@ class FilePaths:
     steps_file: str = "steps.txt"
     api_openapi_file: str = "inputs/xrt_openapi.jsonl"
     experience_pool_md_file: str = "inputs/experience_pool.md"
+    standard_format_file: str = "examples/testcase_example.json"
     
     # 输出文件
     generated_steps_file: str = "steps.json"
@@ -23,12 +24,14 @@ class FilePaths:
     experience_pool_file: str = "outputs/experience_pool.jsonl"
     experience_pool_label_file: str = "outputs/experience_pool_label.jsonl"
     params_reasoning_jsonl_file: str = "outputs/params_reasoning.jsonl"
+    finalized_testcases_dir: str = "outputs/finalized_testcases"
     
     # 模板文件
     gen_steps_template: str = "prompts/gen_steps.jinja"
     testcase_template: str = "prompts/testcase.jinja"
     intent_template: str = "prompts/intent.jinja"
     params_reasoning_template: str = "prompts/params_reasoning.jinja"
+    final_testcase_template: str = "prompts/final_testcase.jinja"
     
     # 索引目录
     index_dir: str = "indexes/api_intent_faiss"
@@ -59,7 +62,7 @@ class GraphConfig:
 @dataclass
 class LogConfig:
     """日志配置"""
-    level: str = "DEBUG"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+    level: str = "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
     format: str = "| %(asctime)s | %(levelname)-8s | %(name)s | %(filename)s:%(lineno)d | %(message)s"
     file_path: Optional[str] = "logs/app.log"  # None 表示不输出到文件
     file_mode: str = "a"  # 'a' 追加, 'w' 覆盖

@@ -9,56 +9,80 @@
   },
   {
     "step_id": 2,
-    "name": "创建DDoS攻击流量模板",
-    "description": "为UDP flood攻击创建一个新的DDoS攻击流量模板",
-    "related_capability": "paths./v1/cl/ddos/attack/flow/create",
-    "based_on_template_step": 7,
+    "name": "查找已存在的DDoS攻击配置模板",
+    "description": "找到一个可用于UDP flood攻击的现有DDoS攻击配置模板",
+    "related_capability": "paths./v1/cl/ddos/attack/profile/list",
+    "based_on_template_step": 2,
     "skip_reason": null
   },
   {
     "step_id": 3,
-    "name": "更新DDoS攻击流量参数",
-    "description": "根据测试需求修改DDoS攻击流量参数，设置峰值为500Mbps，目标IP为11.0.0.1/24",
-    "related_capability": "paths./v1/cl/ddos/attack/flow/param/update",
-    "based_on_template_step": 8,
+    "name": "创建或更新DDoS攻击流量模板",
+    "description": "根据测试需求创建或更新一个用于模拟500Mbps UDP flood攻击的流量模板",
+    "related_capability": "paths./v1/cl/ddos/attack/flow/create, paths./v1/cl/ddos/attack/flow/update",
+    "based_on_template_step": 7,
     "skip_reason": null
   },
   {
     "step_id": 4,
-    "name": "保存DDoS攻击流量模板",
-    "description": "保存配置好的DDoS攻击流量模板",
-    "related_capability": "paths./v1/cl/ddos/attack/flow/save",
+    "name": "检查DDoS攻击流量模板的有效性",
+    "description": "验证新创建或更新的DDoS攻击流量模板是否有效",
+    "related_capability": "paths./v1/cl/ddos/attack/flow/check",
     "based_on_template_step": null,
     "skip_reason": null
   },
   {
     "step_id": 5,
-    "name": "运行DDoS攻击流量测试",
-    "description": "执行已配置的DDoS攻击流量测试，持续60秒",
+    "name": "保存DDoS攻击流量模板",
+    "description": "将配置好的DDoS攻击流量模板保存下来",
+    "related_capability": "paths./v1/cl/ddos/attack/flow/save",
+    "based_on_template_step": null,
+    "skip_reason": null
+  },
+  {
+    "step_id": 6,
+    "name": "启动捕获会话",
+    "description": "为了记录攻击期间的网络活动，启动一个新的数据包捕获会话",
+    "related_capability": "paths./v1/cl/capture/start",
+    "based_on_template_step": null,
+    "skip_reason": null
+  },
+  {
+    "step_id": 7,
+    "name": "运行DDoS攻击测试用例",
+    "description": "执行之前配置好的DDoS攻击流量模板，模拟UDP flood攻击",
     "related_capability": "paths./v1/cl/testcase/run",
     "based_on_template_step": 9,
     "skip_reason": null
   },
   {
-    "step_id": 6,
+    "step_id": 8,
     "name": "获取统计类别",
-    "description": "获取可用于监控和分析的统计类别列表",
+    "description": "在攻击过程中收集必要的性能统计数据类型",
     "related_capability": "paths./v1/cl/stats/category/search",
     "based_on_template_step": 10,
     "skip_reason": null
   },
   {
-    "step_id": 7,
+    "step_id": 9,
     "name": "获取指定统计类别的详细统计值",
-    "description": "收集并检查测试期间生成的具体统计数据，包括但不限于流量、丢包率等",
+    "description": "针对特定的数据点获取详细的统计信息，如攻击期间的带宽利用率等",
     "related_capability": "paths./v1/cl/stats/search",
     "based_on_template_step": 11,
     "skip_reason": null
   },
   {
-    "step_id": 8,
+    "step_id": 10,
+    "name": "停止捕获会话",
+    "description": "完成攻击后停止数据包捕获会话，准备分析结果",
+    "related_capability": "paths./v1/cl/capture/stop",
+    "based_on_template_step": null,
+    "skip_reason": null
+  },
+  {
+    "step_id": 11,
     "name": "退出客户端登录",
-    "description": "完成测试后安全地退出当前用户的会话",
+    "description": "测试完成后登出客户端",
     "related_capability": "paths./v1/cl/user/logout",
     "based_on_template_step": 12,
     "skip_reason": null

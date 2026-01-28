@@ -25,6 +25,7 @@ def params_reasoning_node(state: "AgentState") -> dict:
     """
     logger.info("Starting params reasoning")
     steps_list = state.get("steps_list", [])
+    params_reasoning = state.get("params_reasoning", []) # 参数推理结果
     candidate_api_ids = state.get("candidate_api_ids", [])
     current_step_index = state.get("current_step_index", 0)
 
@@ -42,14 +43,14 @@ def params_reasoning_node(state: "AgentState") -> dict:
     if current_api_id not in api_index:
         logger.error(f"API ID {current_api_id} not found in api_index")
         return {
-            "params_reasoning": None,
+            "params_reasoning": params_reasoning,
         }
     api_data = api_index[current_api_id]
     api_title = api_data.get("title", "")
     if api_title is None:
         logger.error(f"API title not found for API ID {current_api_id}")
         return {
-            "params_reasoning": None,
+            "params_reasoning": params_reasoning,
         }
 
     previous_steps_outputs_fields = all_output_fields[:current_step_index]
@@ -70,17 +71,17 @@ def params_reasoning_node(state: "AgentState") -> dict:
         if params_reasoning_json is None:
             logger.error(f"Failed to generate params reasoning for step {current_step_index}")
             return {
-                "params_reasoning": None,
+                "params_reasoning": params_reasoning,
             }
         logger.info(f"Successfully generated params reasoning for step {current_step_index}")
         save_json_file(params_reasoning_json, config.files.params_reasoning_jsonl_file, append=True)
         logger.info(f"Successfully saved params reasoning to {config.files.params_reasoning_jsonl_file}")
         logger.debug(f"Params reasoning content: {json.dumps(params_reasoning_json, ensure_ascii=False, indent=2)}")
         return {
-            "params_reasoning": params_reasoning_json,
+            "params_reasoning": params_reasoning + [params_reasoning_json], # 参数推理结果列表
         }
     except Exception as e:
         logger.error(f"Error generating params reasoning for step {current_step_index}: {e}", exc_info=True)
         return {
-            "params_reasoning": None,
+            "params_reasoning": params_reasoning,
         }
