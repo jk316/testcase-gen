@@ -34,11 +34,11 @@
           "description": "签名，通过特定算法生成 (示例值: d45f7e8c3b9a3c0b9d6e7f8a9b2c3d4e5f1a2b3c)"
         }
       ],
-      "output": [
+      "output": [ ref的schema，output不要太多，只保留必要的参数，schema
         {
           "name": "code",
           "type": "integer",
-          "description": "响应代码，零表示成功，非零表示错误"
+          "description": "响应代码，零表示成功，非零表示错误" 描述schema
         },
         {
           "name": "message",
@@ -51,12 +51,12 @@
           "description": "登录结果"
         },
         {
-          "name": "is_admin",
+          "name": "is_admin", 
           "type": "boolean",
           "description": "是否为管理员"
         },
         {
-          "name": "is_observer",
+          "name": "is_observer", 
           "type": "boolean",
           "description": "是否为观察者"
         },

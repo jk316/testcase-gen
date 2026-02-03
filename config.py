@@ -84,8 +84,8 @@ class LogConfig:
 @dataclass
 class RedisConfig:
     """Redis 配置"""
-    # host: str = "10.99.80.159"
-    host: str = "127.0.0.1" # 本地redis
+    remote_host: str = "10.99.80.159"
+    local_host: str = "127.0.0.1" # 本地redis
     port: int = 6379
     password: Optional[str] = "abcd@123"
     db: int = 0

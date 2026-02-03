@@ -112,7 +112,7 @@ def get_redis_client(config) -> redis.Redis:
         Redis 客户端实例
     """
     return redis.Redis(
-        host=config.host,
+        host=config.remote_host,
         port=config.port,
         password=config.password,
         db=config.db,
@@ -247,7 +247,7 @@ def main():
     logger.info(f"已加载 {len(api_data)} 个 API 定义")
     
     # 连接 Redis
-    logger.info(f"正在连接 Redis: {config.redis.host}:{config.redis.port}")
+    logger.info(f"正在连接 Redis: {config.redis.remote_host}:{config.redis.port}")
     try:
         redis_client = get_redis_client(config.redis)
         # 测试连接
