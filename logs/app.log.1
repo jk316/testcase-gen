@@ -37698,3 +37698,30 @@ AttributeError: 'RedisConfig' object has no attribute 'host'
 | 2026-01-29 09:08:03,924 | INFO     | GenerateTestcaseChain | generate_testcase_chain.py:54 | [create_generate_testcase_chain] Creating generate testcase chain
 | 2026-01-29 09:08:03,927 | INFO     | GenerateTestcaseChain | generate_testcase_chain.py:83 | [create_generate_testcase_chain] Chain created successfully
 | 2026-01-29 09:08:16,451 | INFO     | nodes.generate_testcase_node | generate_testcase_node.py:149 | Successfully generated testcase for API ID: 330
+| 2026-02-04 09:53:49,914 | INFO     | __main__ | state.py:70 | ============================================================
+| 2026-02-04 09:53:49,915 | INFO     | __main__ | state.py:71 | Graph Structure:
+| 2026-02-04 09:53:49,915 | INFO     | __main__ | state.py:72 | ============================================================
+| 2026-02-04 09:53:49,916 | INFO     | __main__ | state.py:76 | Nodes: ['__start__', 'load_intent_list', 'generate_steps', 'generate_testcase', 'loop_control_intent', 'loop_control_step', 'should_continue_intent', 'should_continue_step', 'params_reasoning', 'finalize_testcase']
+| 2026-02-04 09:53:49,916 | INFO     | __main__ | state.py:83 | ============================================================
+| 2026-02-04 09:53:49,916 | INFO     | __main__ | state.py:116 | Starting graph execution (async)
+| 2026-02-04 09:53:49,916 | DEBUG    | asyncio | proactor_events.py:633 | Using proactor: IocpProactor
+| 2026-02-04 09:53:49,918 | INFO     | __main__ | state.py:94 | Invoking graph with initial state
+| 2026-02-04 09:53:49,919 | DEBUG    | __main__ | state.py:95 | Initial state keys: ['intent_list', 'current_intent_index', 'candidate_api_ids', 'generated_testcase']
+| 2026-02-04 09:53:49,931 | DEBUG    | urllib3.connectionpool | connectionpool.py:1049 | Starting new HTTPS connection (1): api.smith.langchain.com:443
+| 2026-02-04 09:53:50,316 | INFO     | nodes.load_intent_list_node | load_intent_list_node.py:27 | Starting intent list loading
+| 2026-02-04 09:53:50,319 | INFO     | nodes.load_intent_list_node | load_intent_list_node.py:33 | Loaded intent list from intent.txt
+| 2026-02-04 09:53:50,320 | DEBUG    | nodes.load_intent_list_node | load_intent_list_node.py:34 | Intent list content: ['1.测试UDP flood攻击，测试流量的峰值是500Mbps，测试时长为60秒，目的IP为11.0.0.1/24 \n', '2.测试SYN flood攻击，测试流量的峰值是100Mbps，测试时长为70秒，目的IP为12.0.0.1/24 ']
+| 2026-02-04 09:53:50,323 | INFO     | __main__ | state.py:101 | Graph event (iteration 1)
+| 2026-02-04 09:53:50,323 | DEBUG    | __main__ | state.py:103 | Node 'load_intent_list' output keys: ['intent_list']
+| 2026-02-04 09:53:50,325 | INFO     | nodes.generate_steps_node | generate_steps_node.py:78 | Starting steps generation
+| 2026-02-04 09:53:50,328 | INFO     | FileProcess | file_process.py:17 | [load_jsonl] Loaded 503 items from outputs/api_descriptions.jsonl
+| 2026-02-04 09:53:50,329 | INFO     | nodes.shared | shared.py:90 | [_load_api_capabilities] Loaded 503 API capabilities
+| 2026-02-04 09:53:50,330 | INFO     | nodes.generate_steps_node | generate_steps_node.py:103 | Calling LLM to generate test steps plan
+| 2026-02-04 09:53:50,331 | INFO     | chains.generate_steps_chain | generate_steps_chain.py:54 | [create_generate_steps_chain] Creating generate steps chain
+| 2026-02-04 09:53:50,335 | INFO     | nodes.shared | shared.py:131 | Initializing LLM...
+| 2026-02-04 09:53:50,612 | DEBUG    | urllib3.connectionpool | connectionpool.py:544 | https://api.smith.langchain.com:443 "GET /info HTTP/1.1" 200 922
+| 2026-02-04 09:53:50,614 | DEBUG    | langsmith.client | _background_thread.py:718 | Tracing control thread func compress parallel called
+| 2026-02-04 09:53:50,670 | DEBUG    | langsmith.client | client.py:2324 | Sending multipart request to https://api.smith.langchain.com with context: trace=019c265b-1765-7041-b0ad-b924e4a462b0,id=019c265b-1765-7041-b0ad-b924e4a462b0; trace=019c265b-1765-7041-b0ad-b924e4a462b0,id=019c265b-18eb-7552-b948-a0f7bcd9d7df; trace=019c265b-1765-7041-b0ad-b924e4a462b0,id=019c265b-18f4-7e63-ac54-d1f217c8c97d
+| 2026-02-04 09:53:50,931 | DEBUG    | urllib3.connectionpool | connectionpool.py:544 | https://api.smith.langchain.com:443 "POST /runs/multipart HTTP/1.1" 202 34
+| 2026-02-04 09:53:51,455 | INFO     | nodes.shared | shared.py:133 | LLM initialized successfully
+| 2026-02-04 09:53:51,457 | INFO     | chains.generate_steps_chain | generate_steps_chain.py:84 | [create_generate_steps_chain] Chain created successfully

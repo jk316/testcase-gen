@@ -4,7 +4,7 @@ if TYPE_CHECKING:
     from schemas.state import AgentState
 from utils.logger import get_logger
 from config import get_config
-from utils.file_process import load_file,save_json_file
+from utils.file_process import load_file
 from nodes.shared import get_api_data_cache
 
 import json
@@ -13,7 +13,7 @@ logger = get_logger(__name__)
 config = get_config()
 
 
-def params_reasoning_node(state: "AgentState") -> dict:
+async def params_reasoning_node(state: "AgentState") -> dict:
     """
     分析当前步骤的参数依赖关系
     
@@ -60,7 +60,7 @@ def params_reasoning_node(state: "AgentState") -> dict:
     try:
         params_reasoning_chain = create_params_reasoning_chain()
 
-        params_reasoning_json = params_reasoning_chain.invoke({
+        params_reasoning_json = await params_reasoning_chain.ainvoke({
             "current_step_id": current_step_index,
             "testcase": current_testcase,
             "input_parameters_json": current_input_fields,

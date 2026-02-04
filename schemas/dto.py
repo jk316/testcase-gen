@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import Dict, Any, NamedTuple, Literal
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import BaseModel, Field
 
 
 @dataclass(frozen=True)

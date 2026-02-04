@@ -23,9 +23,9 @@ _llm: Optional[ChatTongyi] = None
 _testcase_template: Optional[PromptTemplate] = None
 
 
-def get_api_index() -> ApiIntentIndexNew:
+async def get_api_index() -> ApiIntentIndexNew:
     """
-    获取或初始化 API 索引实例（单例模式）
+    获取或初始化 API 索引实例（单例模式，异步）
     
     Returns:
         ApiIntentIndexNew 实例
@@ -70,7 +70,7 @@ def get_api_index() -> ApiIntentIndexNew:
             _api_index.load(INDEX_DIR)
         else:
             logger.info("Building FAISS index...")
-            _api_index.build_from_apis(apis, force_rebuild=FORCE_REBUILD)
+            await _api_index.build_from_apis(apis, force_rebuild=FORCE_REBUILD)
             _api_index.save(INDEX_DIR)
         
         logger.info("API index initialized successfully")

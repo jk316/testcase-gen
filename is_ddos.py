@@ -1,5 +1,4 @@
 import json
-from typing import Any
 
 from langchain_community.chat_models import ChatTongyi
 from langchain.prompts import ChatPromptTemplate
@@ -45,7 +44,7 @@ def get_content():
     #     print(c)
 
 
-def judge():
+async def judge():
     ### 读取contents.json中的内容，然后判断是否包含已知的ddos攻击
     ## 1. 读取需要被判断的内容
     content = read_json("contents.json")
@@ -90,7 +89,7 @@ def judge():
     for i, attack in enumerate(content):
         try:
             print(f"处理第 {i+1}/{len(content)} 个攻击: {attack}")
-            res = chain.invoke({"known_attacks": known_attacks_text, "attack": attack})
+            res = await chain.ainvoke({"known_attacks": known_attacks_text, "attack": attack})
 
             # print(f"原始响应: {res}")
             # print(f"响应类型: {type(res)}")
@@ -122,5 +121,5 @@ def collect_unique_attacks():
 
 if __name__ == "__main__":
     # get_content()
-    # judge()
+    # asyncio.run(judge())
     collect_unique_attacks()

@@ -54,7 +54,7 @@ def aggregate_api_params(input_file: str, output_file: str):
             full_path = param.get("full_path", "")
             required = param.get("required", False)
             
-            if direction == "input" and required == True:
+            if direction == "input" and required:
                 if full_path:
                     all_input_fields.append(full_path)
             elif direction == "output":
@@ -86,7 +86,7 @@ def aggregate_api_params(input_file: str, output_file: str):
     # 打印一些统计信息
     total_input_fields = sum(len(r["ALL_INPUT_FIELDS"]) for r in aggregated_results)
     total_output_fields = sum(len(r["ALL_OUTPUT_FIELDS"]) for r in aggregated_results)
-    print(f"\n统计信息:")
+    print("\n统计信息:")
     print(f"  总必填输入字段数: {total_input_fields}")
     print(f"  总输出字段数: {total_output_fields}")
 

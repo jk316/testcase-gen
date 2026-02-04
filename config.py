@@ -72,7 +72,7 @@ class GraphConfig:
 @dataclass
 class LogConfig:
     """日志配置"""
-    level: str = "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+    level: str = "DEBUG"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
     format: str = "| %(asctime)s | %(levelname)-8s | %(name)s | %(filename)s:%(lineno)d | %(message)s"
     file_path: Optional[str] = "logs/app.log"  # None 表示不输出到文件
     file_mode: str = "a"  # 'a' 追加, 'w' 覆盖

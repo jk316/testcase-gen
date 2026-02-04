@@ -99,7 +99,7 @@ class ExperiencePool:
         Merge human labels into raw records (by id).
         Raw records are not modified on disk.
         """
-        label_map = {l["id"]: l for l in labels}
+        label_map = {label["id"]: label for label in labels}
 
         merged = []
         for r in records:

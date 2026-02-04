@@ -26,16 +26,16 @@ def test_get_steps_node():
     print("=" * 60)
     print("测试 get_steps_node")
     print("=" * 60)
-    print(f"\n初始状态:")
+    print("\n初始状态:")
     print(f"  intent (长度): {len(initial_state['intent'])}")
     print(f"  intent 内容: {repr(initial_state['intent'][:50]) if initial_state['intent'] else '(空)'}")
     
     # 2. 调用 Node
-    print(f"\n调用 get_steps_node...")
+    print("\n调用 get_steps_node...")
     result_state = get_steps_node(initial_state)
     
     # 3. 验证结果
-    print(f"\n结果验证:")
+    print("\n结果验证:")
     print(f"  intent 是否已更新: {result_state['intent'] != initial_state['intent']}")
     print(f"  intent 长度: {len(result_state['intent'])}")
     
@@ -50,11 +50,11 @@ def test_get_steps_node():
                     expected_lines.append(line)
         expected_text = "\n".join(expected_lines)
         
-        print(f"\n预期结果:")
+        print("\n预期结果:")
         print(f"  预期行数: {len(expected_lines)}")
         print(f"  预期内容长度: {len(expected_text)}")
         
-        print(f"\n实际结果:")
+        print("\n实际结果:")
         print(f"  实际行数: {len(result_state['intent'].split(chr(10)))}")
         print(f"  实际内容长度: {len(result_state['intent'])}")
         
@@ -66,9 +66,9 @@ def test_get_steps_node():
             print("✅ 测试通过！Node 正确读取了 steps.txt 并写入 intent")
         else:
             print("❌ 测试失败！内容不匹配")
-            print(f"\n预期内容前100字符:")
+            print("\n预期内容前100字符:")
             print(repr(expected_text[:100]))
-            print(f"\n实际内容前100字符:")
+            print("\n实际内容前100字符:")
             print(repr(result_state['intent'][:100]))
     else:
         print("⚠️  警告: steps.txt 文件不存在，无法进行完整验证")

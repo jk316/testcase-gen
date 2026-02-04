@@ -1,3 +1,4 @@
+import asyncio
 import json
 from jinja2 import Template
 import time
@@ -85,7 +86,7 @@ def postorder_sort(rows):
     )
 
 
-def main():
+async def main():
     jsonl_path = "outputs/merged4.jsonl"
     template_path = "prompts/testcase_prompt.jinja"
     root_steps = ["1","2","3"]  # 需要包含的根步骤前缀列表
@@ -145,7 +146,7 @@ def main():
             step_start_time = time.time()
             
             prompt = build_prompt(template, [row])
-            resp = llm.invoke(prompt)
+            resp = await llm.ainvoke(prompt)
             resp_text = resp.content if hasattr(resp, "content") else str(resp)
 
             write_jsonl(output_path, resp_text)
@@ -168,4 +169,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
