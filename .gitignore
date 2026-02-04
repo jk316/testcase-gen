@@ -3,3 +3,6 @@ __pycache__/
 .venv/
 models/ms-marco-MiniLM-L-6-v2/
 indexes/api_intent_faiss/
+logs/*
+logs/app.log.*
+outputs/*
