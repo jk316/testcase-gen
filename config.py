@@ -72,7 +72,7 @@ class GraphConfig:
 @dataclass
 class LogConfig:
     """日志配置"""
-    level: str = "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+    level: str = "DEBUG"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
     format: str = "| %(asctime)s | %(levelname)-8s | %(name)s | %(filename)s:%(lineno)d | %(message)s"
     file_path: Optional[str] = "logs/app.log"  # None 表示不输出到文件
     file_mode: str = "a"  # 'a' 追加, 'w' 覆盖
@@ -84,8 +84,8 @@ class LogConfig:
 @dataclass
 class RedisConfig:
     """Redis 配置"""
-    # host: str = "10.99.80.159"
-    host: str = "127.0.0.1" # 本地redis
+    host: str = "10.99.80.159"
+    # host: str = "127.0.0.1" # 本地redis
     port: int = 6379
     password: Optional[str] = "abcd@123"
     db: int = 0

@@ -2,7 +2,7 @@
 生成测试意图的 LangChain Chain
 负责加载模板、调用 LLM 并解析 JSON 响应
 """
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, Optional
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnableLambda
 from nodes.shared import get_llm, parse_json_from_llm_response

@@ -1,12 +1,8 @@
 import array
-import json
-from shelve import Shelf
-from sys import int_info
 import time
 import hashlib
-from datetime import datetime
 from typing import Optional, Dict, Any
-from models.ddos_attack_config import DataRate, BasicData, AttackProfileBrief, FlowItem, ProfileDetail, SuperFlow, LoadProfile, DefaultProfile, Behav, SrcPort, AttackModule, SharedSettings, TestcaseInfo, Testcase
+from models.ddos_attack_config import DataRate, BasicData, AttackProfileBrief, ProfileDetail, SuperFlow, LoadProfile, DefaultProfile, Behav, SrcPort, AttackModule, SharedSettings, TestcaseInfo
 from exceptions import AttackNotFoundError
 import requests
 import logging

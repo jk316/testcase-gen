@@ -2,7 +2,7 @@
 生成测试意图的 Node
 根据 intent.txt 中的内容，参考 gen_intent.jinja 的需求，生成测试意图
 """
-from typing import TYPE_CHECKING, List, Dict, Any, Tuple, Optional
+from typing import TYPE_CHECKING, List, Dict, Any, Tuple
 from utils.logger import get_logger
 from utils.file_process import save_json_file
 from config import get_config
@@ -70,7 +70,7 @@ def _extract_steps_data_from_json(
     return steps_list, candidate_api_ids_list
 
 
-def generate_steps_node(state: "AgentState") -> dict:
+async def generate_steps_node(state: "AgentState") -> dict:
     """
     根据 state 中的 intent，参考 gen_intent.jinja 的需求，生成测试步骤
     传递给 generate_testcase_node，并保存在 steps.json 中
@@ -107,7 +107,7 @@ def generate_steps_node(state: "AgentState") -> dict:
         chain = create_generate_steps_chain()
         
         # 调用 chain
-        steps_json = chain.invoke({
+        steps_json = await chain.ainvoke({
             "test_intent": current_intent,
             "api_capabilities": api_capabilities_str
         })

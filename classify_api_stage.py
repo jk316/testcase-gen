@@ -2,11 +2,11 @@
 扫描 xrt_openapi.jsonl 前504行，使用 stage.jinja 模板进行分类
 输出格式符合 resource.json 的 schema 约束
 """
+import asyncio
 import json
 import re
 from typing import Dict, Any, Optional, Literal
 from pathlib import Path
-from jinja2 import Template
 from langchain_community.chat_models import ChatTongyi
 from langchain_core.prompts import PromptTemplate
 from utils.file_process import load_jinja_template, load_api_jsonl
@@ -163,7 +163,7 @@ def parse_llm_output(llm_output: str) -> Optional[Dict[str, Any]]:
         return None
 
 
-def classify_api(api_item: Dict[str, Any], llm_chain, logger) -> Optional[Dict[str, Any]]:
+async def classify_api(api_item: Dict[str, Any], llm_chain, logger) -> Optional[Dict[str, Any]]:
     """
     对单个API进行分类
     """
@@ -174,7 +174,7 @@ def classify_api(api_item: Dict[str, Any], llm_chain, logger) -> Optional[Dict[s
     
     try:
         # 调用LLM
-        result = llm_chain.invoke({
+        result = await llm_chain.ainvoke({
             "api_path": api_info["api_path"],
             "http_method": api_info["http_method"],
             "api_description": api_info["api_description"],
@@ -203,7 +203,7 @@ def classify_api(api_item: Dict[str, Any], llm_chain, logger) -> Optional[Dict[s
         return None
 
 
-def main():
+async def main():
     logger = get_logger("ClassifyAPIStage")
     
     # 配置
@@ -243,7 +243,7 @@ def main():
     for idx, api_item in enumerate(apis_to_process, 1):
         logger.info("处理进度: %d/%d", idx, len(apis_to_process))
         
-        result = classify_api(api_item, chain, logger)
+        result = await classify_api(api_item, chain, logger)
         
         if result:
             # 验证结果
@@ -276,5 +276,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
 

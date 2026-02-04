@@ -9,56 +9,56 @@
   },
   {
     "step_id": 2,
-    "name": "查找已存在的DDoS攻击配置模板",
-    "description": "搜索现有的DDoS攻击配置文件，用于检查是否存在符合需求的模板",
-    "related_capability": "paths./v1/cl/ddos/attack/profile/search",
-    "based_on_template_step": 2,
-    "skip_reason": null
-  },
-  {
-    "step_id": 3,
-    "name": "创建或更新DDoS攻击配置模板",
-    "description": "如果找不到合适的现有模板，则创建一个新的UDP flood攻击配置模板或者更新现有模板以满足测试需求",
-    "related_capability": "paths./v1/cl/ddos/attack/profile/create, paths./v1/cl/ddos/attack/profile/param/update",
+    "name": "创建DDoS攻击流量模板",
+    "description": "根据测试需求，创建一个用于模拟UDP flood攻击的流量模板",
+    "related_capability": "paths./v1/cl/ddos/attack/flow/create",
     "based_on_template_step": 7,
     "skip_reason": null
   },
   {
-    "step_id": 4,
-    "name": "设置目标IP地址",
-    "description": "将目标IP地址设为11.0.0.1/24，并确保其他相关参数（如流量峰值500Mbps）正确配置",
+    "step_id": 3,
+    "name": "更新DDoS攻击流量参数",
+    "description": "配置流量峰值为500Mbps，测试时长60秒，目的IP为11.0.0.1/24",
     "related_capability": "paths./v1/cl/ddos/attack/flow/param/update",
     "based_on_template_step": 8,
     "skip_reason": null
   },
   {
+    "step_id": 4,
+    "name": "保存DDoS攻击流量模板",
+    "description": "将配置好的DDoS攻击流量模板保存下来",
+    "related_capability": "paths./v1/cl/ddos/attack/flow/save",
+    "based_on_template_step": null,
+    "skip_reason": null
+  },
+  {
     "step_id": 5,
-    "name": "启动DDoS攻击测试",
-    "description": "运行配置好的DDoS攻击测试用例，开始模拟UDP flood攻击",
+    "name": "运行DDoS攻击流量测试用例",
+    "description": "执行已配置并保存的DDoS攻击流量模板来发起UDP flood攻击",
     "related_capability": "paths./v1/cl/testcase/run",
     "based_on_template_step": 9,
     "skip_reason": null
   },
   {
     "step_id": 6,
-    "name": "监控攻击过程中的统计信息",
-    "description": "在攻击过程中收集并查看相关的统计数据，确保攻击按预期进行",
-    "related_capability": "paths./v1/cl/stats/search, paths./v1/cl/stats/overview",
+    "name": "获取统计类别",
+    "description": "确定在本次测试中需要关注哪些类型的统计数据",
+    "related_capability": "paths./v1/cl/stats/category/search",
     "based_on_template_step": 10,
     "skip_reason": null
   },
   {
     "step_id": 7,
-    "name": "停止DDoS攻击测试",
-    "description": "在指定的测试时长（60秒）结束后，停止正在进行的测试用例",
-    "related_capability": "paths./v1/cl/testcase/stop",
-    "based_on_template_step": null,
+    "name": "获取指定统计类别的详细统计值",
+    "description": "收集与分析测试过程中产生的具体统计数据",
+    "related_capability": "paths./v1/cl/stats/search",
+    "based_on_template_step": 11,
     "skip_reason": null
   },
   {
     "step_id": 8,
     "name": "退出客户端登录",
-    "description": "完成所有操作后，安全地注销当前用户的会话",
+    "description": "完成所有测试活动后安全地登出系统",
     "related_capability": "paths./v1/cl/user/logout",
     "based_on_template_step": 12,
     "skip_reason": null

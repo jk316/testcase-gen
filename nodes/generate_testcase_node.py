@@ -12,7 +12,7 @@ logger = get_logger(__name__)
 config = get_config()
 
 
-def generate_testcase_node(state: "AgentState") -> dict:
+async def generate_testcase_node(state: "AgentState") -> dict:
     """
     根据 candidate_api_ids 查询 API 定义，填充模板，使用 LLM 生成 testcase
     
@@ -133,7 +133,7 @@ def generate_testcase_node(state: "AgentState") -> dict:
             # 获取模板和 LLM
             generate_testcase_chain = create_generate_testcase_chain()
 
-            testcase_json = generate_testcase_chain.invoke({
+            testcase_json = await generate_testcase_chain.ainvoke({
                 "api_json_here": api_json_here,
                 "current_step_index": current_step_index,
                 "current_step": current_step

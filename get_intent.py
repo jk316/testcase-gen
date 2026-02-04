@@ -1,7 +1,6 @@
-from langchain_core.prompts import PromptTemplate
+import asyncio
 from langchain_community.chat_models.tongyi import ChatTongyi
 from langchain_community.embeddings import DashScopeEmbeddings
-from langchain_community.vectorstores import FAISS
 from api_intent_index_new import ApiIntentIndexNew
 import json
 from utils.logger import get_logger
@@ -22,7 +21,7 @@ logging.basicConfig(
     ],
 )
 
-def main():
+async def main():
     logger = get_logger("Main")
     logger.info("Loading API jsonl...")
     api_jsonl = load_api_jsonl("inputs/xrt_openapi.jsonl")
@@ -55,7 +54,7 @@ def main():
         index.load(INDEX_DIR)
     else:
         logger.info("Building FAISS index...")
-        index.build_from_apis(apis, force_rebuild=FORCE_REBUILD)
+        await index.build_from_apis(apis, force_rebuild=FORCE_REBUILD)
         index.save(INDEX_DIR)
 
     # 从 steps.txt 读取查询列表
@@ -86,7 +85,7 @@ def main():
             logger.info(f"{'='*60}")
             
             with_cross_encoder = False  # 可以根据需要修改这个值
-            results = index.search(
+            results = await index.search(
                 intent=query,
                 with_cross_encoder=with_cross_encoder
             )
@@ -117,4 +116,4 @@ def main():
     logger.info(f"结果已保存到: {output_file}")
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

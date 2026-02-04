@@ -1,3 +1,4 @@
+import asyncio
 from langchain_openai import ChatOpenAI
 
 llm = ChatOpenAI(
@@ -7,5 +8,11 @@ llm = ChatOpenAI(
     base_url="https://open.bigmodel.cn/api/coding/paas/v4"  # 智谱 OpenAI 兼容端点
 )
 
-resp = llm.invoke("用一句话解释什么是 OpenAI 协议")
-print(resp.content)
+
+async def main():
+    resp = await llm.ainvoke("用一句话解释什么是 OpenAI 协议")
+    print(resp.content)
+
+
+if __name__ == "__main__":
+    asyncio.run(main())

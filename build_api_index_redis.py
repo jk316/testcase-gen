@@ -275,7 +275,7 @@ def main():
     
     # 输出统计信息
     logger.info("=" * 60)
-    logger.info(f"处理完成！")
+    logger.info("处理完成！")
     logger.info(f"成功: {success_count} 个 API")
     logger.info(f"失败: {fail_count} 个 API")
     logger.info(f"总计: {len(path_titles)} 个 API")

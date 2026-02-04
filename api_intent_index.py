@@ -6,11 +6,11 @@ from langchain_community.embeddings import DashScopeEmbeddings
 from langchain_community.chat_models import ChatTongyi
 from langchain_core.documents import Document
 from sentence_transformers import CrossEncoder
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Optional
 from pathlib import Path
 from utils.logger import get_logger
 from utils.file_process import load_jinja_template
-from schemas.dto import *
+from schemas.dto import ApiItem, DescriptionItem, Candidate, RerankResult
 import os
 
 
@@ -65,7 +65,7 @@ class ApiIntentIndex:
 
     # ----------- 构建阶段 -----------
 
-    def generate_descriptions(
+    async def generate_descriptions(
         self,
         apis: List[Dict],
         output_path: str = "outputs/api_descriptions.jsonl"
@@ -101,7 +101,7 @@ class ApiIntentIndex:
                     f"[LLM] {i}/{total} {api['title']}"
                 )
 
-                desc = self._generate_description(api)
+                desc = await self._generate_description(api)
 
                 item = {
                     "id": api["id"],
@@ -138,7 +138,7 @@ class ApiIntentIndex:
 
         self.logger.info("FAISS index built successfully")
 
-    def build_from_apis(self, 
+    async def build_from_apis(self, 
                         apis: List[ApiItem],
                         description_path: str = "outputs/api_descriptions.jsonl"
         ):
@@ -148,7 +148,7 @@ class ApiIntentIndex:
         descriptions = self._load_descriptions_if_exists(description_path)
         if descriptions is None or len(descriptions) < len(apis):
             self.logger.info("Descriptions incomplete, regenerating missing ones...")
-            descriptions = self.generate_descriptions(apis, description_path)
+            descriptions = await self.generate_descriptions(apis, description_path)
         else:
             self.logger.info("Existing descriptions found, skipping generation.")
         self.build_index_from_descriptions(descriptions)
@@ -168,7 +168,7 @@ class ApiIntentIndex:
         self.logger.info(f"Loaded {len(items)} API descriptions")
         return items
     
-    def _generate_description(self, api: Dict) -> str:
+    async def _generate_description(self, api: Dict) -> str:
         """
         调用 LLM 为单个 API 生成语义描述
         """
@@ -180,7 +180,7 @@ class ApiIntentIndex:
         )
         self.logger.info(f"FINAL PROMPT:\n{prompt_text}")
 
-        result = self.chain.invoke({
+        result = await self.chain.ainvoke({
             "id": api["id"],
             "title": api["title"],
             "content": api["content"]
@@ -189,7 +189,7 @@ class ApiIntentIndex:
 
     # ----------- 查询阶段 -----------
 
-    def search(self, intent: str, recall_size: int = None) -> List[Candidate]:
+    async def search(self, intent: str, recall_size: int = None) -> List[Candidate]:
         """
         根据测试意图检索相关 API
         
@@ -224,7 +224,7 @@ class ApiIntentIndex:
         
         # 使用LLM进一步重排序（作为cross-encoder的下一步）
         if ce_reranked_results:
-            llm_reranked_results = self.rerank_with_llm(intent, ce_reranked_results)
+            llm_reranked_results = await self.rerank_with_llm(intent, ce_reranked_results)
         else:
             llm_reranked_results = []
         
@@ -282,7 +282,7 @@ class ApiIntentIndex:
 
         return top_results
     
-    def rerank_with_llm(self, query: str, candidates: List[RerankResult]) -> List[RerankResult]:
+    async def rerank_with_llm(self, query: str, candidates: List[RerankResult]) -> List[RerankResult]:
         """
         使用 LLM 对候选结果进行重排序（作为 cross-encoder 的下一步）
         
@@ -321,7 +321,7 @@ class ApiIntentIndex:
         
         try:
             # 调用 LLM 进行重排序
-            response = self.llm.invoke(rerank_prompt)
+            response = await self.llm.ainvoke(rerank_prompt)
             result_text = response.content.strip()
             
             # 解析 LLM 返回的排序结果

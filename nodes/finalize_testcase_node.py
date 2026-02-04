@@ -17,7 +17,7 @@ logger = get_logger(__name__)
 config = get_config()
 
 
-def finalize_testcase_node(state: "AgentState") -> dict:
+async def finalize_testcase_node(state: "AgentState") -> dict:
     """
     根据 state 中的 params_reasoning，参考 final_testcase.jinja 的需求，生成最终测试用例
     
@@ -63,7 +63,7 @@ def finalize_testcase_node(state: "AgentState") -> dict:
         
         # 调用 chain，传入原始测试用例和标准格式
         # chain 会自动将 JSON 对象转换为字符串
-        finalized_testcase = chain.invoke({
+        finalized_testcase = await chain.ainvoke({
             "params_reasoning": params_reasoning, # 参数推理结果列表
             "standard_format": standard_format, # 标准格式
         })
