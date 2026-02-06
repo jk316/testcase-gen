@@ -36,7 +36,7 @@
   - step_id：整数，从 1 开始递增
   - name：步骤名称（简要）
   - description：该步骤的测试目的
-  - related_capability：对应的系统能力名称或 API 描述（必须来自 api_description.jsonl）
+  - related_capability：对应的系统能力名称或 API 描述（必须来自 api_description.jsonl），如果推断出多个能力，则用逗号隔开
   - based_on_template_step：参考的标准步骤编号（如无对应，可填写 null）
   - skip_reason：如果该步骤是对标准步骤的“跳过说明”，填写原因，否则为 null
 
@@ -44,10 +44,10 @@
 [
   {
     "step_id": 1,
-    "name": "登录客户端",
-    "description": "使用测试用户登录系统以获取后续操作权限",
-    "related_capability": "UserLoginAPI",
-    "based_on_template_step": 1,
+    "name": "获取指定统计类别的详细统计值",
+    "description": "获取测试运行期间流量、攻击等关键指标的详细统计数据",
+    "related_capability": "paths./v1/cl/stats/model",  
+    "based_on_template_step": 11,
     "skip_reason": null
   }
 ]

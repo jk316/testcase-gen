@@ -26,10 +26,6 @@
 ### 当前步骤的 Input 参数
 {{input_parameters_json}}
 
-
-### 当前步骤的输出参数
-{{output_parameters_json}}
-
 ---
 
 ## 前序步骤的 Output 参数（step 1 ~ step n-1）
@@ -61,7 +57,7 @@
 1. 输出内容必须是严格合法的 JSON
     - JSON 中不允许包含任何形式的注释（如 // 或 /* */）
     - 所有说明性文字只能放在 reasoning 字段中
-2. output中的参数直接参考当前步骤的output参数即可
+2. output中的参数 和 TESTCASE 的output字段**必须保持一致**，如果其中包含'schema'字段，则必须保留
 3. description字段的值 参考 TESTCASE 中的description的值 即可
 4. guidance字段的值 参考 TESTCASE 中的guidance 即可
 

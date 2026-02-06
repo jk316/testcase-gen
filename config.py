@@ -25,6 +25,7 @@ class FilePaths:
     experience_pool_label_file: str = "outputs/experience_pool_label.jsonl"
     params_reasoning_jsonl_file: str = "outputs/params_reasoning.jsonl"
     finalized_testcases_dir: str = "outputs/finalized_testcases"
+    merged_testcase_dir: str = "outputs/merged_testcase"
     
     # 模板文件
     gen_steps_template: str = "prompts/gen_steps.jinja"
@@ -40,12 +41,21 @@ class FilePaths:
 @dataclass
 class ModelConfig:
     """模型配置"""
-    #Qwen model
-    llm_model: str = "qwen-max"
+    # LLM 提供商选择：tongyi, glm, deepseek
+    llm_provider: str = "tongyi"
+    
+    #Qwen model (通义)
+    qwen_model: str = "qwen-max"
 
-    #GLM model
+    #GLM model (智谱)
     glm_model: str = "glm-4.7"
     glm_base_url: str = "https://open.bigmodel.cn/api/paas/v4/"  # 智谱 OpenAI 兼容端点
+    glm_api_key: Optional[str] = None
+
+    #DeepSeek model
+    deepseek_model: str = "deepseek-chat"
+    deepseek_base_url: str = "https://api.deepseek.com"
+    deepseek_api_key: Optional[str] = None
 
     #embedding model
     embedding_model: str = "text-embedding-v1"
@@ -146,10 +156,23 @@ class AppConfig:
             except ValueError:
                 pass
         
-        # 可以从环境变量覆盖其他配置
-        # 例如：
-        # config.files.intent_file = os.getenv("INTENT_FILE", config.files.intent_file)
-        # config.model.llm_model = os.getenv("LLM_MODEL", config.model.llm_model)
+        # 从环境变量覆盖 LLM 配置
+        if os.getenv("LLM_PROVIDER"):
+            config.model.llm_provider = os.getenv("LLM_PROVIDER")
+        if os.getenv("LLM_MODEL"):
+            config.model.llm_model = os.getenv("LLM_MODEL")
+        if os.getenv("GLM_API_KEY"):
+            config.model.glm_api_key = os.getenv("GLM_API_KEY")
+        if os.getenv("GLM_MODEL"):
+            config.model.glm_model = os.getenv("GLM_MODEL")
+        if os.getenv("GLM_BASE_URL"):
+            config.model.glm_base_url = os.getenv("GLM_BASE_URL")
+        if os.getenv("DEEPSEEK_API_KEY"):
+            config.model.deepseek_api_key = os.getenv("DEEPSEEK_API_KEY")
+        if os.getenv("DEEPSEEK_MODEL"):
+            config.model.deepseek_model = os.getenv("DEEPSEEK_MODEL")
+        if os.getenv("DEEPSEEK_BASE_URL"):
+            config.model.deepseek_base_url = os.getenv("DEEPSEEK_BASE_URL")
         
         return config
 

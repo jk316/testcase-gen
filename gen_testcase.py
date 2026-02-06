@@ -3,8 +3,8 @@ import json
 from jinja2 import Template
 import time
 
-from langchain_community.chat_models import ChatTongyi
 from dotenv import load_dotenv
+from nodes.shared import get_llm
 
 load_dotenv()
 
@@ -109,7 +109,7 @@ async def main():
     template = load_prompt_template(template_path)
     print("✓ 已加载模板文件")
 
-    llm = ChatTongyi(model="qwen-max")
+    llm = get_llm()
     print("✓ LLM 模型已初始化")
     print("-" * 80)
 

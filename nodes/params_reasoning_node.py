@@ -38,23 +38,11 @@ async def params_reasoning_node(state: "AgentState") -> dict:
     experience_pool = load_file(config.files.experience_pool_md_file)
     current_testcase = generated_testcases[current_step_index] # 当前测试用例
     current_input_fields = all_input_fields[current_step_index]
-    current_api_id = candidate_api_ids[current_step_index][0]
-    api_index = get_api_data_cache()
-    if current_api_id not in api_index:
-        logger.error(f"API ID {current_api_id} not found in api_index")
-        return {
-            "params_reasoning": params_reasoning,
-        }
-    api_data = api_index[current_api_id]
-    api_title = api_data.get("title", "")
-    if api_title is None:
-        logger.error(f"API title not found for API ID {current_api_id}")
-        return {
-            "params_reasoning": params_reasoning,
-        }
-
     previous_steps_outputs_fields = all_output_fields[:current_step_index]
     current_step_output_fields = all_output_fields[current_step_index]
+    logger.debug(f"Received current_testcase: {current_testcase}")
+    logger.debug(f"Received current_input_fields: {current_input_fields}")
+    logger.debug(f"Received previous_steps_outputs_fields: {previous_steps_outputs_fields}")
     logger.debug(f"Received current_step_output_fields: {current_step_output_fields}")
 
     try:
