@@ -7,8 +7,8 @@ import json
 import re
 from typing import Dict, Any, Optional, Literal
 from pathlib import Path
-from langchain_community.chat_models import ChatTongyi
 from langchain_core.prompts import PromptTemplate
+from nodes.shared import get_llm
 from utils.file_process import load_jinja_template, load_api_jsonl
 from utils.logger import get_logger
 from pydantic import BaseModel, Field, ValidationError
@@ -218,7 +218,7 @@ async def main():
     template_str = load_jinja_template(template_path)
     
     # 初始化LLM
-    llm = ChatTongyi(model="qwen-max")
+    llm = get_llm()
     
     # 创建PromptTemplate和chain
     prompt_template = PromptTemplate(

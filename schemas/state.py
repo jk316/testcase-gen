@@ -36,5 +36,7 @@ class AgentState(TypedDict):
     # 参数推理
     params_reasoning: List[Dict[str, Any]]
 
-    # 最终测试用例
-    finalized_testcase: Optional[Dict[str, Any]]
+    # 每一步的 finalized 结果列表（按步骤顺序），供 merge 节点使用
+    finalized_testcases: List[Dict[str, Any]]
+    # 合并后的测试用例：
+    merged_testcase: Optional[Dict[str, Any]]

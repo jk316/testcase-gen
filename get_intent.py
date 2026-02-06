@@ -1,7 +1,7 @@
 import asyncio
-from langchain_community.chat_models.tongyi import ChatTongyi
 from langchain_community.embeddings import DashScopeEmbeddings
 from api_intent_index_new import ApiIntentIndexNew
+from nodes.shared import get_llm
 import json
 from utils.logger import get_logger
 import os
@@ -32,10 +32,7 @@ async def main():
 
     template_str = load_jinja_template("prompts/intent.jinja")
 
-    llm = ChatTongyi(
-        model="qwen-max"
-    )
-    
+    llm = get_llm()
     embeddings = DashScopeEmbeddings(model="text-embedding-v1")
 
     logger.info("Initializing ApiIntentIndex...")

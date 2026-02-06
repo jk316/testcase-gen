@@ -9,6 +9,7 @@ from nodes.shared import get_llm, parse_json_from_llm_response
 from utils.file_process import load_jinja_template
 from utils.logger import get_logger
 from config import get_config
+import json
 
 logger = get_logger(__name__)
 config = get_config()
@@ -43,7 +44,7 @@ def create_finalize_testcase_chain():
     
     Returns:
         配置好的 LangChain chain
-        - 输入：{"params_reasoning": List[Dict[str, Any]]}
+        - 输入：{"current_params_reasoning": Dict[str, Any]}
         - 输出：Dict[str, Any] 或 None
     """
     global _finalize_testcase_chain
@@ -58,7 +59,7 @@ def create_finalize_testcase_chain():
     
     # 2. 创建 PromptTemplate
     prompt_template = PromptTemplate(
-        input_variables=["params_reasoning"],
+        input_variables=["current_params_reasoning"],
         template=template_str,
         template_format="jinja2"
     )
@@ -74,7 +75,7 @@ def create_finalize_testcase_chain():
     def format_input(input_dict: Dict[str, str]) -> Dict[str, str]:
         """将输入格式转换为 PromptTemplate 期望的格式"""
         return {
-            "params_reasoning": input_dict["params_reasoning"],
+            "current_params_reasoning": json.dumps(input_dict["current_params_reasoning"], ensure_ascii=False, indent=2),
         }
     
     input_formatter = RunnableLambda(format_input)

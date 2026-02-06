@@ -2,9 +2,11 @@
 共享工具函数
 用于各个 node 之间的共享功能
 """
+import os
 import json
 from typing import Dict, Optional, Any, List
 from langchain_community.chat_models.tongyi import ChatTongyi
+from langchain_openai import ChatOpenAI
 from langchain_community.embeddings import DashScopeEmbeddings
 from langchain_core.prompts import PromptTemplate
 from api_intent_index_new import ApiIntentIndexNew
@@ -12,6 +14,9 @@ from schemas.dto import ApiItem
 from utils.file_process import load_jsonl, load_jinja_template
 from utils.logger import get_logger
 from config import get_config
+from dotenv import load_dotenv
+
+load_dotenv()
 
 logger = get_logger(__name__)
 config = get_config()
@@ -19,7 +24,7 @@ config = get_config()
 # 模块级别的单例实例（延迟初始化）
 _api_index: Optional[ApiIntentIndexNew] = None
 _api_data_cache: Optional[Dict[str, Dict[str, Any]]] = None
-_llm: Optional[ChatTongyi] = None
+_llm: Optional[Any] = None
 _testcase_template: Optional[PromptTemplate] = None
 
 
@@ -42,7 +47,7 @@ async def get_api_index() -> ApiIntentIndexNew:
         logger.info(f"Loaded {len(apis)} APIs")
         
         # 初始化 LLM 和 Embeddings
-        llm = ChatTongyi(model=config.model.llm_model)
+        llm = get_llm()
         embeddings = DashScopeEmbeddings(model=config.model.embedding_model)
         
         # 加载 prompt 模板
@@ -118,19 +123,51 @@ def get_api_data_cache() -> Dict[str, Dict[str, Any]]:
     return _api_data_cache
 
 
-def get_llm() -> ChatTongyi:
+def get_llm() -> Any:
     """
     获取或初始化 LLM 实例（单例模式）
+    根据 config.model.llm_provider 返回对应的模型实例
     
     Returns:
-        ChatTongyi 实例
+        LLM 实例（ChatTongyi、ChatOpenAI 等）
     """
     global _llm
     
     if _llm is None:
-        logger.info("Initializing LLM...")
-        _llm = ChatTongyi(model=config.model.llm_model)
-        logger.info("LLM initialized successfully")
+        provider = config.model.llm_provider.lower()
+        logger.info(f"Initializing LLM with provider: {provider}")
+        
+        if provider == "tongyi":
+            _llm = ChatTongyi(model=config.model.qwen_model)
+            logger.info(f"LLM initialized successfully: Tongyi ({config.model.qwen_model})")
+        elif provider == "glm":
+            api_key = config.model.glm_api_key or os.getenv("GLM_API_KEY")
+            if not api_key:
+                logger.error(f"GLM_API_KEY not found, falling back to Tongyi ({config.model.qwen_model})")
+                _llm = ChatTongyi(model=config.model.qwen_model)
+            else:
+                _llm = ChatOpenAI(
+                    model=config.model.glm_model,
+                    base_url=config.model.glm_base_url,
+                    openai_api_key=api_key
+                )
+                logger.info(f"LLM initialized successfully: GLM ({config.model.glm_model})")
+        elif provider == "deepseek":
+            api_key = config.model.deepseek_api_key or os.getenv("DEEPSEEK_API_KEY")
+            if not api_key:
+                logger.error(f"DEEPSEEK_API_KEY not found, falling back to Tongyi ({config.model.qwen_model})")
+                _llm = ChatTongyi(model=config.model.qwen_model)
+            else:
+                _llm = ChatOpenAI(
+                    model=config.model.deepseek_model,
+                    base_url=config.model.deepseek_base_url,
+                    openai_api_key=api_key
+                )
+                logger.info(f"LLM initialized successfully: DeepSeek ({config.model.deepseek_model})")
+        else:
+            logger.error(f"Unknown LLM provider: {provider}, falling back to Tongyi ({config.model.qwen_model})")
+            _llm = ChatTongyi(model=config.model.qwen_model)
+            logger.info(f"LLM initialized successfully: Tongyi ({config.model.qwen_model})")
     
     return _llm
 

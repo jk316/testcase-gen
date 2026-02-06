@@ -1,7 +1,7 @@
 import json
 
-from langchain_community.chat_models import ChatTongyi
 from langchain.prompts import ChatPromptTemplate
+from nodes.shared import get_llm
 from dotenv import load_dotenv
 from utils.file_process import save_as_json, read_json
 
@@ -53,9 +53,8 @@ async def judge():
     with open("inputs/known_xinertel_attacks.md", "r", encoding="utf-8") as f:
         known_attacks_text = f.read()
 
-    # 2. LangChain 模型
-    # llm = ChatTongyi(model="qwen-max", temperature=0)
-    llm = ChatTongyi(model="qwen-flash", temperature=0)  #问题简单,换小模型
+    # 2. LangChain 模型（统一使用 get_llm）
+    llm = get_llm()
 
     # 3. Prompt 模板
     prompt = ChatPromptTemplate.from_messages([

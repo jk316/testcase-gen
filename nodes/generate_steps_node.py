@@ -10,8 +10,11 @@ from nodes.shared import (
     create_api_title_to_id_mapping,
     format_api_capabilities,
     load_api_capabilities,
+    get_api_data_cache,
 )
 from chains import create_generate_steps_chain
+from tools.redis_api_params_tool import query_api_params_from_redis
+import json
 
 if TYPE_CHECKING:
     from schemas.state import AgentState
@@ -55,12 +58,19 @@ def _extract_steps_data_from_json(
                 capability_titles = [cap.strip() for cap in related_capability.split(",")]
                 temp_api_ids = []
                 for title in capability_titles:
-                    if title in api_title_to_id:
-                        api_id = api_title_to_id[title]
-                        temp_api_ids.append(api_id)
-                        logger.debug(f"Found API ID {api_id} for capability: {title}")
+                    logger.debug(f"Checking capability: {title}")
+                    matched_id = None
+                    for known_title, api_id in api_title_to_id.items():
+                        if known_title in title:  # 或者 title in known_title
+                            matched_id = api_id
+                            break
+
+                    if matched_id:
+                        temp_api_ids.append(matched_id)
+                        logger.debug(f"Found API ID {matched_id} for capability: {title}")
                     else:
-                        logger.warning(f"API title not found in mapping: {title}")
+                        logger.error(f"API title not found in mapping: {title}")
+                        temp_api_ids.append(None)
                 candidate_api_ids_list.append(temp_api_ids)
             else:
                 # 如果没有 related_capability，添加空列表
@@ -68,6 +78,94 @@ def _extract_steps_data_from_json(
     
     logger.debug(f"Extracted {len(steps_list)} steps and {len(candidate_api_ids_list)} API ID lists")
     return steps_list, candidate_api_ids_list
+
+
+async def _precompute_api_params(
+    candidate_api_ids_list: List[List[str]]
+) -> Tuple[List[List[Dict[str, Any]]], List[List[Dict[str, Any]]]]:
+    """
+    提前计算所有步骤的 API 参数（从 Redis 查询）
+    
+    Args:
+        candidate_api_ids_list: 每个步骤的候选 API ID 列表
+        
+    Returns:
+        (all_input_fields, all_output_fields) 元组
+        每个字段是一个列表，索引对应步骤索引
+    """
+    all_input_fields = []
+    all_output_fields = []
+    api_index = get_api_data_cache()
+    
+    for step_index, api_ids in enumerate(candidate_api_ids_list):
+        # 为每个步骤的第一个 API ID 查询参数（当前逻辑只处理第一个）
+        if not api_ids:
+            logger.warning(f"步骤 {step_index} 没有候选 API ID，使用空参数列表")
+            all_input_fields.append([])
+            all_output_fields.append([])
+            continue
+        
+        # 取第一个 API ID
+        api_id = api_ids[0]
+        
+        if api_id not in api_index:
+            logger.error(f"步骤 {step_index} 的 API ID {api_id} 不在缓存中，使用空参数列表")
+            all_input_fields.append([])
+            all_output_fields.append([])
+            continue
+        
+        api_data = api_index[api_id]
+        
+        # 解析 content（可能是字符串或已经是 dict）
+        api_content = api_data.get("content", {})
+        if isinstance(api_content, str):
+            try:
+                api_content = json.loads(api_content)
+            except json.JSONDecodeError:
+                logger.error(f"步骤 {step_index} 的 API ID {api_id} 的 content 解析失败，使用空参数列表")
+                all_input_fields.append([])
+                all_output_fields.append([])
+                continue
+        
+        # 从 API 数据中提取 HTTP 方法和 URL 路径
+        api_title = api_data.get("title", "")
+        if api_title.startswith("paths."):
+            url_path = api_title.replace("paths.", "")
+        else:
+            url_path = api_title
+        
+        # 确保 URL 路径以 / 开头
+        if not url_path.startswith("/"):
+            url_path = "/" + url_path
+        
+        # 从 content 中提取 HTTP 方法
+        http_method = "POST"  # 默认值
+        for method in ["get", "post", "put", "delete", "patch"]:
+            if method in api_content:
+                http_method = method.upper()
+                break
+        
+        # 从 Redis 查询 API 参数
+        logger.info(f"步骤 {step_index}: 查询 Redis API 参数: {http_method} {url_path}")
+        try:
+            params_result = query_api_params_from_redis(http_method, url_path)
+            input_params = params_result.get("input_params", [])
+            output_params = params_result.get("output_params", [])
+            
+            logger.info(
+                f"步骤 {step_index}: 从 Redis 获取到 {len(input_params)} 个输入参数, "
+                f"{len(output_params)} 个输出参数"
+            )
+        except Exception as e:
+            logger.error(f"步骤 {step_index}: 从 Redis 查询 API 参数失败: {e}", exc_info=True)
+            input_params = []
+            output_params = []
+        
+        all_input_fields.append(input_params)
+        all_output_fields.append(output_params)
+    
+    logger.info(f"已为 {len(all_input_fields)} 个步骤预计算参数")
+    return all_input_fields, all_output_fields
 
 
 async def generate_steps_node(state: "AgentState") -> dict:
@@ -138,10 +236,16 @@ async def generate_steps_node(state: "AgentState") -> dict:
         logger.info(f"Extracted {len(steps_list)} steps from generated steps")
         logger.debug(f"API ID lists: {candidate_api_ids_list}")
         
-        # 10. 返回 delta，更新 steps_list 和 candidate_api_ids
+        # 10. 提前计算所有步骤的 API 参数
+        logger.info("Precomputing API parameters for all steps")
+        all_input_fields, all_output_fields = await _precompute_api_params(candidate_api_ids_list)
+        
+        # 11. 返回 delta，更新 steps_list、candidate_api_ids 和预计算的参数
         return {
             "steps_list": steps_list,
-            "candidate_api_ids": candidate_api_ids_list
+            "candidate_api_ids": candidate_api_ids_list,
+            "all_input_fields": all_input_fields,
+            "all_output_fields": all_output_fields
         }
         
     except Exception as e:
