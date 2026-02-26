@@ -1,5 +1,0 @@
-{
-    "id": "330",
-    "title": "paths./v1/cl/user/login",
-    "content": "{\"name\":\"paths./v1/cl/user/login\",\"post\":{\"consumes\":[\"application/json\"],\"produces\":[\"application/json\"],\"tags\":[\"User APIs\"],\"summary\":\"user login\",\"operationId\":\"func25\",\"parameters\":[{\"type\":\"string\",\"description\":\"unix timestamp, expired in 10 minutes, type is int\",\"name\":\"timestamp\",\"in\":\"query\"},{\"name\":\"body\",\"in\":\"body\",\"required\":true,\"schema\":{\"$ref\":\"#/definitions/alps.UserLoginRequest\"}}],\"responses\":{\"200\":{\"description\":\"OK\",\"schema\":{\"$ref\":\"#/definitions/alps.UserLoginResponse\"}}}}}"
-}

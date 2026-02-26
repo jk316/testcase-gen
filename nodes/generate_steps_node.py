@@ -58,7 +58,7 @@ def _extract_steps_data_from_json(
                 capability_titles = [cap.strip() for cap in related_capability.split(",")]
                 temp_api_ids = []
                 for title in capability_titles:
-                    logger.debug(f"Checking capability: {title}")
+                    logger.debug("Checking capability: %s", title)
                     matched_id = None
                     for known_title, api_id in api_title_to_id.items():
                         if known_title in title:  # 或者 title in known_title
@@ -67,16 +67,16 @@ def _extract_steps_data_from_json(
 
                     if matched_id:
                         temp_api_ids.append(matched_id)
-                        logger.debug(f"Found API ID {matched_id} for capability: {title}")
+                        logger.debug("Found API ID %s for capability: %s", matched_id, title)
                     else:
-                        logger.error(f"API title not found in mapping: {title}")
+                        logger.error("API title not found in mapping: %s", title)
                         temp_api_ids.append(None)
                 candidate_api_ids_list.append(temp_api_ids)
             else:
                 # 如果没有 related_capability，添加空列表
                 candidate_api_ids_list.append([])
     
-    logger.debug(f"Extracted {len(steps_list)} steps and {len(candidate_api_ids_list)} API ID lists")
+    logger.debug("Extracted %s steps and %s API ID lists", len(steps_list), len(candidate_api_ids_list))
     return steps_list, candidate_api_ids_list
 
 
@@ -109,7 +109,7 @@ async def _precompute_api_params(
         api_id = api_ids[0]
         
         if api_id not in api_index:
-            logger.error(f"步骤 {step_index} 的 API ID {api_id} 不在缓存中，使用空参数列表")
+            logger.error("步骤 %s 的 API ID %s 不在缓存中，使用空参数列表", step_index, api_id)
             all_input_fields.append([])
             all_output_fields.append([])
             continue
@@ -122,7 +122,7 @@ async def _precompute_api_params(
             try:
                 api_content = json.loads(api_content)
             except json.JSONDecodeError:
-                logger.error(f"步骤 {step_index} 的 API ID {api_id} 的 content 解析失败，使用空参数列表")
+                logger.error("步骤 %s 的 API ID %s 的 content 解析失败，使用空参数列表", step_index, api_id)
                 all_input_fields.append([])
                 all_output_fields.append([])
                 continue
@@ -146,18 +146,17 @@ async def _precompute_api_params(
                 break
         
         # 从 Redis 查询 API 参数
-        logger.info(f"步骤 {step_index}: 查询 Redis API 参数: {http_method} {url_path}")
+        logger.info("步骤 %s: 查询 Redis API 参数: %s %s", step_index, http_method, url_path)
         try:
             params_result = query_api_params_from_redis(http_method, url_path)
             input_params = params_result.get("input_params", [])
             output_params = params_result.get("output_params", [])
             
             logger.info(
-                f"步骤 {step_index}: 从 Redis 获取到 {len(input_params)} 个输入参数, "
-                f"{len(output_params)} 个输出参数"
+                "步骤 %s: 从 Redis 获取到 %s 个输入参数, %s 个输出参数", step_index, len(input_params), len(output_params)
             )
         except Exception as e:
-            logger.error(f"步骤 {step_index}: 从 Redis 查询 API 参数失败: {e}", exc_info=True)
+            logger.error("步骤 %s: 从 Redis 查询 API 参数失败: %s", step_index, e, exc_info=True)
             input_params = []
             output_params = []
         

@@ -6,7 +6,7 @@
 import json
 import redis
 from typing import Dict, List, Any, Optional
-from extract_api_params import (
+from utils.extract_api_params import (
     load_api_data,
     extract_api_params_from_title
 )

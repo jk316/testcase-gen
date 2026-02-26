@@ -9,7 +9,7 @@ from langchain_community.chat_models.tongyi import ChatTongyi
 from langchain_openai import ChatOpenAI
 from langchain_community.embeddings import DashScopeEmbeddings
 from langchain_core.prompts import PromptTemplate
-from api_intent_index_new import ApiIntentIndexNew
+from utils.api_intent_index_new import ApiIntentIndexNew
 from schemas.dto import ApiItem
 from utils.file_process import load_jsonl, load_jinja_template
 from utils.logger import get_logger
@@ -69,7 +69,6 @@ async def get_api_index() -> ApiIntentIndexNew:
         INDEX_DIR = config.files.index_dir
         FORCE_REBUILD = config.index.force_rebuild
         
-        import os
         if os.path.exists(INDEX_DIR) and not FORCE_REBUILD:
             logger.info("Loading FAISS index from disk...")
             _api_index.load(INDEX_DIR)

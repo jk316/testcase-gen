@@ -1,0 +1,82 @@
+[
+  {
+    "step_id": 1,
+    "name": "使用测试用户登录客户端",
+    "description": "确保具有执行后续操作的权限",
+    "related_capability": "paths./v1/cl/user/login",
+    "based_on_template_step": 1,
+    "skip_reason": null
+  },
+  {
+    "step_id": 2,
+    "name": "创建DDoS攻击流量模板",
+    "description": "根据测试意图，定义一个UDP flood攻击的流量模板",
+    "related_capability": "paths./v1/cl/ddos/attack/flow/create, paths./v1/cl/ddos/attack/flow/param/update",
+    "based_on_template_step": null,
+    "skip_reason": null
+  },
+  {
+    "step_id": 3,
+    "name": "检查DDoS攻击流量模板的有效性",
+    "description": "验证创建的攻击流量模板是否符合预期要求",
+    "related_capability": "paths./v1/cl/ddos/attack/flow/check",
+    "based_on_template_step": null,
+    "skip_reason": null
+  },
+  {
+    "step_id": 4,
+    "name": "保存DDoS攻击流量模板",
+    "description": "将配置好的攻击流量模板保存下来以便后续使用",
+    "related_capability": "paths./v1/cl/ddos/attack/flow/save",
+    "based_on_template_step": null,
+    "skip_reason": null
+  },
+  {
+    "step_id": 5,
+    "name": "启动捕获会话",
+    "description": "开始记录即将进行的攻击过程中的网络数据包",
+    "related_capability": "paths./v1/cl/capture/start",
+    "based_on_template_step": null,
+    "skip_reason": null
+  },
+  {
+    "step_id": 6,
+    "name": "运行测试用例（发起攻击）",
+    "description": "执行之前创建并保存的DDoS攻击流量模板以模拟UDP flood攻击",
+    "related_capability": "paths./v1/cl/testcase/run",
+    "based_on_template_step": 9,
+    "skip_reason": null
+  },
+  {
+    "step_id": 7,
+    "name": "获取指定统计类别的详细统计值",
+    "description": "收集攻击期间的性能指标，包括但不限于峰值流量等关键数据",
+    "related_capability": "paths./v1/cl/stats/model, paths./v1/cl/stats/search",
+    "based_on_template_step": 11,
+    "skip_reason": null
+  },
+  {
+    "step_id": 8,
+    "name": "停止捕获会话",
+    "description": "结束对网络数据包的捕获，准备分析结果",
+    "related_capability": "paths./v1/cl/capture/stop",
+    "based_on_template_step": null,
+    "skip_reason": null
+  },
+  {
+    "step_id": 9,
+    "name": "下载捕获的数据包",
+    "description": "将捕获到的数据包下载到本地进行进一步分析",
+    "related_capability": "paths./v1/cl/capture/download/start",
+    "based_on_template_step": null,
+    "skip_reason": null
+  },
+  {
+    "step_id": 10,
+    "name": "退出客户端登录",
+    "description": "完成所有操作后安全退出系统",
+    "related_capability": "paths./v1/cl/user/logout",
+    "based_on_template_step": 12,
+    "skip_reason": null
+  }
+]

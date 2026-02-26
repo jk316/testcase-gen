@@ -11,14 +11,14 @@ import os
 class FilePaths:
     """文件路径配置"""
     # 输入文件
-    intent_list_file: str = "intent.txt"
-    steps_file: str = "steps.txt"
+    intent_list_file: str = "inputs/intent.txt"
+    steps_file: str = "inputs/steps.txt"
     api_openapi_file: str = "inputs/xrt_openapi.jsonl"
     experience_pool_md_file: str = "inputs/experience_pool.md"
     standard_format_file: str = "examples/testcase_example.json"
     
     # 输出文件
-    generated_steps_file: str = "steps.json"
+    generated_steps_file: str = "outputs/steps.json"
     api_descriptions_file: str = "outputs/api_descriptions.jsonl"
     generated_testcases_file: str = "outputs/new_generated_testcase.jsonl"
     experience_pool_file: str = "outputs/experience_pool.jsonl"

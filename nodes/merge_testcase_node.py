@@ -3,7 +3,7 @@ Merge Testcase Node
 将每一步生成的 finalized testcase 合并成一个 steps 列表
 """
 from datetime import datetime
-from typing import TYPE_CHECKING, Dict, Any, List
+from typing import TYPE_CHECKING
 
 from utils.logger import get_logger
 from utils.file_process import save_json_file

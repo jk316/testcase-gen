@@ -7,7 +7,7 @@ from typing import Dict, Any, Optional
 from langchain_core.tools import tool
 import redis
 from config import get_config
-from build_api_index_redis import get_redis_client, build_redis_key
+from utils.build_api_index_redis import get_redis_client, build_redis_key
 from utils.logger import get_logger
 
 
@@ -43,7 +43,7 @@ def query_api_params_from_redis(
     """
     try:
         redis_client = get_redis_client_singleton()
-        
+
         # 构建 Redis Key
         key = build_redis_key(http_method, url_path)
         
@@ -51,7 +51,7 @@ def query_api_params_from_redis(
         result = redis_client.hgetall(key)
         
         if not result:
-            logger.warning(f"Redis 中未找到 key: {key}")
+            logger.warning("Redis 中未找到 key: %s", key)
             return {
                 "input_params": [],
                 "output_params": []
@@ -67,13 +67,13 @@ def query_api_params_from_redis(
         }
         
     except json.JSONDecodeError as e:
-        logger.error(f"解析 Redis 数据失败: {e}")
+        logger.error("解析 Redis 数据失败: %s", e)
         return {
             "input_params": [],
             "output_params": []
         }
     except Exception as e:
-        logger.error(f"查询 Redis API 参数失败: {e}", exc_info=True)
+        logger.error("查询 Redis API 参数失败: %s", e, exc_info=True)
         return {
             "input_params": [],
             "output_params": []

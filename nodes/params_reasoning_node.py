@@ -5,7 +5,6 @@ if TYPE_CHECKING:
 from utils.logger import get_logger
 from config import get_config
 from utils.file_process import load_file
-from nodes.shared import get_api_data_cache
 
 import json
 
@@ -26,7 +25,6 @@ async def params_reasoning_node(state: "AgentState") -> dict:
     logger.info("Starting params reasoning")
     generated_testcases = state.get("generated_testcases", [])
     params_reasoning = state.get("params_reasoning", []) # 参数推理结果
-    candidate_api_ids = state.get("candidate_api_ids", [])
     current_step_index = state.get("current_step_index", 0)
 
     all_input_fields = state.get("all_input_fields", [])

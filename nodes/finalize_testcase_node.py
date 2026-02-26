@@ -34,6 +34,15 @@ async def finalize_testcase_node(state: "AgentState") -> dict:
     finalized_testcases = state.get("finalized_testcases", []) # 每一步的testcase结果列表（按步骤顺序）
     current_step_index = state.get("current_step_index", 0)
 
+    # 2. 安全检查：params_reasoning 长度必须覆盖当前步骤，否则说明上一步推理未产出结果
+    if current_step_index >= len(params_reasoning):
+        msg = (
+            f"params_reasoning length ({len(params_reasoning)}) does not cover current_step_index ({current_step_index}). "
+            "Params reasoning may have failed for this step. Aborting."
+        )
+        logger.error(msg)
+        raise IndexError(msg)
+
     current_params_reasoning = params_reasoning[current_step_index] # 当前步骤的参数推理结果
     
     if not current_params_reasoning:
