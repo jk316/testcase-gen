@@ -47,6 +47,7 @@ __all__ = [
     "find_attack_profile_id",
     "find_available_network",
     "find_available_port",
+    "split_network_tags",
     "extract_matched_ports",
 ]
 
@@ -244,6 +245,24 @@ class AlpsClient:
         return self._request(
             "POST", "/v1/cl/network/fetch", json_body={"network_id": network_id}, add_session_id=True
         )
+
+    def get_network_tags(self, network_id: int) -> list[str]:
+        """POST /v1/cl/network/tags/fetch，返回网络配置实际使用的组件标签。"""
+        data = self._request(
+            "POST",
+            "/v1/cl/network/tags/fetch",
+            json_body={"network_id": network_id},
+            add_session_id=True,
+        )
+        if data.get("code") not in (None, 0):
+            raise ApiError(f"获取网络标签失败: {data.get('message', data)}")
+        tags = data.get("result")
+        if not isinstance(tags, list):
+            raise ApiError(f"网络标签响应格式错误: {data!r}")
+        normalized = list(dict.fromkeys(str(tag).strip() for tag in tags if str(tag).strip()))
+        if not normalized:
+            raise ApiError(f"网络 {network_id} 没有可用的组件标签")
+        return normalized
 
     def get_component_list(self) -> Dict[str, Any]:
         """GET /v1/cl/testcase/component/list。"""
@@ -491,13 +510,18 @@ class AlpsClient:
     # ---------- 攻击配置构建器 ---------- #
     # 这些方法返回 Pydantic 模型，供 save_testcase 使用；具体取值语义需按设备实测校准。
 
-    def set_basic_data(self, attack_name: str) -> BasicData:
+    def set_basic_data(
+        self,
+        attack_name: str,
+        client_tags: Optional[list[str]] = None,
+        server_tags: Optional[list[str]] = None,
+    ) -> BasicData:
         """构建 BasicData。"""
         return BasicData(
             name=attack_name,
             desc="",
-            client_tags=["client6"],  # TODO: 按设备实际标签查询
-            server_tags=["server6"],
+            client_tags=client_tags,
+            server_tags=server_tags,
             disable=False,
         )
 
@@ -552,10 +576,12 @@ class AlpsClient:
         profile_name: str,
         rate: Optional[int] = None,
         steady_duration: Optional[int] = None,
+        client_tags: Optional[list[str]] = None,
+        server_tags: Optional[list[str]] = None,
     ) -> AttackModule:
         """构建一个完整 AttackModule（basic + load_profile + attack_profile + ...）。"""
         return AttackModule(
-            basic=self.set_basic_data(profile_name),
+            basic=self.set_basic_data(profile_name, client_tags, server_tags),
             load_profile=self.set_load_profile(steady_duration or 60),
             attack_profile=self.set_attack_profile_brief(profile_id, profile_name),
             data_rate=self.set_data_rate(rate),
@@ -575,10 +601,12 @@ class AlpsClient:
         profile_name: str,
         rate: Optional[int] = None,
         steady_duration: Optional[int] = None,
+        client_tags: Optional[list[str]] = None,
+        server_tags: Optional[list[str]] = None,
     ) -> AppModule:
         """构建一个完整 AppModule（业务/应用仿真模块），结构与 AttackModule 平行。"""
         return AppModule(
-            basic=self.set_basic_data(profile_name),
+            basic=self.set_basic_data(profile_name, client_tags, server_tags),
             load_profile=self.set_load_profile(steady_duration or 60),
             app_profile=self.set_app_profile_brief(profile_id, profile_name),
             data_rate=self.set_data_rate(rate),
@@ -615,6 +643,9 @@ class AlpsClient:
         businesses: Optional[list[dict[str, Any]]] = None,
         network_id: Optional[int] = None,
         network_name: Optional[str] = None,
+        component_tags: Optional[list[str]] = None,
+        client_tags: Optional[list[str]] = None,
+        server_tags: Optional[list[str]] = None,
     ) -> TestcaseInfo:
         """构建 TestcaseInfo（支持多攻击 + 多业务）。
 
@@ -624,6 +655,16 @@ class AlpsClient:
 
         ``bandwidth_mbps`` 映射到 ``data_rate``，``duration_sec`` 映射到 ``load_profile`` 稳态时长。
         """
+        if component_tags is None or client_tags is None or server_tags is None:
+            if network_id is None:
+                raise ApiError("构建测试用例需要 network_id，以查询真实网络标签")
+            resolved_component, resolved_client, resolved_server = split_network_tags(
+                self.get_network_tags(network_id)
+            )
+            component_tags = component_tags or resolved_component
+            client_tags = client_tags or resolved_client
+            server_tags = server_tags or resolved_server
+
         info = TestcaseInfo()
         info.testcase_id = testcase_id
         info.ddos_attack_list = [
@@ -632,6 +673,8 @@ class AlpsClient:
                 a["profile_name"],
                 a.get("bandwidth_mbps"),
                 a.get("duration_sec"),
+                client_tags,
+                server_tags,
             )
             for a in attacks
         ]
@@ -642,6 +685,8 @@ class AlpsClient:
                     b["profile_name"],
                     b.get("bandwidth_mbps"),
                     b.get("duration_sec"),
+                    client_tags,
+                    server_tags,
                 )
                 for b in businesses
             ]
@@ -650,7 +695,7 @@ class AlpsClient:
             network_id=network_id,
             network_name=network_name,
         )
-        info.component_tags = ["client6", "server6"]
+        info.component_tags = component_tags
         return info
 
 
@@ -680,6 +725,29 @@ def find_available_network(data: Dict[str, Any]) -> Optional[tuple[int, str]]:
         if network_id is not None and network_name:
             return int(network_id), str(network_name)
     return None
+
+
+def split_network_tags(tags: list[str]) -> tuple[list[str], list[str], list[str]]:
+    """把网络组件标签拆成全部/client/server 三组，保持设备返回顺序。"""
+    component_tags = list(dict.fromkeys(str(tag).strip() for tag in tags if str(tag).strip()))
+    client_tags = [
+        tag for tag in component_tags if "client" in tag.casefold() or "客户端" in tag
+    ]
+    server_tags = [
+        tag for tag in component_tags if "server" in tag.casefold() or "服务端" in tag
+    ]
+
+    remaining = [tag for tag in component_tags if tag not in client_tags and tag not in server_tags]
+    if not client_tags and remaining:
+        client_tags = [remaining.pop(0)]
+        logger.warning("网络标签未标注 client 角色，按返回顺序使用 %s", client_tags[0])
+    if not server_tags and remaining:
+        server_tags = [remaining.pop(0)]
+        logger.warning("网络标签未标注 server 角色，按返回顺序使用 %s", server_tags[0])
+
+    if not client_tags or not server_tags:
+        raise ApiError(f"无法从网络标签中同时识别 client/server: {component_tags!r}")
+    return component_tags, client_tags, server_tags
 
 
 def extract_matched_ports(data: Dict[str, Any]) -> list[Dict[str, Any]]:

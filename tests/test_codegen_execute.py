@@ -17,6 +17,7 @@ RESPONSES = {
     "/v1/cl/network/list": {
         "result": [{"network_id": 18, "network_name": "ZGC Scene Two Network"}]
     },
+    "/v1/cl/network/tags/fetch": {"code": 0, "result": ["client9", "server9"]},
     "/v1/cl/ddos/attack/profile/list": {"result": [{"profile_id": 7, "profile_name": "udp_flood"}]},
     "/v1/cl/ddos/attack/profile/create": {"result": {"profile_id": 99}},
     "/v1/cl/load/profile/list": {"result": []},
@@ -141,6 +142,9 @@ def test_save_body_has_multi_attack_and_business():
     assert info["app_simulator_list"][0]["data_rate"]["min_rate"] == 2000
     assert info["shared_settings"]["network_id"] == 18
     assert info["shared_settings"]["network_name"] == "ZGC Scene Two Network"
+    assert info["component_tags"] == ["client9", "server9"]
+    assert info["ddos_attack_list"][0]["basic"]["client_tags"] == ["client9"]
+    assert info["ddos_attack_list"][0]["basic"]["server_tags"] == ["server9"]
     # 时长已注入
     assert info["ddos_attack_list"][0]["load_profile"]["default"]["steady"]["duration"] == 200
 

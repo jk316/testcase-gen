@@ -74,6 +74,9 @@ def test_set_testcase_info_multi_attack_and_business():
         businesses=[{"profile_id": 20, "profile_name": "http_browse", "bandwidth_mbps": 2000, "duration_sec": 200}],
         network_id=18,
         network_name="ZGC Scene Two Network",
+        component_tags=["client9", "server9"],
+        client_tags=["client9"],
+        server_tags=["server9"],
     )
     assert len(info.ddos_attack_list) == 2
     assert len(info.app_simulator_list) == 1
@@ -82,6 +85,9 @@ def test_set_testcase_info_multi_attack_and_business():
     assert info.app_simulator_list[0].app_profile.profile_id == 20
     assert info.shared_settings.network_id == 18
     assert info.shared_settings.network_name == "ZGC Scene Two Network"
+    assert info.component_tags == ["client9", "server9"]
+    assert info.ddos_attack_list[0].basic.client_tags == ["client9"]
+    assert info.ddos_attack_list[0].basic.server_tags == ["server9"]
 
 
 def test_synthesize_generates_valid_python():
@@ -169,3 +175,23 @@ def test_select_first_available_network():
         return_value={"result": [{"network_id": 18, "network_name": "default"}]},
     ):
         assert client.select_first_available_network() == (18, "default")
+
+
+def test_split_network_tags_by_role_name():
+    from examples.sdk import split_network_tags
+
+    assert split_network_tags(["client9", "server9", "monitor"]) == (
+        ["client9", "server9", "monitor"],
+        ["client9"],
+        ["server9"],
+    )
+
+
+def test_split_network_tags_falls_back_to_api_order():
+    from examples.sdk import split_network_tags
+
+    assert split_network_tags(["left", "right"]) == (
+        ["left", "right"],
+        ["left"],
+        ["right"],
+    )

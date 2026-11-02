@@ -14,6 +14,7 @@ from examples.sdk.client import (
     find_available_network,
     find_available_port,
     sha1_hex,
+    split_network_tags,
 )
 from examples.sdk.errors import AlpsError, ApiError, AttackNotFoundError
 from examples.sdk.capabilities import CAPABILITIES, Capability, get_capability
@@ -32,4 +33,5 @@ __all__ = [
     "find_available_port",
     "get_capability",
     "sha1_hex",
+    "split_network_tags",
 ]
