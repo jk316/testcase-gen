@@ -36,6 +36,8 @@ _INTENT_PROMPT = """你是测试需求解析器。从下面的测试意图中抽
 
 规则：
 - 带宽统一换算成 Mbps 整数（1Gbps=1000Mbps）。
+- "攻击总带宽"对应 attack.total_bandwidth_mbps，"业务总带宽"对应 business.total_bandwidth_mbps，两者都要提取。
+- 提到业务总带宽但没给具体业务类型时，business.types 填 ["business"]。
 - 没提业务流量时，business.total_bandwidth_mbps 为 0、types 为空数组。
 - 只输出 JSON。"""
 
@@ -60,6 +62,8 @@ def _build_requirement(data: dict) -> TestRequirement:
     business = data.get("business", {})
     business_types = [str(t) for t in business.get("types", [])]
     business_total = int(business.get("total_bandwidth_mbps", 0))
+    if business_total > 0 and not business_types:
+        business_types = ["business_traffic"]  # 有业务带宽但没给类型时的兜底
     business_per = allocate_bandwidth(business_total, len(business_types))
     businesses = tuple(
         BusinessSpec(type=t, bandwidth_mbps=b) for t, b in zip(business_types, business_per)

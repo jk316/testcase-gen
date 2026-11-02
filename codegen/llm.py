@@ -1,39 +1,30 @@
-"""LLM 工厂与调用工具。"""
+"""LLM 工厂与调用工具（仅 DeepSeek）。
+
+模型名与 base_url 从环境变量（.env）加载：
+- DEEPSEEK_API_KEY（必需）
+- MODEL_NAME（默认 deepseek-flash）
+- BASE_URL（默认 https://api.deepseek.com）
+"""
 from __future__ import annotations
 
 import json
 import os
 from typing import Any, Optional
 
+from dotenv import load_dotenv
 
-def get_llm(provider: Optional[str] = None, model: Optional[str] = None) -> Any:
-    """按 provider 返回 LangChain chat model，默认通义 qwen-plus。"""
-    provider = (provider or os.getenv("LLM_PROVIDER", "tongyi")).lower()
+load_dotenv()
 
-    if provider == "tongyi":
-        from langchain_community.chat_models.tongyi import ChatTongyi
 
-        return ChatTongyi(model=model or os.getenv("QWEN_MODEL", "qwen-plus"))
+def get_llm(model: Optional[str] = None) -> Any:
+    """返回 DeepSeek chat model。"""
+    from langchain_openai import ChatOpenAI
 
-    if provider == "glm":
-        from langchain_openai import ChatOpenAI
-
-        return ChatOpenAI(
-            model=model or "glm-4.7",
-            base_url="https://open.bigmodel.cn/api/paas/v4/",
-            openai_api_key=os.getenv("GLM_API_KEY"),
-        )
-
-    if provider == "deepseek":
-        from langchain_openai import ChatOpenAI
-
-        return ChatOpenAI(
-            model=model or "deepseek-chat",
-            base_url="https://api.deepseek.com",
-            openai_api_key=os.getenv("DEEPSEEK_API_KEY"),
-        )
-
-    raise ValueError(f"未知 LLM provider: {provider}")
+    return ChatOpenAI(
+        model=model or os.getenv("MODEL_NAME") or os.getenv("DEEPSEEK_MODEL") or "deepseek-flash",
+        base_url=os.getenv("BASE_URL") or os.getenv("DEEPSEEK_BASE_URL") or "https://api.deepseek.com",
+        openai_api_key=os.getenv("DEEPSEEK_API_KEY"),
+    )
 
 
 def ask_llm(llm: Any, prompt: str) -> str:
