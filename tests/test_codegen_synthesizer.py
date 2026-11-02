@@ -29,7 +29,7 @@ def _requirement() -> TestRequirement:
 def _plan() -> list[PlanStep]:
     return [
         PlanStep("login", "login", {}, ["session_id"]),
-        PlanStep("reserve", "reserve_port", {}, []),
+        PlanStep("network", "select_network", {}, ["network_id", "network_name"]),
         PlanStep("prof_udp", "ensure_attack_profile", {"profile_name": "udp_flood"}, ["profile_id", "profile_name"]),
         PlanStep("prof_http", "ensure_attack_profile", {"profile_name": "http_get_flood"}, ["profile_id", "profile_name"]),
         PlanStep("prof_biz", "ensure_load_profile", {"profile_name": "http_browse"}, ["profile_id", "profile_name"]),
@@ -37,7 +37,12 @@ def _plan() -> list[PlanStep]:
         PlanStep(
             "build",
             "build_testcase_info",
-            {"testcase_id": Ref("tc", "testcase_id"), "testcase_name": "UDP+HTTP 混合攻击"},
+            {
+                "testcase_id": Ref("tc", "testcase_id"),
+                "testcase_name": "UDP+HTTP 混合攻击",
+                "network_id": Ref("network", "network_id"),
+                "network_name": Ref("network", "network_name"),
+            },
             ["testcase_info"],
         ),
         PlanStep(
@@ -67,12 +72,16 @@ def test_set_testcase_info_multi_attack_and_business():
             {"profile_id": 11, "profile_name": "http_get_flood", "bandwidth_mbps": 500, "duration_sec": 200},
         ],
         businesses=[{"profile_id": 20, "profile_name": "http_browse", "bandwidth_mbps": 2000, "duration_sec": 200}],
+        network_id=18,
+        network_name="ZGC Scene Two Network",
     )
     assert len(info.ddos_attack_list) == 2
     assert len(info.app_simulator_list) == 1
     assert info.ddos_attack_list[0].data_rate.min_rate == 500
     assert info.ddos_attack_list[0].load_profile.default.steady.duration == 200
     assert info.app_simulator_list[0].app_profile.profile_id == 20
+    assert info.shared_settings.network_id == 18
+    assert info.shared_settings.network_name == "ZGC Scene Two Network"
 
 
 def test_synthesize_generates_valid_python():
@@ -95,8 +104,10 @@ def test_synthesize_resolves_refs():
     # create_testcase 产出 testcase_id，run 引用它
     assert "v_tc_testcase_id = _r_tc[\"result\"][\"testcase_id\"]" in code
     assert "client.run_testcase(v_tc_testcase_id" in code
-    # reserve 自动找端口
-    assert "client.reserve_first_available_port()" in code
+    # 自动选择网络邻居，并把结果传入测试用例配置
+    assert "client.select_first_available_network()" in code
+    assert "network_id=v_network_network_id" in code
+    assert "network_name=v_network_network_name" in code
     # run 产出 instance_id，stats 引用它
     assert "v_run_instance_id = _r_run[\"result\"][\"instance_id\"]" in code
     assert "client.get_stats_overview(v_run_instance_id)" in code
@@ -133,3 +144,28 @@ def test_reserve_first_available_port():
         port_id = client.reserve_first_available_port()
         assert port_id == "9"
         mock_reserve.assert_called_once_with("9")
+
+
+def test_find_available_network_picks_first_valid_neighbor():
+    from examples.sdk import find_available_network
+
+    data = {
+        "result": [
+            {"network_id": None, "network_name": "invalid"},
+            {"network_id": 18, "network_name": "ZGC Scene Two Network"},
+            {"network_id": 19, "network_name": "backup"},
+        ]
+    }
+    assert find_available_network(data) == (18, "ZGC Scene Two Network")
+
+
+def test_select_first_available_network():
+    from unittest.mock import patch
+
+    client = AlpsClient(base_url="https://x", name="admin", password="admin", verify=False)
+    with patch.object(
+        AlpsClient,
+        "get_network_list",
+        return_value={"result": [{"network_id": 18, "network_name": "default"}]},
+    ):
+        assert client.select_first_available_network() == (18, "default")

@@ -108,6 +108,11 @@ def validate_plan(plan: List[PlanStep], capabilities: Dict[str, Any]) -> List[st
         # 输入字段须在能力声明的输入范围内（能力声明了非空 input_fields 才校验）
         declared = set(getattr(cap, "input_fields", ()) or ())
         if declared:
+            missing = declared - set(step.inputs)
+            if missing:
+                errors.append(
+                    f"步骤 {step.step_id}: 缺少能力 {step.capability} 的必填输入 {sorted(missing)}"
+                )
             for name in step.inputs:
                 if name not in declared:
                     errors.append(

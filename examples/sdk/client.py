@@ -45,6 +45,7 @@ __all__ = [
     "build_signature",
     "sha1_hex",
     "find_attack_profile_id",
+    "find_available_network",
     "find_available_port",
     "extract_matched_ports",
 ]
@@ -230,6 +231,13 @@ class AlpsClient:
     def get_network_list(self) -> Dict[str, Any]:
         """GET /v1/cl/network/list。"""
         return self._request("GET", "/v1/cl/network/list", add_session_id=True)
+
+    def select_first_available_network(self) -> tuple[int, str]:
+        """查询网络邻居并返回第一个包含有效 id/name 的网络配置。"""
+        network = find_available_network(self.get_network_list())
+        if network is None:
+            raise ApiError("没有可用的网络邻居")
+        return network
 
     def fetch_network(self, network_id: int) -> Dict[str, Any]:
         """POST /v1/cl/network/fetch。"""
@@ -545,7 +553,7 @@ class AlpsClient:
     def set_shared_settings(
         self,
         testcase_name: str,
-        network_id: Optional[int] = 18,
+        network_id: Optional[int] = None,
         network_name: Optional[str] = None,
     ) -> SharedSettings:
         """构建 SharedSettings。"""
@@ -567,6 +575,8 @@ class AlpsClient:
         testcase_name: str,
         attacks: list[dict[str, Any]],
         businesses: Optional[list[dict[str, Any]]] = None,
+        network_id: Optional[int] = None,
+        network_name: Optional[str] = None,
     ) -> TestcaseInfo:
         """构建 TestcaseInfo（支持多攻击 + 多业务）。
 
@@ -597,7 +607,11 @@ class AlpsClient:
                 )
                 for b in businesses
             ]
-        info.shared_settings = self.set_shared_settings(testcase_name)
+        info.shared_settings = self.set_shared_settings(
+            testcase_name,
+            network_id=network_id,
+            network_name=network_name,
+        )
         info.component_tags = ["client6", "server6"]
         return info
 
@@ -613,6 +627,21 @@ def find_attack_profile_id(attack_profile_list: Any, attack_name: str) -> tuple[
             return profile.get("profile_id"), profile_name
     logger.info("未找到名称匹配的 profile '%s'，将由调用方决定是否新建", attack_name)
     raise AttackNotFoundError("attack not found")
+
+
+def find_available_network(data: Dict[str, Any]) -> Optional[tuple[int, str]]:
+    """从 ``network/list`` 结果中选择第一个具有有效 id/name 的网络邻居。"""
+    result = data.get("result", [])
+    if not isinstance(result, list):
+        return None
+    for network in result:
+        if not isinstance(network, dict):
+            continue
+        network_id = network.get("network_id")
+        network_name = network.get("network_name")
+        if network_id is not None and network_name:
+            return int(network_id), str(network_name)
+    return None
 
 
 def extract_matched_ports(data: Dict[str, Any]) -> list[Dict[str, Any]]:

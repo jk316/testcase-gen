@@ -41,9 +41,7 @@ def test_allocate_bandwidth_zero_count():
 def _plan():
     return [
         PlanStep("login", "login", {}, ["session_id"]),
-        PlanStep(
-            "reserve", "reserve_port", {"port_id": "port_1"}, []
-        ),
+        PlanStep("network", "select_network", {}, ["network_id", "network_name"]),
         PlanStep(
             "run", "run_testcase", {"testcase_id": Ref("create_tc", "testcase_id")}, []
         ),
@@ -106,3 +104,9 @@ def test_validate_plan_unknown_input_field():
     ]
     errors = validate_plan(plan, CAPABILITIES)
     assert any("不在能力" in e for e in errors)
+
+
+def test_validate_plan_missing_required_input():
+    plan = [PlanStep("network_info", "build_testcase_info", {}, [])]
+    errors = validate_plan(plan, CAPABILITIES)
+    assert any("缺少能力" in e and "network_id" in e for e in errors)

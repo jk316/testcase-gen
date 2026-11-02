@@ -14,12 +14,9 @@ from codegen.synthesizer import synthesize
 # 各接口的 mock 返回；udp_flood 走复用，http_get_flood/business 走新建
 RESPONSES = {
     "/v1/cl/user/login": {"result": {"session_id": "sess_123"}},
-    "/v1/cl/port/list": {
-        "result": [
-            {"card_list": [{"port_list": [{"port_id": "9", "is_reserved": False, "test_running": False}]}]}
-        ]
+    "/v1/cl/network/list": {
+        "result": [{"network_id": 18, "network_name": "ZGC Scene Two Network"}]
     },
-    "/v1/cl/port/reserve": {"result": {}},
     "/v1/cl/ddos/attack/profile/list": {"result": [{"profile_id": 7, "profile_name": "udp_flood"}]},
     "/v1/cl/ddos/attack/profile/create": {"result": {"profile_id": 99}},
     "/v1/cl/load/profile/list": {"result": []},
@@ -48,7 +45,7 @@ def _requirement() -> TestRequirement:
 def _plan() -> list[PlanStep]:
     return [
         PlanStep("login", "login", {}, []),
-        PlanStep("reserve", "reserve_port", {}, []),
+        PlanStep("network", "select_network", {}, []),
         PlanStep("prof_udp", "ensure_attack_profile", {"profile_name": "udp_flood"}, []),
         PlanStep("prof_http", "ensure_attack_profile", {"profile_name": "http_get_flood"}, []),
         PlanStep("prof_biz", "ensure_load_profile", {"profile_name": "http_browse"}, []),
@@ -56,7 +53,12 @@ def _plan() -> list[PlanStep]:
         PlanStep(
             "build",
             "build_testcase_info",
-            {"testcase_id": Ref("tc", "testcase_id"), "testcase_name": "UDP+HTTP 混合攻击"},
+            {
+                "testcase_id": Ref("tc", "testcase_id"),
+                "testcase_name": "UDP+HTTP 混合攻击",
+                "network_id": Ref("network", "network_id"),
+                "network_name": Ref("network", "network_name"),
+            },
             [],
         ),
         PlanStep(
@@ -100,10 +102,10 @@ def test_generated_script_executes_end_to_end():
     assert paths[0] == "/v1/cl/user/login"
     assert paths[-1] == "/v1/cl/user/logout"
 
-    # 端口：先查列表再预留
-    assert "/v1/cl/port/list" in paths
-    assert "/v1/cl/port/reserve" in paths
-    assert paths.index("/v1/cl/port/list") < paths.index("/v1/cl/port/reserve")
+    # 网络邻居：只查询并选择，不预约端口
+    assert "/v1/cl/network/list" in paths
+    assert "/v1/cl/port/list" not in paths
+    assert "/v1/cl/port/reserve" not in paths
 
     # profile：udp 复用（list 命中），http 新建（create）
     assert paths.count("/v1/cl/ddos/attack/profile/list") == 2
@@ -134,6 +136,8 @@ def test_save_body_has_multi_attack_and_business():
     # 带宽已注入
     assert info["ddos_attack_list"][0]["data_rate"]["min_rate"] == 500
     assert info["app_simulator_list"][0]["data_rate"]["min_rate"] == 2000
+    assert info["shared_settings"]["network_id"] == 18
+    assert info["shared_settings"]["network_name"] == "ZGC Scene Two Network"
     # 时长已注入
     assert info["ddos_attack_list"][0]["load_profile"]["default"]["steady"]["duration"] == 200
 

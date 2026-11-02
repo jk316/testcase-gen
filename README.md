@@ -138,7 +138,7 @@ class PlanStep:
 | 能力 | 说明 |
 |------|------|
 | `login` / `logout` | 登录 / 登出（session 由 client 内部自持） |
-| `reserve_port` | 自动查询并预留可用端口 |
+| `select_network` | 查询网络邻居并选择第一个有效网络配置 |
 | `ensure_attack_profile` | **复用优先**：按名匹配已有攻击 profile，否则新建 |
 | `ensure_load_profile` | 同上（业务/负载 profile） |
 | `create_testcase` | 创建测试用例 |
@@ -176,10 +176,13 @@ def main():
         client.ensure_attack_profile('udp_flood')       # 复用或新建
         client.ensure_attack_profile('http_get_flood')  # 复用或新建
         client.ensure_load_profile('business')          # 业务流量
-        port_id = client.reserve_first_available_port() # 自动查端口
+        network_id, network_name = client.select_first_available_network() # 自动查网络邻居
         tc_id = client.create_testcase('...')["result"]["testcase_id"]
         # ATTACKS/BUSINESSES 由合成器从上述 profile 步骤自动收集（含带宽/时长）
-        info = client.set_testcase_info(tc_id, '...', attacks=ATTACKS, businesses=BUSINESSES)
+        info = client.set_testcase_info(
+            tc_id, '...', attacks=ATTACKS, businesses=BUSINESSES,
+            network_id=network_id, network_name=network_name,
+        )
         client.save_testcase(tc_id, info)
         instance_id = client.run_testcase(tc_id, '...')["result"]["instance_id"]
         client.get_stats_overview(instance_id)
@@ -204,7 +207,7 @@ codegen/               # 生成流水线（当前设计的核心）
   parser.py            # ① 意图 → TestRequirement
   planner.py           # ② TestRequirement → TestPlan（校验失败回炉重试）
   synthesizer.py       # ③ TestPlan → 可执行 Python 脚本
-  generate.py          # 端到端入口（python -m codegen.generate）
+  generate.py          # 端到端入口（uv run python -m codegen.generate）
 examples/
   sdk/                 # 稳定 SDK（AlpsClient + 能力注册表 + 异常）
     client.py          # 封装 /v1/cl/* 接口
@@ -224,7 +227,7 @@ inputs/
 ## 八、快速开始
 
 ```bash
-# 1. 安装依赖
+# 1. 安装依赖（装进 uv 管理的 .venv，会自动按 .python-version 下载 Python 3.13）
 uv sync
 
 # 2. 配置 .env（模型名与 API key 从 .env 加载）
@@ -233,18 +236,21 @@ uv sync
 #    BASE_URL=https://api.deepseek.com
 
 # 3. 生成（命令行传意图）
-python -m codegen.generate "测试 udp flood 和 http get flood 混合攻击，攻击总带宽1Gbps，业务总带宽2Gbps，时长200秒"
+uv run python -m codegen.generate "测试 udp flood 和 http get flood 混合攻击，攻击总带宽1Gbps，业务总带宽2Gbps，时长200秒"
 
 #    或读取 inputs/intent.txt
-python -m codegen.generate
+uv run python -m codegen.generate
 
 # 输出：outputs/generated_testcase_1.py
 ```
 
+> 依赖装在 uv 的 `.venv` 里，请始终用 `uv run python ...`（或先激活 `.venv`）运行，
+> 不要用系统裸 `python`，否则会报 `ModuleNotFoundError: No module named 'dotenv'` 之类错误。
+
 运行测试：
 
 ```bash
-python -m pytest tests/ -q
+uv run python -m pytest tests/ -q
 ```
 
 ---
