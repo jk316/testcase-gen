@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "testcase-gen 系统架构",
+    "quality_profile": "showcase"
+  },
+  "components": [
+    { "id": "requirement", "type": "external", "label": "需求文档", "sublabel": "requirement.docx", "pos": [40, 40], "size": [130, 56] },
+    { "id": "intent", "type": "external", "label": "测试意图", "sublabel": "intent.txt", "pos": [40, 130], "size": [130, 56] },
+    { "id": "steps", "type": "backend", "label": "generate_steps", "sublabel": "步骤规划", "pos": [40, 240], "size": [130, 60] },
+    { "id": "testcase", "type": "backend", "label": "generate_testcase", "sublabel": "用例生成", "pos": [250, 240], "size": [130, 60] },
+    { "id": "reasoning", "type": "backend", "label": "params_reasoning", "sublabel": "参数依赖推理", "pos": [470, 240], "size": [140, 60] },
+    { "id": "finalize", "type": "backend", "label": "finalize_testcase", "sublabel": "规范化", "pos": [690, 240], "size": [130, 60] },
+    { "id": "merge", "type": "backend", "label": "merge_testcase", "sublabel": "合并", "pos": [900, 240], "size": [120, 60] },
+    { "id": "output", "type": "external", "label": "测试用例 JSON", "sublabel": "merged_testcase", "pos": [1100, 240], "size": [130, 60] },
+    { "id": "llm", "type": "cloud", "label": "LLM 可插拔", "sublabel": "通义 / 智谱 / DeepSeek", "pos": [250, 400], "size": [130, 56] },
+    { "id": "rag", "type": "backend", "label": "API 语义检索 RAG", "sublabel": "FAISS→CrossEncoder→LLM", "tag": "未接线主图", "pos": [470, 400], "size": [180, 56] },
+    { "id": "redis", "type": "database", "label": "Redis 参数索引", "sublabel": "api:params:<M>:<P>", "pos": [40, 400], "size": [120, 56] },
+    { "id": "experience", "type": "database", "label": "经验池", "sublabel": "余弦相似度命中", "pos": [690, 400], "size": [140, 56] }
+  ],
+  "boundaries": [
+    { "kind": "region", "label": "输入层", "wraps": ["requirement", "intent"] },
+    { "kind": "region", "label": "LangGraph 编排层", "wraps": ["steps", "testcase", "reasoning", "finalize", "merge"] },
+    { "kind": "region", "label": "知识 / 支撑层", "wraps": ["llm", "rag", "redis", "experience"] }
+  ],
+  "connections": [
+    { "id": "req-intent", "from": "requirement", "to": "intent", "label": "split.py 拆分", "fromSide": "bottom", "toSide": "top", "labelDy": 24 },
+    { "id": "intent-steps", "from": "intent", "to": "steps", "label": "读入意图", "fromSide": "bottom", "toSide": "top", "labelDy": 24 },
+    { "id": "steps-testcase", "from": "steps", "to": "testcase", "label": "步骤计划" },
+    { "id": "testcase-reasoning", "from": "testcase", "to": "reasoning", "label": "单步用例" },
+    { "id": "reasoning-finalize", "from": "reasoning", "to": "finalize", "label": "参数依赖" },
+    { "id": "finalize-merge", "from": "finalize", "to": "merge", "label": "规范化用例" },
+    { "id": "merge-output", "from": "merge", "to": "output", "label": "输出用例" },
+    { "id": "loop-back", "from": "finalize", "to": "testcase", "label": "下一 step", "variant": "dashed", "fromSide": "top", "toSide": "top" },
+    { "id": "llm-steps", "from": "llm", "to": "steps", "label": "LLM 调用", "variant": "dashed" },
+    { "id": "redis-steps", "from": "redis", "to": "steps", "label": "预计算参数", "fromSide": "top", "toSide": "bottom" },
+    { "id": "exp-reasoning", "from": "experience", "to": "reasoning", "label": "相似意图命中" }
+  ]
+}
