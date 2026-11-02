@@ -8,7 +8,7 @@ import json
 from typing import Any, List, Optional
 
 from codegen.ir import PlanStep, Ref, TestRequirement, validate_plan
-from codegen.llm import ask_llm, extract_json, get_llm
+from codegen.llm import TokenUsage, ask_llm, extract_json, get_llm
 from examples.sdk.capabilities import CAPABILITIES
 
 _PLAN_PROMPT = """你是测试计划编排器。根据结构化需求与可用能力，编排一份测试计划。
@@ -67,57 +67,51 @@ def _build_plan(data: Any) -> List[PlanStep]:
     return steps
 
 
+def _requirement_json(requirement: TestRequirement) -> str:
+    """把需求序列化为 prompt 用的 JSON。"""
+    return json.dumps(
+        {
+            "name": requirement.name,
+            "duration_sec": requirement.duration_sec,
+            "attacks": [
+                {"type": a.type, "bandwidth_mbps": a.bandwidth_mbps, "target": a.target}
+                for a in requirement.attacks
+            ],
+            "businesses": [
+                {"type": b.type, "bandwidth_mbps": b.bandwidth_mbps}
+                for b in requirement.businesses
+            ],
+        },
+        ensure_ascii=False,
+    )
+
+
 def plan_test(
     requirement: TestRequirement,
     llm: Optional[Any] = None,
     max_retries: int = 3,
-) -> List[PlanStep]:
-    """编排 TestPlan，校验失败时回炉重试。"""
+) -> tuple[List[PlanStep], TokenUsage, int, bool]:
+    """编排 TestPlan，校验失败时回炉重试。
+
+    Returns:
+        (计划, 总 token 用量, 重试次数, 是否首轮通过校验)。
+    """
     llm = llm or get_llm()
-    prompt = _PLAN_PROMPT.format(
+    base_prompt = _PLAN_PROMPT.format(
         capabilities=_format_capabilities(),
-        requirement=json.dumps(
-            {
-                "name": requirement.name,
-                "duration_sec": requirement.duration_sec,
-                "attacks": [
-                    {"type": a.type, "bandwidth_mbps": a.bandwidth_mbps, "target": a.target}
-                    for a in requirement.attacks
-                ],
-                "businesses": [
-                    {"type": b.type, "bandwidth_mbps": b.bandwidth_mbps}
-                    for b in requirement.businesses
-                ],
-            },
-            ensure_ascii=False,
-        ),
+        requirement=_requirement_json(requirement),
     )
 
-    last_errors: List[str] = []
-    for _ in range(max_retries):
-        raw = ask_llm(llm, prompt)
+    usage_total = TokenUsage()
+    prompt = base_prompt
+    for attempt in range(max_retries):
+        raw, usage = ask_llm(llm, prompt)
+        usage_total += usage
         plan = _build_plan(extract_json(raw))
         last_errors = validate_plan(plan, CAPABILITIES)
         if not last_errors:
-            return plan
-        prompt = _PLAN_PROMPT.format(
-            capabilities=_format_capabilities(),
-            requirement=json.dumps(
-                {
-                    "name": requirement.name,
-                    "duration_sec": requirement.duration_sec,
-                    "attacks": [
-                        {"type": a.type, "bandwidth_mbps": a.bandwidth_mbps, "target": a.target}
-                        for a in requirement.attacks
-                    ],
-                    "businesses": [
-                        {"type": b.type, "bandwidth_mbps": b.bandwidth_mbps}
-                        for b in requirement.businesses
-                    ],
-                },
-                ensure_ascii=False,
-            ),
-        ) + "\n\n上次生成的计划校验失败，错误如下（请修正后重新输出 JSON 数组）：\n" + "\n".join(
+            return plan, usage_total, attempt, attempt == 0
+        prompt = base_prompt + "\n\n上次生成的计划校验失败，错误如下（请修正后重新输出 JSON 数组）：\n" + "\n".join(
             f"- {e}" for e in last_errors
         )
 

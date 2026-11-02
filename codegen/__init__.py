@@ -15,6 +15,8 @@ from codegen.ir import (
     parse_bandwidth_mbps,
     validate_plan,
 )
+from codegen.llm import TokenUsage
+from codegen.metrics import GenerationMetrics, summarize
 from codegen.parser import parse_intent
 from codegen.planner import plan_test
 from codegen.synthesizer import synthesize
@@ -25,10 +27,13 @@ __all__ = [
     "PlanStep",
     "Ref",
     "TestRequirement",
+    "TokenUsage",
+    "GenerationMetrics",
     "allocate_bandwidth",
     "parse_bandwidth_mbps",
     "parse_intent",
     "plan_test",
+    "summarize",
     "synthesize",
     "validate_plan",
 ]

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import os
+from dataclasses import dataclass
 from typing import Any, Optional
 
 from dotenv import load_dotenv
@@ -27,12 +28,49 @@ def get_llm(model: Optional[str] = None) -> Any:
     )
 
 
-def ask_llm(llm: Any, prompt: str) -> str:
-    """调用 LLM 并返回文本内容。"""
+@dataclass
+class TokenUsage:
+    """一次 LLM 调用的 token 用量。"""
+
+    prompt_tokens: int = 0
+    completion_tokens: int = 0
+
+    def __iadd__(self, other: "TokenUsage") -> "TokenUsage":
+        self.prompt_tokens += other.prompt_tokens
+        self.completion_tokens += other.completion_tokens
+        return self
+
+    @property
+    def total_tokens(self) -> int:
+        return self.prompt_tokens + self.completion_tokens
+
+
+def _extract_usage(resp: Any) -> TokenUsage:
+    """从 LangChain 响应中提取 token 用量。
+
+    兼容两种结构：``usage_metadata``（新版 AIMessage）与
+    ``response_metadata["token_usage"]``（OpenAI 原生）。
+    """
+    usage = TokenUsage()
+    um = getattr(resp, "usage_metadata", None)
+    if um:
+        usage.prompt_tokens = int(um.get("input_tokens") or um.get("prompt_tokens") or 0)
+        usage.completion_tokens = int(um.get("output_tokens") or um.get("completion_tokens") or 0)
+        if usage.prompt_tokens or usage.completion_tokens:
+            return usage
+    tu = (getattr(resp, "response_metadata", None) or {}).get("token_usage") or {}
+    if tu:
+        usage.prompt_tokens = int(tu.get("prompt_tokens") or tu.get("input_tokens") or 0)
+        usage.completion_tokens = int(tu.get("completion_tokens") or tu.get("output_tokens") or 0)
+    return usage
+
+
+def ask_llm(llm: Any, prompt: str) -> tuple[str, TokenUsage]:
+    """调用 LLM，返回 (文本内容, token 用量)。"""
     resp = llm.invoke(prompt)
-    if hasattr(resp, "content"):
-        return resp.content
-    return str(resp)
+    usage = _extract_usage(resp)
+    content = resp.content if hasattr(resp, "content") else str(resp)
+    return content, usage
 
 
 def extract_json(text: str) -> Any:
@@ -58,4 +96,4 @@ def extract_json(text: str) -> Any:
         return json.loads(s[start : end + 1])
 
 
-__all__ = ["get_llm", "ask_llm", "extract_json"]
+__all__ = ["get_llm", "ask_llm", "extract_json", "TokenUsage"]

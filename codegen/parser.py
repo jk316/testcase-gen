@@ -12,7 +12,7 @@ from codegen.ir import (
     TestRequirement,
     allocate_bandwidth,
 )
-from codegen.llm import ask_llm, extract_json, get_llm
+from codegen.llm import TokenUsage, ask_llm, extract_json, get_llm
 
 _INTENT_PROMPT = """你是测试需求解析器。从下面的测试意图中抽取结构化字段，只输出 JSON（不要解释）。
 
@@ -80,12 +80,14 @@ def _build_requirement(data: dict) -> TestRequirement:
     )
 
 
-def parse_intent(intent_text: str, llm: Optional[Any] = None) -> TestRequirement:
-    """解析单条测试意图 → TestRequirement。"""
+def parse_intent(
+    intent_text: str, llm: Optional[Any] = None
+) -> tuple[TestRequirement, TokenUsage]:
+    """解析单条测试意图 → (TestRequirement, token 用量)。"""
     llm = llm or get_llm()
-    raw = ask_llm(llm, _INTENT_PROMPT.format(intent=intent_text))
+    raw, usage = ask_llm(llm, _INTENT_PROMPT.format(intent=intent_text))
     data = extract_json(raw)
-    return _build_requirement(data)
+    return _build_requirement(data), usage
 
 
 __all__ = ["parse_intent"]
