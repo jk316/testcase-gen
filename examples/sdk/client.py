@@ -255,6 +255,10 @@ class AlpsClient:
         """GET /v1/cl/ddos/attack/profile/list。"""
         return self._request("GET", "/v1/cl/ddos/attack/profile/list", add_session_id=True)
 
+    def get_load_profile_list(self) -> Dict[str, Any]:
+        """GET /v1/cl/load/profile/list（负载/业务 profile 列表）。"""
+        return self._request("GET", "/v1/cl/load/profile/list", add_session_id=True)
+
     def get_attack_profile(self, attack_profile_id: int) -> Dict[str, Any]:
         """POST /v1/cl/ddos/attack/profile/fetch。"""
         return self._request(
@@ -347,7 +351,7 @@ class AlpsClient:
         """复用优先：按名称匹配已有负载（业务）profile，找不到则新建空 profile。"""
         try:
             return find_attack_profile_id(
-                self.get_profile_list().get("result", []), profile_name
+                self.get_load_profile_list().get("result", []), profile_name
             )
         except AttackNotFoundError:
             data = self.create_load_profile(profile_name)
