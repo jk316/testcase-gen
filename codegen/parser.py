@@ -39,6 +39,7 @@ _INTENT_PROMPT = """你是测试需求解析器。从下面的测试意图中抽
 - "攻击总带宽"对应 attack.total_bandwidth_mbps，"业务总带宽"对应 business.total_bandwidth_mbps，两者都要提取。
 - 提到业务总带宽但没给具体业务类型时，business.types 填 ["business"]。
 - 没提业务流量时，business.total_bandwidth_mbps 为 0、types 为空数组。
+- 测试名称必须以 "AI_" 开头。
 - 只输出 JSON。"""
 
 
@@ -69,8 +70,12 @@ def _build_requirement(data: dict) -> TestRequirement:
         BusinessSpec(type=t, bandwidth_mbps=b) for t, b in zip(business_types, business_per)
     )
 
+    name = str(data.get("name", "testcase")).strip() or "testcase"
+    if not name.casefold().startswith("ai"):
+        name = f"AI_{name}"
+
     return TestRequirement(
-        name=data.get("name", "testcase"),
+        name=name,
         duration_sec=int(data.get("duration_sec", 60)),
         attacks=attacks,
         businesses=businesses,

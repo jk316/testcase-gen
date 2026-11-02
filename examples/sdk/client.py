@@ -15,7 +15,9 @@ from __future__ import annotations
 
 import hashlib
 import logging
+import re
 import time
+from difflib import SequenceMatcher
 from typing import Any, Dict, Optional
 
 import requests
@@ -233,9 +235,11 @@ class AlpsClient:
         """GET /v1/cl/network/list。"""
         return self._request("GET", "/v1/cl/network/list", add_session_id=True)
 
-    def select_first_available_network(self) -> tuple[int, str]:
-        """查询网络邻居并返回第一个包含有效 id/name 的网络配置。"""
-        network = find_available_network(self.get_network_list())
+    def select_first_available_network(
+        self, preferred_name: str = "Scene One"
+    ) -> tuple[int, str]:
+        """优先选择名称包含 ``Scene One`` 的网络，否则返回第一个有效网络。"""
+        network = find_available_network(self.get_network_list(), preferred_name)
         if network is None:
             raise ApiError("没有可用的网络邻居")
         return network
@@ -291,7 +295,7 @@ class AlpsClient:
         return self._request(
             "POST",
             "/v1/cl/ddos/attack/profile/fetch",
-            json_body={"attack_profile_id": attack_profile_id},
+            json_body={"profile_id": attack_profile_id},
             add_session_id=True,
         )
 
@@ -358,39 +362,64 @@ class AlpsClient:
         )
 
     def ensure_attack_profile(self, profile_name: str) -> tuple[int, str]:
-        """复用优先：按名称匹配已有攻击 profile，找不到则新建空 profile。
+        """搜索并复用名称相同或相似的攻击 profile，不自动创建。
 
-        返回 ``(profile_id, profile_name)``。当前仅按名称复用；参数是否符合
+        返回 ``(profile_id, profile_name)``。参数是否符合
         要求（带宽/时长/目标）的校验需后续用 ``profile/param/fetch`` 补充。
         """
+        profiles = self.get_ddos_attack_profile_list().get("result", [])
         try:
-            return find_attack_profile_id(
-                self.get_ddos_attack_profile_list().get("result", []), profile_name
+            return find_attack_profile_id(profiles, profile_name)
+        except AttackNotFoundError as profile_error:
+            try:
+                flow_id, flow_name = _find_similar_named_item(
+                    self.get_ddos_attack_flow_list().get("result", []),
+                    profile_name,
+                    id_field="flow_id",
+                    name_field="flow_name",
+                )
+            except AttackNotFoundError:
+                raise profile_error
+
+            for profile in profiles if isinstance(profiles, list) else []:
+                profile_id = profile.get("profile_id") if isinstance(profile, dict) else None
+                existing_name = profile.get("profile_name") if isinstance(profile, dict) else None
+                if profile_id is None or not existing_name:
+                    continue
+                detail = self.get_attack_profile(int(profile_id)).get("result", {})
+                flows = detail.get("flows", []) if isinstance(detail, dict) else []
+                if any(
+                    isinstance(flow, dict)
+                    and (
+                        flow.get("flow_id") == flow_id
+                        or _normalize_profile_name(flow.get("flow_name", ""))
+                        == _normalize_profile_name(flow_name)
+                    )
+                    for flow in flows
+                ):
+                    logger.info(
+                        "为 '%s' 复用包含相似 flow '%s' 的 profile '%s'",
+                        profile_name,
+                        flow_name,
+                        existing_name,
+                    )
+                    return int(profile_id), str(existing_name)
+
+            raise AttackNotFoundError(
+                f"找到相似 flow {flow_name!r}，但没有已有 profile 引用它；不会自动创建"
             )
-        except AttackNotFoundError:
-            data = self.create_attack_profile(profile_name)
-            profile_id = data.get("result", {}).get("profile_id")
-            if profile_id is None:
-                raise ApiError(f"创建攻击 profile 失败，未返回 profile_id: {data}")
-            return profile_id, profile_name
 
     def ensure_load_profile(self, profile_name: str) -> tuple[int, str]:
-        """复用优先：按名称匹配已有负载（业务）profile，找不到则新建空 profile。"""
-        try:
-            return find_attack_profile_id(
-                self.get_load_profile_list().get("result", []), profile_name
-            )
-        except AttackNotFoundError:
-            data = self.create_load_profile(profile_name)
-            profile_id = data.get("result", {}).get("profile_id")
-            if profile_id is None:
-                raise ApiError(f"创建 load profile 失败，未返回 profile_id: {data}")
-            return profile_id, profile_name
+        """搜索并复用名称相同或相似的负载（业务）profile，不自动创建。"""
+        return find_attack_profile_id(
+            self.get_load_profile_list().get("result", []), profile_name
+        )
 
     # ---------- 测试用例 ---------- #
 
     def create_testcase(self, testcase_name: str, overwrite: bool = True) -> Dict[str, Any]:
         """POST /v1/cl/testcase/create。"""
+        testcase_name = _ensure_ai_testcase_name(testcase_name)
         return self._request(
             "POST",
             "/v1/cl/testcase/create",
@@ -438,7 +467,7 @@ class AlpsClient:
         """
         payload: Dict[str, Any] = {"testcase_id": testcase_id}
         if testcase_name is not None:
-            payload["testcase_name"] = testcase_name
+            payload["testcase_name"] = _ensure_ai_testcase_name(testcase_name)
         if port_mapping is not None:
             payload["port_mapping"] = port_mapping
         data = self._request(
@@ -625,7 +654,7 @@ class AlpsClient:
         """构建 SharedSettings。"""
         shared = SharedSettings()
         shared.port_reset = True
-        shared.testcase_name = testcase_name
+        shared.testcase_name = _ensure_ai_testcase_name(testcase_name)
         if network_id is not None:
             shared.network_id = network_id
         if network_name is not None:
@@ -699,32 +728,94 @@ class AlpsClient:
         return info
 
 
-def find_attack_profile_id(attack_profile_list: Any, attack_name: str) -> tuple[int, str]:
-    """在攻击 profile 列表中按名称匹配，返回 (profile_id, profile_name)。"""
-    attack_name_lower = attack_name.lower()
-    for profile in attack_profile_list:
-        profile_name = profile.get("profile_name")
-        if not profile_name:
+def _ensure_ai_testcase_name(testcase_name: str) -> str:
+    """保证设备侧测试用例名称以 ``AI`` 开头。"""
+    name = str(testcase_name).strip() or "testcase"
+    return name if name.casefold().startswith("ai") else f"AI_{name}"
+
+
+def _normalize_profile_name(name: str) -> str:
+    """统一大小写和分隔符，便于 ``udp_flood`` 匹配 ``UDP Flood Attack``。"""
+    return " ".join(re.findall(r"[a-z0-9\u4e00-\u9fff]+", str(name).casefold()))
+
+
+def _find_similar_named_item(
+    items: Any,
+    query_name: str,
+    *,
+    id_field: str,
+    name_field: str,
+) -> tuple[int, str]:
+    """在资源列表中按标准化名称做高置信度相似匹配。"""
+    query = _normalize_profile_name(query_name)
+    query_tokens = set(query.split())
+    candidates: list[tuple[float, int, str]] = []
+    available: list[str] = []
+
+    for item in items if isinstance(items, list) else []:
+        if not isinstance(item, dict):
             continue
-        if attack_name_lower in profile_name.lower():
-            return profile.get("profile_id"), profile_name
-    logger.info("未找到名称匹配的 profile '%s'，将由调用方决定是否新建", attack_name)
-    raise AttackNotFoundError("attack not found")
+        item_id = item.get(id_field)
+        item_name = item.get(name_field)
+        if item_id is None or not item_name:
+            continue
+        item_name = str(item_name)
+        available.append(item_name)
+        normalized = _normalize_profile_name(item_name)
+        candidate_tokens = set(normalized.split())
+
+        if normalized == query:
+            score = 1.0
+        elif query_tokens and query_tokens.issubset(candidate_tokens):
+            score = 0.95 - 0.01 * (len(candidate_tokens) - len(query_tokens))
+        else:
+            score = SequenceMatcher(None, query, normalized).ratio()
+            if score < 0.9:
+                continue
+        candidates.append((score, int(item_id), item_name))
+
+    if candidates:
+        _, item_id, item_name = max(candidates, key=lambda item: item[0])
+        return item_id, item_name
+
+    raise AttackNotFoundError(
+        f"未找到与 {query_name!r} 相关或相似的已有配置；"
+        f"不会自动创建。可用项: {available}"
+    )
 
 
-def find_available_network(data: Dict[str, Any]) -> Optional[tuple[int, str]]:
-    """从 ``network/list`` 结果中选择第一个具有有效 id/name 的网络邻居。"""
+def find_attack_profile_id(attack_profile_list: Any, attack_name: str) -> tuple[int, str]:
+    """在已有 profile 中查找相同或高置信度相似名称，不创建新配置。"""
+    profile_id, profile_name = _find_similar_named_item(
+        attack_profile_list,
+        attack_name,
+        id_field="profile_id",
+        name_field="profile_name",
+    )
+    logger.info("为 '%s' 复用已有 profile '%s'", attack_name, profile_name)
+    return profile_id, profile_name
+
+
+def find_available_network(
+    data: Dict[str, Any], preferred_name: str = "Scene One"
+) -> Optional[tuple[int, str]]:
+    """优先按名称选择网络，未命中时回退第一个有效网络邻居。"""
     result = data.get("result", [])
     if not isinstance(result, list):
         return None
+    valid: list[tuple[int, str]] = []
     for network in result:
         if not isinstance(network, dict):
             continue
         network_id = network.get("network_id")
         network_name = network.get("network_name")
         if network_id is not None and network_name:
-            return int(network_id), str(network_name)
-    return None
+            valid.append((int(network_id), str(network_name)))
+    preferred = _normalize_profile_name(preferred_name)
+    for network in valid:
+        if preferred and preferred in _normalize_profile_name(network[1]):
+            return network
+    return valid[0] if valid else None
 
 
 def split_network_tags(tags: list[str]) -> tuple[list[str], list[str], list[str]]:

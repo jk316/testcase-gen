@@ -15,12 +15,22 @@ from codegen.synthesizer import synthesize
 RESPONSES = {
     "/v1/cl/user/login": {"result": {"session_id": "sess_123"}},
     "/v1/cl/network/list": {
-        "result": [{"network_id": 18, "network_name": "ZGC Scene Two Network"}]
+        "result": [
+            {"network_id": 18, "network_name": "ZGC Scene Two Network"},
+            {"network_id": 17, "network_name": "ZGC Scene One Network"},
+        ]
     },
     "/v1/cl/network/tags/fetch": {"code": 0, "result": ["client9", "server9"]},
-    "/v1/cl/ddos/attack/profile/list": {"result": [{"profile_id": 7, "profile_name": "udp_flood"}]},
+    "/v1/cl/ddos/attack/profile/list": {
+        "result": [
+            {"profile_id": 7, "profile_name": "UDP Flood Attack"},
+            {"profile_id": 8, "profile_name": "HTTP GET Flood Attack"},
+        ]
+    },
     "/v1/cl/ddos/attack/profile/create": {"result": {"profile_id": 99}},
-    "/v1/cl/load/profile/list": {"result": []},
+    "/v1/cl/load/profile/list": {
+        "result": [{"profile_id": 10, "profile_name": "HTTP Browse Profile"}]
+    },
     "/v1/cl/load/profile/create": {"result": {"profile_id": 100}},
     "/v1/cl/testcase/create": {"result": {"testcase_id": 10850}},
     "/v1/cl/testcase/save": {"result": {}},
@@ -111,12 +121,11 @@ def test_generated_script_executes_end_to_end():
     assert "/v1/cl/port/list" not in paths
     assert "/v1/cl/port/reserve" not in paths
 
-    # profile：udp 复用（list 命中），http 新建（create）
+    # profile：只搜索并复用相似名称，不创建空配置
     assert paths.count("/v1/cl/ddos/attack/profile/list") == 2
-    assert "/v1/cl/ddos/attack/profile/create" in paths
-    # 业务 profile 新建
+    assert "/v1/cl/ddos/attack/profile/create" not in paths
     assert "/v1/cl/load/profile/list" in paths
-    assert "/v1/cl/load/profile/create" in paths
+    assert "/v1/cl/load/profile/create" not in paths
 
     # 测试用例：创建→保存→运行→统计→停止
     for p in (
@@ -140,8 +149,9 @@ def test_save_body_has_multi_attack_and_business():
     # 带宽已注入
     assert info["ddos_attack_list"][0]["data_rate"]["min_rate"] == 500
     assert info["app_simulator_list"][0]["data_rate"]["min_rate"] == 2000
-    assert info["shared_settings"]["network_id"] == 18
-    assert info["shared_settings"]["network_name"] == "ZGC Scene Two Network"
+    assert info["shared_settings"]["network_id"] == 17
+    assert info["shared_settings"]["network_name"] == "ZGC Scene One Network"
+    assert info["shared_settings"]["testcase_name"].startswith("AI")
     assert info["component_tags"] == ["client9", "server9"]
     assert info["ddos_attack_list"][0]["basic"]["client_tags"] == ["client9"]
     assert info["ddos_attack_list"][0]["basic"]["server_tags"] == ["server9"]
@@ -154,11 +164,14 @@ def test_stats_uses_run_instance_id():
     calls = _execute(code)
 
     run_body = next(body for _, path, body in calls if path == "/v1/cl/testcase/run")
+    create_body = next(body for _, path, body in calls if path == "/v1/cl/testcase/create")
     stats_body = next(body for _, path, body in calls if path == "/v1/cl/stats/overview")
     # run 返回 instance_id=500，stats 必须引用它（而非 testcase_id）
     assert stats_body["instance_id"] == 500
     assert stats_body["interval"] == 1
     assert run_body["testcase_id"] == 10850
+    assert create_body["testcase_name"].startswith("AI")
+    assert run_body["testcase_name"].startswith("AI")
 
 
 def test_run_falls_back_to_status_when_response_has_no_result():

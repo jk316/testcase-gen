@@ -28,8 +28,10 @@ _PLAN_PROMPT = """你是测试计划编排器。根据结构化需求与可用�
 
 编排要求：
 - 第一步必须是 login，最后一步必须是 logout。
+- 所有 testcase_name 必须与测试需求中的 name 完全一致，并以 AI 开头。
 - 每个攻击类型各调用一次 ensure_attack_profile（profile_name 用攻击类型名）。
 - 每个业务类型各调用一次 ensure_load_profile。
+- ensure_attack_profile / ensure_load_profile 只搜索并复用已有相似配置，不创建新配置。
 - 登录后调用一次 select_network 查询可用网络邻居，不要调用端口预约接口。
 - 依次 select_network → create_testcase → build_testcase_info → save_testcase → run_testcase → get_stats_overview。
 - build_testcase_info 传 testcase_id、testcase_name，并分别引用 select_network 产出的 network_id、network_name；攻击/业务 profile 由前序 ensure_attack_profile / ensure_load_profile 步骤自动汇入，不要显式传 profile_id/profile_name。

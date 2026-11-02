@@ -138,8 +138,8 @@ class PlanStep:
 | 能力 | 说明 |
 |------|------|
 | `login` / `logout` | 登录 / 登出（session 由 client 内部自持） |
-| `select_network` | 查询网络邻居并选择第一个有效网络配置 |
-| `ensure_attack_profile` | **复用优先**：按名匹配已有攻击 profile，否则新建 |
+| `select_network` | 查询网络邻居，优先选择名称包含 `Scene One` 的配置 |
+| `ensure_attack_profile` | 按相同或相似名称搜索已有攻击 profile，不自动创建 |
 | `ensure_load_profile` | 同上（业务/负载 profile） |
 | `create_testcase` | 创建测试用例 |
 | `build_testcase_info` | 把前序 profile 组装成 TestcaseInfo（fan-in） |
@@ -173,8 +173,8 @@ def main():
     client = AlpsClient(base_url=BASE_URL, name=NAME, password=PASSWORD, verify=False)
     try:
         client.login()
-        client.ensure_attack_profile('udp_flood')       # 复用或新建
-        client.ensure_attack_profile('http_get_flood')  # 复用或新建
+        client.ensure_attack_profile('udp_flood')       # 搜索并复用相似配置
+        client.ensure_attack_profile('http_get_flood')  # 搜索并复用相似配置
         client.ensure_load_profile('business')          # 业务流量
         network_id, network_name = client.select_first_available_network() # 自动查网络邻居
         tc_id = client.create_testcase('...')["result"]["testcase_id"]

@@ -165,6 +165,18 @@ def test_find_available_network_picks_first_valid_neighbor():
     assert find_available_network(data) == (18, "ZGC Scene Two Network")
 
 
+def test_find_available_network_prefers_scene_one_over_first_result():
+    from examples.sdk import find_available_network
+
+    data = {
+        "result": [
+            {"network_id": 20, "network_name": "Backup Network"},
+            {"network_id": 21, "network_name": "ZGC Scene One Network"},
+        ]
+    }
+    assert find_available_network(data) == (21, "ZGC Scene One Network")
+
+
 def test_select_first_available_network():
     from unittest.mock import patch
 
@@ -195,3 +207,47 @@ def test_split_network_tags_falls_back_to_api_order():
         ["left"],
         ["right"],
     )
+
+
+def test_find_attack_profile_matches_normalized_similar_name():
+    from examples.sdk import find_attack_profile_id
+
+    profiles = [
+        {"profile_id": 7, "profile_name": "UDP Flood Attack"},
+        {"profile_id": 8, "profile_name": "HTTP POST Flood Attack"},
+    ]
+    assert find_attack_profile_id(profiles, "udp_flood") == (7, "UDP Flood Attack")
+
+
+def test_ensure_attack_profile_does_not_create_when_missing():
+    from unittest.mock import patch
+
+    from examples.sdk import AttackNotFoundError
+
+    client = AlpsClient(base_url="https://x", name="admin", password="admin", verify=False)
+    with patch.object(
+        AlpsClient, "get_ddos_attack_profile_list", return_value={"result": []}
+    ), patch.object(AlpsClient, "get_ddos_attack_flow_list", return_value={"result": []}), patch.object(
+        AlpsClient, "create_attack_profile"
+    ) as create:
+        import pytest
+
+        with pytest.raises(AttackNotFoundError, match="不会自动创建"):
+            client.ensure_attack_profile("udp_flood")
+        create.assert_not_called()
+
+
+def test_ensure_attack_profile_can_match_nested_existing_flow():
+    from unittest.mock import patch
+
+    client = AlpsClient(base_url="https://x", name="admin", password="admin", verify=False)
+    profiles = [{"profile_id": 30, "profile_name": "Existing Mixed Profile"}]
+    flows = [{"flow_id": 40, "flow_name": "UDP Flood Attack Flow"}]
+    with patch.object(
+        AlpsClient, "get_ddos_attack_profile_list", return_value={"result": profiles}
+    ), patch.object(AlpsClient, "get_ddos_attack_flow_list", return_value={"result": flows}), patch.object(
+        AlpsClient,
+        "get_attack_profile",
+        return_value={"result": {"flows": flows}},
+    ):
+        assert client.ensure_attack_profile("udp_flood") == (30, "Existing Mixed Profile")

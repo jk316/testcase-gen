@@ -21,6 +21,7 @@ def test_build_requirement_mixed_attack_bandwidth_even_split():
     assert [b.bandwidth_mbps for b in req.businesses] == [2000]
     assert req.attacks[0].target == {"dest_ip": "11.0.0.1/24"}
     assert req.duration_sec == 200
+    assert req.name == "AI_混合攻击"
 
 
 def test_build_requirement_no_business():
