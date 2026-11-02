@@ -408,14 +408,54 @@ class AlpsClient:
         testcase_id: int,
         testcase_name: Optional[str] = None,
         port_mapping: Optional[Any] = None,
+        instance_lookup_timeout: float = 10.0,
+        poll_interval: float = 0.5,
     ) -> Dict[str, Any]:
-        """POST /v1/cl/testcase/run，执行指定测试用例。"""
+        """执行测试用例，并保证返回 ``result.instance_id``。
+
+        部分设备版本的 ``testcase/run`` 成功响应只有 ``code/message``，与
+        OpenAPI 声明不一致。此时通过 ``testcase/status`` 短暂轮询实例 ID，
+        再把它补回 run 响应，给生成代码提供稳定的返回结构。
+        """
         payload: Dict[str, Any] = {"testcase_id": testcase_id}
         if testcase_name is not None:
             payload["testcase_name"] = testcase_name
         if port_mapping is not None:
             payload["port_mapping"] = port_mapping
-        return self._request("POST", "/v1/cl/testcase/run", json_body=payload, add_session_id=True)
+        data = self._request(
+            "POST", "/v1/cl/testcase/run", json_body=payload, add_session_id=True
+        )
+
+        if data.get("code") not in (None, 0):
+            raise ApiError(f"运行测试用例失败: {data.get('message', data)}")
+
+        result = data.get("result")
+        if isinstance(result, dict) and result.get("instance_id") is not None:
+            return data
+
+        deadline = time.monotonic() + max(0.0, instance_lookup_timeout)
+        while True:
+            status = self.get_testcase_status(testcase_id)
+            status_result = status.get("result")
+            if isinstance(status_result, dict) and status_result.get("instance_id") is not None:
+                normalized = dict(data)
+                normalized["result"] = dict(status_result)
+                return normalized
+            if time.monotonic() >= deadline:
+                raise ApiError(
+                    "测试用例已提交运行，但 run/status 均未返回 instance_id; "
+                    f"run={data!r}, status={status!r}"
+                )
+            time.sleep(max(0.0, poll_interval))
+
+    def get_testcase_status(self, testcase_id: int) -> Dict[str, Any]:
+        """POST /v1/cl/testcase/status，查询运行状态与实例 ID。"""
+        return self._request(
+            "POST",
+            "/v1/cl/testcase/status",
+            json_body={"testcase_id": testcase_id},
+            add_session_id=True,
+        )
 
     def stop_testcase(self, testcase_id: int) -> Dict[str, Any]:
         """POST /v1/cl/testcase/stop，停止指定测试用例。"""
@@ -431,11 +471,9 @@ class AlpsClient:
             "POST", "/v1/cl/stats/model", json_body={"instance_id": instance_id}, add_session_id=True
         )
 
-    def get_stats_overview(self, instance_id: int, interval: Optional[int] = None) -> Dict[str, Any]:
+    def get_stats_overview(self, instance_id: int, interval: int = 1) -> Dict[str, Any]:
         """POST /v1/cl/stats/overview，获取测试用例实例的概览统计。"""
-        payload: Dict[str, Any] = {"instance_id": instance_id}
-        if interval is not None:
-            payload["interval"] = interval
+        payload: Dict[str, Any] = {"instance_id": instance_id, "interval": interval}
         return self._request(
             "POST", "/v1/cl/stats/overview", json_body=payload, add_session_id=True
         )

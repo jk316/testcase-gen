@@ -24,6 +24,9 @@ RESPONSES = {
     "/v1/cl/testcase/create": {"result": {"testcase_id": 10850}},
     "/v1/cl/testcase/save": {"result": {}},
     "/v1/cl/testcase/run": {"result": {"instance_id": 500}},
+    "/v1/cl/testcase/status": {
+        "result": {"instance_id": 500, "duration": 0, "is_running": True}
+    },
     "/v1/cl/stats/overview": {"result": {"bandwidth": 1000}},
     "/v1/cl/testcase/stop": {"result": {}},
     "/v1/cl/user/logout": {"result": {}},
@@ -150,4 +153,28 @@ def test_stats_uses_run_instance_id():
     stats_body = next(body for _, path, body in calls if path == "/v1/cl/stats/overview")
     # run 返回 instance_id=500，stats 必须引用它（而非 testcase_id）
     assert stats_body["instance_id"] == 500
+    assert stats_body["interval"] == 1
     assert run_body["testcase_id"] == 10850
+
+
+def test_run_falls_back_to_status_when_response_has_no_result():
+    responses = dict(RESPONSES)
+    responses["/v1/cl/testcase/run"] = {"code": 0, "message": "success"}
+    calls: list[tuple[str, str, dict]] = []
+
+    def fake_request(self, method, path, *, params=None, json_body=None, **kw):
+        calls.append((method, path, json_body or {}))
+        return responses.get(path, {"result": {}})
+
+    client = sdk_client.AlpsClient(
+        base_url="https://x", name="admin", password="admin", verify=False
+    )
+    client.session_id = "sess_123"
+    with patch.object(sdk_client.AlpsClient, "_request", fake_request):
+        result = client.run_testcase(10850, "t", instance_lookup_timeout=0)
+
+    assert result["result"]["instance_id"] == 500
+    assert [path for _, path, _ in calls] == [
+        "/v1/cl/testcase/run",
+        "/v1/cl/testcase/status",
+    ]
