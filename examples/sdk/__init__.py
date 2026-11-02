@@ -11,6 +11,7 @@ from examples.sdk.client import (
     build_signature,
     extract_matched_ports,
     find_attack_profile_id,
+    find_available_port,
     sha1_hex,
 )
 from examples.sdk.errors import AlpsError, ApiError, AttackNotFoundError
@@ -26,6 +27,7 @@ __all__ = [
     "build_signature",
     "extract_matched_ports",
     "find_attack_profile_id",
+    "find_available_port",
     "get_capability",
     "sha1_hex",
 ]

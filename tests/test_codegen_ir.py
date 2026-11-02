@@ -100,9 +100,9 @@ def test_validate_plan_ref_to_missing_field():
 
 
 def test_validate_plan_unknown_input_field():
-    # reserve_port 声明了 input_fields=("port_id",)，传入未声明字段应报错
+    # create_testcase 声明了 input_fields=("testcase_name",)，传入未声明字段应报错
     plan = [
-        PlanStep("reserve", "reserve_port", {"bogus": 1, "port_id": "p1"}, []),
+        PlanStep("tc", "create_testcase", {"bogus": 1, "testcase_name": "t"}, []),
     ]
     errors = validate_plan(plan, CAPABILITIES)
     assert any("不在能力" in e for e in errors)

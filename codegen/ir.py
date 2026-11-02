@@ -124,7 +124,8 @@ def validate_plan(plan: List[PlanStep], capabilities: Dict[str, Any]) -> List[st
                         f"步骤 {step.step_id}.{name}: 步骤 {val.step} 未产出字段 {val.field}"
                     )
 
-        produced[step.step_id] = set(step.outputs)
+        # 产出字段以能力声明的 output_fields 为准（权威来源）
+        produced[step.step_id] = set(getattr(cap, "output_fields", ()) or ())
 
     return errors
 

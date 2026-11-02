@@ -31,7 +31,9 @@ _PLAN_PROMPT = """你是测试计划编排器。根据结构化需求与可用�
 - 每个攻击类型各调用一次 ensure_attack_profile（profile_name 用攻击类型名）。
 - 每个业务类型各调用一次 ensure_load_profile。
 - 依次 reserve_port → create_testcase → build_testcase_info → save_testcase → run_testcase → get_stats_overview。
+- reserve_port 自动查询并预留可用端口，无需传 port_id。
 - build_testcase_info 只传 testcase_id、testcase_name；攻击/业务 profile 由前序 ensure_attack_profile / ensure_load_profile 步骤自动汇入，不要显式传 profile_id/profile_name。
+- run_testcase 会产出 instance_id；get_stats_overview 的 instance_id 用 {{"ref": "run_testcase步骤的step_id", "field": "instance_id"}} 引用，不要编造字面量。
 - 只使用上面列出的能力。
 - 只输出 JSON 数组。"""
 

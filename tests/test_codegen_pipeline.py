@@ -52,14 +52,14 @@ def test_build_plan_constructs_ref():
 def test_build_plan_literal_value_stays():
     data = [
         {
-            "step_id": "reserve",
-            "capability": "reserve_port",
-            "inputs": {"port_id": "port_1"},
+            "step_id": "tc",
+            "capability": "create_testcase",
+            "inputs": {"testcase_name": "t"},
             "outputs": [],
         }
     ]
     plan = _build_plan(data)
-    assert plan[0].inputs["port_id"] == "port_1"
+    assert plan[0].inputs["testcase_name"] == "t"
 
 
 def test_end_to_end_plan_validates():

@@ -45,6 +45,7 @@ __all__ = [
     "build_signature",
     "sha1_hex",
     "find_attack_profile_id",
+    "find_available_port",
     "extract_matched_ports",
 ]
 
@@ -208,6 +209,15 @@ class AlpsClient:
         return self._request(
             "POST", "/v1/cl/port/reserve", json_body={"port_id": port_id}, add_session_id=True
         )
+
+    def reserve_first_available_port(self) -> str:
+        """查询端口列表并预留第一个可用（未预留、未运行）端口，返回 port_id。"""
+        data = self.get_port_list()
+        port_id = find_available_port(data)
+        if port_id is None:
+            raise ApiError("没有可用的未预留端口")
+        self.reserve_port(port_id)
+        return port_id
 
     def release_port(self, port_id: str) -> Dict[str, Any]:
         """POST /v1/cl/port/release，释放指定端口。"""
@@ -610,3 +620,13 @@ def extract_matched_ports(data: Dict[str, Any]) -> list[Dict[str, Any]]:
                 if port.get("is_reserved") and not port.get("test_running"):
                     matched.append({"port_id": port.get("port_id")})
     return matched
+
+
+def find_available_port(data: Dict[str, Any]) -> Optional[str]:
+    """从 port/list 结果里找第一个可用（未预留、未运行）端口的 port_id。"""
+    for chassis in data.get("result", []):
+        for card in chassis.get("card_list", []):
+            for port in card.get("port_list", []):
+                if not port.get("is_reserved") and not port.get("test_running"):
+                    return port.get("port_id")
+    return None
