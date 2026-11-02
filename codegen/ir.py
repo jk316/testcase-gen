@@ -32,6 +32,8 @@ class BusinessSpec:
 class TestRequirement:
     """结构化测试需求（输入模型）。"""
 
+    __test__ = False  # 避免 pytest 把它当成测试类收集
+
     name: str
     duration_sec: int
     attacks: Tuple[AttackSpec, ...] = ()

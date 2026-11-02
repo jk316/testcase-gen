@@ -22,6 +22,8 @@ import requests
 
 from examples.sdk.errors import ApiError, AttackNotFoundError
 from models.ddos_attack_config import (
+    AppModule,
+    AppProfileBrief,
     AttackModule,
     AttackProfileBrief,
     BasicData,
@@ -503,6 +505,29 @@ class AlpsClient:
             delay_start_second=2,
         )
 
+    def set_app_profile_brief(self, profile_id: int, profile_name: str) -> AppProfileBrief:
+        """构建 AppProfileBrief（业务 profile 简要信息）。"""
+        return AppProfileBrief(profile_id=profile_id, profile_name=profile_name, user_id=1)
+
+    def set_app_module(
+        self,
+        profile_id: int,
+        profile_name: str,
+        rate: Optional[int] = None,
+        steady_duration: Optional[int] = None,
+    ) -> AppModule:
+        """构建一个完整 AppModule（业务/应用仿真模块），结构与 AttackModule 平行。"""
+        return AppModule(
+            basic=self.set_basic_data(profile_name),
+            load_profile=self.set_load_profile(steady_duration or 60),
+            app_profile=self.set_app_profile_brief(profile_id, profile_name),
+            data_rate=self.set_data_rate(rate),
+            super_flow=self.set_super_flow(),
+            src_port=self.set_src_port(),
+            delay_start=2,
+            delay_start_second=2,
+        )
+
     def set_shared_settings(
         self,
         testcase_name: str,
@@ -523,12 +548,41 @@ class AlpsClient:
         return shared
 
     def set_testcase_info(
-        self, testcase_id: int, testcase_name: str, profile_id: int, profile_name: str
+        self,
+        testcase_id: int,
+        testcase_name: str,
+        attacks: list[dict[str, Any]],
+        businesses: Optional[list[dict[str, Any]]] = None,
     ) -> TestcaseInfo:
-        """构建 TestcaseInfo（单个攻击模块）。"""
+        """构建 TestcaseInfo（支持多攻击 + 多业务）。
+
+        ``attacks`` / ``businesses`` 每项形如::
+
+            {"profile_id": int, "profile_name": str, "bandwidth_mbps": int, "duration_sec": int}
+
+        ``bandwidth_mbps`` 映射到 ``data_rate``，``duration_sec`` 映射到 ``load_profile`` 稳态时长。
+        """
         info = TestcaseInfo()
         info.testcase_id = testcase_id
-        info.ddos_attack_list = [self.set_attack_module(profile_id, profile_name)]
+        info.ddos_attack_list = [
+            self.set_attack_module(
+                a["profile_id"],
+                a["profile_name"],
+                a.get("bandwidth_mbps"),
+                a.get("duration_sec"),
+            )
+            for a in attacks
+        ]
+        if businesses:
+            info.app_simulator_list = [
+                self.set_app_module(
+                    b["profile_id"],
+                    b["profile_name"],
+                    b.get("bandwidth_mbps"),
+                    b.get("duration_sec"),
+                )
+                for b in businesses
+            ]
         info.shared_settings = self.set_shared_settings(testcase_name)
         info.component_tags = ["client6", "server6"]
         return info

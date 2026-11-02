@@ -17,6 +17,7 @@ from codegen.ir import (
 )
 from codegen.parser import parse_intent
 from codegen.planner import plan_test
+from codegen.synthesizer import synthesize
 
 __all__ = [
     "AttackSpec",
@@ -28,5 +29,6 @@ __all__ = [
     "parse_bandwidth_mbps",
     "parse_intent",
     "plan_test",
+    "synthesize",
     "validate_plan",
 ]

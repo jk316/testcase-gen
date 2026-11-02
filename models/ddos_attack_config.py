@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 from typing import List, Optional
 
 
@@ -21,12 +21,11 @@ class BasicData(BaseModel):
 
 
 class AttackProfileBrief(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+
     profile_id: Optional[int] = Field(None, alias="profile_id")
     profile_name: Optional[str] = Field(None, alias="profile_name")
     user_id: Optional[int] = Field(None, alias="user_id")
-
-    class Config:
-        populate_by_name = True
 
 
 class FlowItem(BaseModel):
@@ -99,8 +98,25 @@ class AttackModule(BaseModel):
     delay_start_second: Optional[int] = None
 
 
+class AppProfileBrief(BaseModel):
+    """业务（应用仿真）profile 的简要信息。"""
+
+    profile_id: Optional[int] = None
+    profile_name: Optional[str] = None
+    user_id: Optional[int] = None
+
+
 class AppModule(BaseModel):
-    pass
+    """业务（应用仿真）模块，结构与 AttackModule 平行。"""
+
+    basic: Optional[BasicData] = None
+    load_profile: Optional[LoadProfile] = None
+    app_profile: Optional[AppProfileBrief] = None
+    data_rate: Optional[DataRate] = None
+    super_flow: Optional[SuperFlow] = None
+    src_port: Optional[SrcPort] = None
+    delay_start: Optional[int] = None
+    delay_start_second: Optional[int] = None
 
 
 # --------------------- Testcase ---------------------
@@ -124,7 +140,7 @@ class TestcaseInfo(BaseModel):
 
     component_tags: Optional[List[str]] = None
     ddos_attack_list: Optional[List[AttackModule]] = None
-    # app_simulator_list: Optional[List[AppModule]] = None
+    app_simulator_list: Optional[List[AppModule]] = None
     shared_settings: Optional[SharedSettings] = None
 
 
